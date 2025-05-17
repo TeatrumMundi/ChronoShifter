@@ -8,6 +8,7 @@
  */
 export async function fetchFromRiotAPI(endpoint: string): Promise<Response>
 {
+    console.log("Fetching data from Riot API with endpoint:", endpoint);
     // Retrieve the Riot API key from environment variables
     const riotApiKey = process.env.RIOT_API_KEY;
 
