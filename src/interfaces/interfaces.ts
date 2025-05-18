@@ -1,16 +1,21 @@
-﻿export interface LeagueAccount
+﻿export interface RiotAccount
 {
-    riotAccount : RiotAccount;
-    leagueAccountsDetails : LeagueAccountDetails;
-    leagueRank : LeagueRank[];
-    //recentMatches: RecentMatches[];
+    riotAccountDetails : RiotAccountDetails;
+    leagueAccount: LeagueAccount;
 }
 
-export interface RiotAccount
+export interface RiotAccountDetails
 {
     puuid : string;
     gameName : string;
     tagLine : string;
+}
+
+export interface LeagueAccount
+{
+    leagueAccountsDetails : LeagueAccountDetails;
+    leagueRank : LeagueRank[];
+    recentMatches: RecentMatches[];
 }
 
 export interface LeagueAccountDetails
@@ -53,9 +58,9 @@ export interface MatchDetails
 
 export interface Participant
 {
-    participantPuuid : string;
+    puuid : string;
     riotIdGameName : string;
-    riotIdTagLine : string;
+    riotIdTagline : string;
     summonerName : string;
     champLevel : number;
     championId : number;
@@ -65,6 +70,8 @@ export interface Participant
     deaths : number;
     assists : number;
     totalMinionsKilled : number;
+    neutralMinionsKilled: number;
+    allMinionsKilled: number;
     goldEarned : number;
     totalHealsOnTeammates : number;
     totalDamageShieldedOnTeammates : number;

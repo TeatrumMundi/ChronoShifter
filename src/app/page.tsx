@@ -2,8 +2,6 @@ import { Background } from "@/components/common";
 import SearchForm from "@/components/common/search/SearchForm";
 import { Footer, Header } from "@/components/mainPage";
 
-
-
 const backgroundMap: Record<number, string> = {
     1: "/main/1.jpg", // Monday
     2: "/main/2.jpg", // Tuesday
@@ -19,7 +17,7 @@ export default function Home() {
     const splashUrl = backgroundMap[today] || "/main/1.jpg";
 
     return (
-        <div className="relative min-h-dvh text-white overflow-hidden flex flex-col">
+        <div className="relative min-h-dvh text-white overflow-hidden flex flex-col" style={{ fontFamily: "var(--font-verminVibes)" }}>
             <Background splashUrl={splashUrl} quality={100}/>
             <Header />
             <div className="flex-grow relative">
