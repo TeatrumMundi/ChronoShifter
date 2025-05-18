@@ -30,19 +30,24 @@ export default function SearchForm({ position = "centered", className }: SearchF
     };
     
     return (
-        <div className={`w-full max-w-3xl px-4 ${position === "centered"
-            ? "absolute top-6/10 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            : `mx-auto ${className ?? "mb-4"}`}`}>
+        <div className={`px-4 
+            ${position === "centered"
+            ? "absolute top-6/10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl"
+            : `${className ?? "mb-4"}`}`}
+        >
             <form
                 className="relative flex items-center "
                 onSubmit={handleSubmit}
                 noValidate
             >
-                <div className="flex w-full relative shadow-md transition-shadow duration-200 backdrop-blur-sm">
-                    <div>
-                        <RegionSelector region={region} setRegion={setRegion} />
-                    </div>
-                    <div className="flex-1 flex flex-col relative">
+                <div 
+                    className="flex w-full relative shadow-md transition-shadow duration-200 backdrop-blur-sm"
+                    style={{ fontFamily: "var(--font-verminVibes)" }}
+                >
+                <div className="flex-shrink-0 min-w-0 xs:w-24 sm:w-32">
+                    <RegionSelector region={region} setRegion={setRegion} />
+                </div>
+                <div className="flex-1 flex flex-col relative min-w-0">
                 <input
                     type="text"
                     name="nickTag"
@@ -91,23 +96,24 @@ function RegionSelector({ region, setRegion }: { region: string, setRegion: (r: 
     return (
         <Listbox value={region} onChange={setRegion}>
             {({ open }) => (
-                <div>
+                <div className="relative min-w-0">
                     <ListboxButton
-                        className={`w-32 px-3 py-2 text-sm xs:text-base sm:text-lg md:text-xl
+                        className={`xs:w-24 sm:w-32 px-3 py-2 text-sm xs:text-base sm:text-lg md:text-xl
                             bg-white/20 border-t border-b border-l border-white/30 rounded-l-sm
                             focus:outline-none text-white tracking-widest
                             ${open ? "rounded-bl-none border-b-transparent" : ""}
+                            min-w-0 xs:truncate xs:overflow-hidden xs:text-ellipsis
                         `}
                     >
                         {region}
                     </ListboxButton>
                     <ListboxOptions
-                        className="absolute z-50 w-32 bg-white/20 text-white rounded-b-sm left-0 
-                        outline-none border-b border-l border-r border-white/30 tracking-widest"
+                        className="absolute z-[9999] w-full left-0 bg-white/20 text-white rounded-b-sm
+                        outline-none border-b border-l border-r border-white/30 tracking-widest min-w-0"
                     >
-                        <ListboxOption value="AMERICAS" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-widest">AMERICAS</ListboxOption>
-                        <ListboxOption value="EUROPE" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-widest">EUROPE</ListboxOption>
-                        <ListboxOption value="ASIA" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-widest">ASIA</ListboxOption>
+                        <ListboxOption value="AMERICAS" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'AMERICAS'}</ListboxOption>
+                        <ListboxOption value="EUROPE" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'EUROPE'}</ListboxOption>
+                        <ListboxOption value="ASIA" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'ASIA'}</ListboxOption>
                     </ListboxOptions>
                 </div>
             )}

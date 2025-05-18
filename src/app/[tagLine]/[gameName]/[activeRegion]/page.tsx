@@ -1,6 +1,7 @@
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
 import { RiotAccount } from "@/interfaces/interfaces";
 import AccountProfile from "@/components/AccountProfile";
+import { notFound } from "next/navigation";
 
 export default async function Home({params}: 
 { params: 
@@ -8,23 +9,12 @@ export default async function Home({params}:
 {
   const { tagLine, gameName, activeRegion } = await params;
 
-  try {
-    const riotAccount: RiotAccount = await createRiotAccount(
-      tagLine,
-      gameName,
-      activeRegion
-    );
+
+    const riotAccount: RiotAccount = await createRiotAccount(tagLine, gameName, activeRegion);
+
+    if (!riotAccount) {notFound();}
 
     return <AccountProfile riotAccount={riotAccount}/>;
-  } catch (error) {
-    return (
-      <div>
-        <p style={{ color: "red" }}>
-          Failed to fetch Riot account data: {error instanceof Error ? error.message : String(error)}
-        </p>
-      </div>
-    );
-  }
 }
 
 export async function generateMetadata({ params }: 

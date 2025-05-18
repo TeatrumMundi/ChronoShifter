@@ -19,20 +19,20 @@ export function Footer() {
 
     const buttons: GameButton[] = [
         {
-            src: "main/footer/LOL_Icon.svg",
+            src: "/footer/LOL_Icon.svg",
             text: "League of Legends",
             shortText: "LOL",
             disabled: false,
             route: "/",
         },
         {
-            src: "main/footer/TFT_Icon.svg",
+            src: "/footer/TFT_Icon.svg",
             text: "Teamfight Tactics",
             shortText: "TFT",
             disabled: true,
         },
         {
-            src: "main/footer/VAL_Icon.svg",
+            src: "/footer/VAL_Icon.svg",
             text: "Valorant",
             shortText: "VAL",
             disabled: true,
@@ -51,7 +51,8 @@ export function Footer() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="absolute bottom-7 left-1/2 transform -translate-x-1/2 flex gap-5 w-full max-w-[900px] px-5"
+                className="absolute bottom-7 left-1/2 transform -translate-x-1/2 flex gap-5 w-full max-w-[900px] px-5 z-0"
+                style={{ fontFamily: "var(--font-verminVibes)" }}
             >
                 {buttons.map((item) => {
                     const isActive = pathname === item.route && !item.disabled;
@@ -62,7 +63,7 @@ export function Footer() {
                                 onClick={() => handleClick(item.route)}
                                 disabled={item.disabled}
                                 aria-label={item.text}
-                                className={`flex items-center justify-center gap-2 rounded-[20px] px-4 py-1 text-sm font-medium tracking-wider whitespace-nowrap w-full transition duration-200 ease-in-out
+                                className={`flex items-center justify-center gap-2 rounded-md px-4 py-1 text-sm font-medium tracking-wider whitespace-nowrap w-full transition duration-200 ease-in-out
                                 ${
                                     item.disabled
                                         ? "bg-gray-800 bg-opacity-50 cursor-not-allowed"
@@ -105,12 +106,13 @@ export function Footer() {
             </motion.div>
 
             <a
+                style={{ fontFamily: "var(--font-lato)" }} 
                 href="https://github.com/TeatrumMundi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-0 left-0 bg-gray-800 bg-opacity-50 text-white text-xs px-3 py-1 rounded-tr-md tracking-widest"
+                className="fixed bottom-0 left-0 bg-gray-800 bg-opacity-50 text-white text-xs px-3 py-1 rounded-tr-md"
             >
-                ©2025 Teatrum Mundi
+                2025 Teatrum Mundi ©
             </a>
         </>
     );

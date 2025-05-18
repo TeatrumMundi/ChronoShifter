@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import SearchForm from "@/components/common/search/SearchForm";
+import SearchForm from "@/components/common/SearchForm";
 
 export default function Navbar() {
     return (
