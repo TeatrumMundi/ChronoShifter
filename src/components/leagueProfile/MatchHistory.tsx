@@ -12,7 +12,10 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
     const recentMatches = riotAccount.leagueAccount.recentMatches.slice(0, 5);
 
     return (
-        <div className="space-y-2">
+        <div 
+            className="space-y-2"
+            style={{ fontFamily: "var(--font-lato)" }}
+        >
             {recentMatches.length === 0 && (
                 <div className="p-6 bg-gray-800/80 rounded-xl text-gray-300 text-center tracking-[.25em]">
                     No match data found.

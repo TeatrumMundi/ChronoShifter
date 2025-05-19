@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: [
       "raw.communitydragon.org",
+      "ddragon.leagueoflegends.com",
     ],
   },
 };

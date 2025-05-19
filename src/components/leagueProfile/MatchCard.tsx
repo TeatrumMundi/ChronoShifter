@@ -9,6 +9,7 @@ import {
     timeAgo,
 } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
+import { ItemDisplay } from "./ItemDisplay";
 
 interface MatchCardProps {
     participant: Participant;
@@ -99,17 +100,17 @@ export function MatchCard({ participant, match, activeRegion: server }: MatchCar
 
                                 {/* Items and Augments */}
 
-{/*                                 <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center gap-3">
+                               <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center gap-3">
                                     <ItemDisplay items={participant.items} />
-                                    {gameMode === "Arena" &&
+{/*                                     {gameMode === "Arena" &&
                                         participant.arenaData &&
                                         participant.arenaData.playerAugments.length > 0 && (
                                             <div className="w-full 2xl:w-auto">
                                                 <AugmentDisplay augments={participant.arenaData.playerAugments} />
                                             </div>
-                                        )}
+                                        )} */}
                                 </div>
- */}
+
                             </div>
 
                             {/* Stats */}

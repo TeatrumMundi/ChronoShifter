@@ -2,7 +2,7 @@
 import {fetchFromRiotAPI} from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
-import { get } from 'http';
+import { extractItems } from './extractItems';
 
 async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails>{
     const response : Response = await fetchFromRiotAPI(
@@ -72,86 +72,81 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
         gameMode: data.info.gameMode,
         gameType: data.info.gameType,
         queueId: data.info.queueId,
-        participants: data.info.participants.map((participantData: RawParticipant): Participant => {
-            // Build items array
-            const items: number[] = [];
-            for (let i = 0; i <= 6; i++) {
-                const itemValue = participantData[`item${i}` as keyof RawParticipant] as number;
-                items.push(itemValue);
-            }
+        participants: await Promise.all(
+            data.info.participants.map(async (participantData: RawParticipant): Promise<Participant> => {
+                // Build arenaStats
+                const arenaStats: ArenaStats = {
+                    placement: participantData.placement ?? 0,
+                    augments: [
+                        participantData.playerAugment1,
+                        participantData.playerAugment2,
+                        participantData.playerAugment3,
+                        participantData.playerAugment4,
+                    ].filter(aug => aug !== 0 && aug !== undefined) as number[],
+                    playerSubteamId: participantData.playerSubteamId ?? 0,
+                };
 
-            // Build arenaStats
-            const arenaStats: ArenaStats = {
-                placement: participantData.placement ?? 0,
-                augments: [
-                    participantData.playerAugment1,
-                    participantData.playerAugment2,
-                    participantData.playerAugment3,
-                    participantData.playerAugment4,
-                ].filter(aug => aug !== 0 && aug !== undefined) as number[],
-                playerSubteamId: participantData.playerSubteamId ?? 0,
-            };
-
-            // Build runePage
-            const runePage: RunePage = {
-                statPerks: {
-                    defense: participantData.perks?.statPerks?.defense ?? 0,
-                    flex: participantData.perks?.statPerks?.flex ?? 0,
-                    offense: participantData.perks?.statPerks?.offense ?? 0,
-                },
-                styles: (participantData.perks?.styles ?? []).map((styleData: RuneStyle): RuneStyle => ({
-                    description: styleData.description,
-                    selections: (styleData.selections ?? []).map((selectionData: RuneSelection): RuneSelection => ({
-                        perk: selectionData.perk,
-                        var1: selectionData.var1,
-                        var2: selectionData.var2,
-                        var3: selectionData.var3,
+                // Build runePage
+                const runePage: RunePage = {
+                    statPerks: {
+                        defense: participantData.perks?.statPerks?.defense ?? 0,
+                        flex: participantData.perks?.statPerks?.flex ?? 0,
+                        offense: participantData.perks?.statPerks?.offense ?? 0,
+                    },
+                    styles: (participantData.perks?.styles ?? []).map((styleData: RuneStyle): RuneStyle => ({
+                        description: styleData.description,
+                        selections: (styleData.selections ?? []).map((selectionData: RuneSelection): RuneSelection => ({
+                            perk: selectionData.perk,
+                            var1: selectionData.var1,
+                            var2: selectionData.var2,
+                            var3: selectionData.var3,
+                        })),
+                        style: styleData.style,
                     })),
-                    style: styleData.style,
-                })),
-            };
+                };
 
-            return {
-                puuid: participantData.puuid,
-                riotIdGameName: participantData.riotIdGameName,
-                riotIdTagline: participantData.riotIdTagline,
-                summonerName: participantData.summonerName,
-                champLevel: participantData.champLevel,
-                championId: participantData.championId,
-                championName: participantData.championName,
-                teamId: participantData.teamId,
-                teamPosition: participantData.teamPosition,
+                return {
+                    puuid: participantData.puuid,
+                    riotIdGameName: participantData.riotIdGameName,
+                    riotIdTagline: participantData.riotIdTagline,
+                    summonerName: participantData.summonerName,
+                    champLevel: participantData.champLevel,
+                    championId: participantData.championId,
+                    championName: participantData.championName,
+                    teamId: participantData.teamId,
+                    teamPosition: participantData.teamPosition,
 
-                // Stats
-                kills: participantData.kills,
-                deaths: participantData.deaths,
-                assists: participantData.assists,
-                kda: getKDA(participantData.kills, participantData.deaths, participantData.assists),
-                
-                // Minions Info
-                totalMinionsKilled: participantData.totalMinionsKilled,
-                neutralMinionsKilled: participantData.neutralMinionsKilled,
-                allMinionsKilled: participantData.totalMinionsKilled + participantData.neutralMinionsKilled,
-                minionsPerMinute: getMinionsPerMinute(data.info.gameDuration, (participantData.totalMinionsKilled + participantData.neutralMinionsKilled)),
+                    // Stats
+                    kills: participantData.kills,
+                    deaths: participantData.deaths,
+                    assists: participantData.assists,
+                    kda: getKDA(participantData.kills, participantData.deaths, participantData.assists),
+                    
+                    // Minions Info
+                    totalMinionsKilled: participantData.totalMinionsKilled,
+                    neutralMinionsKilled: participantData.neutralMinionsKilled,
+                    allMinionsKilled: participantData.totalMinionsKilled + participantData.neutralMinionsKilled,
+                    minionsPerMinute: getMinionsPerMinute(data.info.gameDuration, (participantData.totalMinionsKilled + participantData.neutralMinionsKilled)),
 
-                // Performance Stats
-                visionScore: participantData.visionScore,
-                visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore),
-                wardsPlaced: participantData.wardsPlaced,
-                goldEarned: participantData.goldEarned,
-                
-                totalHealsOnTeammates: participantData.totalHealsOnTeammates,
-                totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates,
-                totalDamageTaken: participantData.totalDamageTaken,
-                totalDamageDealtToChampions: participantData.totalDamageDealtToChampions,
-                individualPosition: participantData.individualPosition,
-                win: participantData.win,
+                    // Performance Stats
+                    visionScore: participantData.visionScore,
+                    visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore),
+                    wardsPlaced: participantData.wardsPlaced,
+                    goldEarned: participantData.goldEarned,
+                    
+                    totalHealsOnTeammates: participantData.totalHealsOnTeammates,
+                    totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates,
+                    totalDamageTaken: participantData.totalDamageTaken,
+                    totalDamageDealtToChampions: participantData.totalDamageDealtToChampions,
+                    individualPosition: participantData.individualPosition,
+                    win: participantData.win,
 
-                items: items,
-                runePage: runePage,
-                arenaStats: arenaStats,
-            };
-        }),
+                    items: await extractItems(participantData),
+                    runePage: runePage,
+                    arenaStats: arenaStats,
+                };
+            })
+        ),
     };
 
     return matchDetails;

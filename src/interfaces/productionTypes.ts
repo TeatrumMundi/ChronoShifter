@@ -98,7 +98,7 @@ export interface Participant
 
     arenaStats : ArenaStats;
     runePage : RunePage;
-    items : number[];
+    items : Item[];
 }
 
 export interface ArenaStats

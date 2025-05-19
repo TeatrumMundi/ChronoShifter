@@ -3,7 +3,7 @@ import path from "path";
 import { Augment, Champion, Item, Rune } from "@/interfaces/productionTypes";
 
 const getAssetPath = (file: string) =>
-    path.join(process.cwd(), "src", "utils", "getLeagueOfLegendsAssets", "dataJSON", file);
+    path.join(process.cwd(), "src", "utils", "getLeagueAssets",  file);
 
 /**
  * Load an augment from local augments.json by its ID.
