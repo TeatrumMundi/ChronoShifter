@@ -1,6 +1,6 @@
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
 import { RiotAccount } from "@/interfaces/productionTypes";
-import AccountProfile from "@/components/AccountProfile";
+import AccountProfile from "@/components/leagueProfile/AccountProfile";
 import { notFound } from "next/navigation";
 
 export default async function Home({params}: 

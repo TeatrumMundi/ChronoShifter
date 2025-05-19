@@ -64,14 +64,14 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
         gameMode: data.info.gameMode,
         gameType: data.info.gameType,
         participants: data.info.participants.map((participantData: RawParticipant): Participant => {
-            // Zbuduj tablicę itemów
+            // Build items array
             const items: number[] = [];
             for (let i = 0; i <= 6; i++) {
                 const itemValue = participantData[`item${i}` as keyof RawParticipant] as number;
                 items.push(itemValue);
             }
 
-            // Zbuduj arenaStats
+            // Build arenaStats
             const arenaStats: ArenaStats = {
                 placement: participantData.placement ?? 0,
                 augments: [
@@ -83,7 +83,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                 playerSubteamId: participantData.playerSubteamId ?? 0,
             };
 
-            // Zbuduj runePage (upewnij się, że perks istnieje)
+            // Build runePage
             const runePage: RunePage = {
                 statPerks: {
                     defense: participantData.perks?.statPerks?.defense ?? 0,

@@ -35,12 +35,14 @@ export default function AccountProfile({ riotAccount }: { riotAccount: RiotAccou
           <p>Hot Streak: {leagueAccount.leagueRank[0].hotStreak ? "Hot Streak" : "Not Hot Streak"}</p>
         </>
       )}
+      <br /><br />
       <p>Match ID: {leagueAccount.recentMatches[0].matchId}</p>
       <p>Game Duration: {leagueAccount.recentMatches[0].matchDetails.gameDuration}</p>
       <p>Game Creation: {leagueAccount.recentMatches[0].matchDetails.gameCreation}</p>
       <p>Game End Timestamp: {leagueAccount.recentMatches[0].matchDetails.gameEndTimestamp}</p>
       <p>Game Mode: {leagueAccount.recentMatches[0].matchDetails.gameMode}</p>
       <p>Game Type: {leagueAccount.recentMatches[0].matchDetails.gameType}</p>
+      <br /><br />
       {leagueAccount.recentMatches[0].matchDetails.participants.map((participant) => (
         <div key={participant.puuid}>
           <p>participantPuuid: {participant.puuid}</p>
