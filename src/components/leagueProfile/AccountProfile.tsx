@@ -3,6 +3,7 @@
 import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { MatchHistory } from "./MatchHistory";
 
 interface AccountProfileProps {
     riotAccount: RiotAccount;
@@ -20,13 +21,13 @@ export default function AccountProfile({ riotAccount }: AccountProfileProps) {
     return (
         <>
             <motion.div
-                className="relative w-full rounded-lg"
+                className="relative w-full"
                 style={{ fontFamily: "var(--font-verminVibes)" }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
             >
-                <div className="relative z-10 p-6 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6">
+                <div className="relative z-10 p-6 mb-5 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6 rounded-sm">
                     <SummonerIcon url={summonerIconUrl} level={leagueAccountsDetails.summonerLevel.toString()} />
 
                     <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -58,10 +59,9 @@ export default function AccountProfile({ riotAccount }: AccountProfileProps) {
             </motion.div>
 
             <div className="relative">
-                {/* <MatchHistory
-                    puuid={riotAccount.leagueAccount.leagueAccountsDetails.puuid}
-                    server={riotAccount.leagueAccount.leagueAccountsDetails.activeRegion}
-                /> */}
+                <MatchHistory
+                    riotAccount={riotAccount}
+                />
             </div>
         </>
     );

@@ -1,6 +1,8 @@
 ﻿import {ArenaStats, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, RunePage, RuneSelection, RuneStyle} from '@/interfaces/productionTypes';
 import {fetchFromRiotAPI} from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
+import { getKDA, getMinionsPerMinute } from '../helpers';
+import { get } from 'http';
 
 async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails>{
     const response : Response = await fetchFromRiotAPI(
@@ -69,6 +71,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
         gameEndTimestamp: data.info.gameEndTimestamp,
         gameMode: data.info.gameMode,
         gameType: data.info.gameType,
+        queueId: data.info.queueId,
         participants: data.info.participants.map((participantData: RawParticipant): Participant => {
             // Build items array
             const items: number[] = [];
@@ -117,22 +120,36 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                 championId: participantData.championId,
                 championName: participantData.championName,
                 teamId: participantData.teamId,
+                teamPosition: participantData.teamPosition,
+
+                // Stats
                 kills: participantData.kills,
                 deaths: participantData.deaths,
                 assists: participantData.assists,
+                kda: getKDA(participantData.kills, participantData.deaths, participantData.assists),
+                
+                // Minions Info
                 totalMinionsKilled: participantData.totalMinionsKilled,
                 neutralMinionsKilled: participantData.neutralMinionsKilled,
                 allMinionsKilled: participantData.totalMinionsKilled + participantData.neutralMinionsKilled,
+                minionsPerMinute: getMinionsPerMinute(data.info.gameDuration, (participantData.totalMinionsKilled + participantData.neutralMinionsKilled)),
+
+                // Performance Stats
+                visionScore: participantData.visionScore,
+                visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore),
+                wardsPlaced: participantData.wardsPlaced,
                 goldEarned: participantData.goldEarned,
+                
                 totalHealsOnTeammates: participantData.totalHealsOnTeammates,
                 totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates,
                 totalDamageTaken: participantData.totalDamageTaken,
                 totalDamageDealtToChampions: participantData.totalDamageDealtToChampions,
                 individualPosition: participantData.individualPosition,
+                win: participantData.win,
+
                 items: items,
                 runePage: runePage,
                 arenaStats: arenaStats,
-                win: participantData.win,
             };
         }),
     };

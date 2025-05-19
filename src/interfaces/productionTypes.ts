@@ -16,7 +16,7 @@ export interface LeagueAccount
     leagueAccountsDetails : LeagueAccountDetails;
     leagueSoloRank : LeagueRank;
     leagueFlexRank : LeagueRank;
-    recentMatches: RecentMatches[];
+    recentMatches: RecentMatch[];
 }
 
 export interface LeagueAccountDetails
@@ -43,7 +43,7 @@ export interface LeagueRank
     hotStreak : boolean;
 }
 
-export interface RecentMatches
+export interface RecentMatch
 {
     matchId : string;
     matchDetails : MatchDetails;
@@ -57,6 +57,7 @@ export interface MatchDetails
     gameEndTimestamp : number;
     gameMode : string;
     gameType : string;
+    queueId : number;
 }
 
 export interface Participant
@@ -69,22 +70,35 @@ export interface Participant
     championId : number;
     championName : string;
     teamId : number;
+    teamPosition : string;
+
+    // Stats
     kills : number;
     deaths : number;
     assists : number;
+    kda : string;
+
+    // Minions Info
     totalMinionsKilled : number;
     neutralMinionsKilled: number;
     allMinionsKilled: number;
+    minionsPerMinute: string;
+
+    // Performance Stats
+    visionScore : number;
+    visionPerMinute : string;
+    wardsPlaced : number;
     goldEarned : number;
     totalHealsOnTeammates : number;
     totalDamageShieldedOnTeammates : number;
     totalDamageTaken : number;
     totalDamageDealtToChampions : number;
     individualPosition : string;
-    items : number[];
-    runePage : RunePage;
-    arenaStats : ArenaStats;
     win : boolean;
+
+    arenaStats : ArenaStats;
+    runePage : RunePage;
+    items : number[];
 }
 
 export interface ArenaStats
