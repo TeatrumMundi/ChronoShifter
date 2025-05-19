@@ -1,10 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import SearchForm from "@/components/common/SearchForm";
-import { Background, Footer } from "@/components/common";
+import { Background, Footer, SearchForm } from "@/components/common";
 
-export default function ErrorPage(imagePath: string, errorMessage: string) {
+type ErrorPageProps = {
+    imagePath: string;
+    errorMessage: string;
+};
+
+export default function ErrorPage({ imagePath, errorMessage }: ErrorPageProps) {
     return (
         <div className="relative w-full min-h-screen overflow-hidden px-4 py-10">
             {/* Background */}
@@ -36,7 +40,9 @@ export default function ErrorPage(imagePath: string, errorMessage: string) {
                 />
             </div>
 
+            {/* Footer */}
             <Footer />
+
             {/* SearchForm */}
             <div className="max-w-3xl w-full mx-auto mt-2">
                 <SearchForm position="static" />

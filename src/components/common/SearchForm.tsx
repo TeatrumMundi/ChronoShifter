@@ -10,7 +10,7 @@ type SearchFormProps = {
 };
 
 
-export default function SearchForm({ position = "centered", className }: SearchFormProps) {
+export function SearchForm({ position = "centered", className }: SearchFormProps) {
     const router = useRouter();
     const [region, setRegion] = useState("EUROPE");
     const [error, setError] = useState("");

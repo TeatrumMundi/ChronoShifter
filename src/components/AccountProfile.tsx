@@ -1,6 +1,6 @@
 "use client";
 
-import { RiotAccount } from "@/interfaces/interfaces";
+import { RiotAccount } from "@/interfaces/productionTypes";
 
 export default function AccountProfile({ riotAccount }: { riotAccount: RiotAccount }) {
   const { leagueAccount } = riotAccount;
@@ -45,7 +45,7 @@ export default function AccountProfile({ riotAccount }: { riotAccount: RiotAccou
         <div key={participant.puuid}>
           <p>participantPuuid: {participant.puuid}</p>
           <p>Summoner ID: {participant.riotIdGameName}#{participant.riotIdTagline}</p>
-          <p>Summoner Name: {participant.summonerName}</p>
+          <p>Summoner Name: {participant.summonerName}</p> {/* Error */}
           <p>Champ level: {participant.champLevel}</p>
           <p>Champ id: {participant.championId}</p>
           <p>Team ID: {participant.teamId}</p>
@@ -60,6 +60,44 @@ export default function AccountProfile({ riotAccount }: { riotAccount: RiotAccou
           <p>Total Damage Taken: {participant.totalDamageTaken}</p>
           <p>Total Damage Dealt To Champions: {participant.totalDamageDealtToChampions}</p>
           <p>Individual Position: {participant.individualPosition}</p>
+          <p>Items:</p>
+          <p>Items: {participant.items.join(', ')}</p>
+          <p>RunePage:</p>
+          <ul>
+            <li>
+              <strong>Stat Perks:</strong>
+              <ul>
+                <li>Defense: {participant.runePage.statPerks.defense}</li>
+                <li>Flex: {participant.runePage.statPerks.flex}</li>
+                <li>Offense: {participant.runePage.statPerks.offense}</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Styles:</strong>
+              <ul>
+                {participant.runePage.styles.map((style, idx) => (
+                  <li key={idx}>
+                    <div>Description: {style.description}</div>
+                    <div>Style: {style.style}</div>
+                    <div>Selections:</div>
+                    <ul>
+                      {style.selections.map((sel, i) => (
+                        <li key={i}>
+                          Perk: {sel.perk}, Var1: {sel.var1}, Var2: {sel.var2}, Var3: {sel.var3}
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          </ul>
+          <p>Arena Stats:</p>
+          <ul>
+            <li>Placement: {participant.arenaStats.placement}</li>
+            <li>Player Subteam ID: {participant.arenaStats.playerSubteamId}</li>
+            <li>Augments: {participant.arenaStats.augments.join(', ')}</li>
+          </ul>
           <br />
         </div>
       ))}

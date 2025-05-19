@@ -1,5 +1,5 @@
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
-import { RiotAccount } from "@/interfaces/interfaces";
+import { RiotAccount } from "@/interfaces/productionTypes";
 import AccountProfile from "@/components/AccountProfile";
 import { notFound } from "next/navigation";
 

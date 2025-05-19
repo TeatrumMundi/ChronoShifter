@@ -1,6 +1,6 @@
-import { Background } from "@/components/common";
-import SearchForm from "@/components/common/SearchForm";
-import { Footer, Header } from "@/components/mainPage";
+import { Background, Footer, SearchForm } from "@/components/common";
+
+import { Header } from "@/components/mainPage/Header";
 
 export default function Home() {
     return (
