@@ -66,11 +66,9 @@ export interface Participant
     riotIdGameName : string;
     riotIdTagline : string;
     summonerName : string;
-    champLevel : number;
-    championId : number;
-    championName : string;
     teamId : number;
     teamPosition : string;
+    champLevel : number;
 
     // Stats
     kills : number;
@@ -96,6 +94,7 @@ export interface Participant
     individualPosition : string;
     win : boolean;
 
+    champion: Champion;
     arenaStats : ArenaStats;
     runePage : RunePage;
     items : Item[];

@@ -9,7 +9,6 @@ export default async function Home({params}:
 {
   const { tagLine, gameName, activeRegion } = await params;
 
-
     const riotAccount: RiotAccount = await createRiotAccount(tagLine, gameName, activeRegion);
 
     if (!riotAccount) {notFound();}

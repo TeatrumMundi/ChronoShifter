@@ -31,7 +31,7 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
                             key={match.matchId}
                             match={match}
                             participant={participant}
-                            activeRegion={riotAccount.leagueAccount.leagueAccountsDetails.activeRegion}
+                            region={riotAccount.leagueAccount.leagueAccountsDetails.region}
                         />
                     );
                 })

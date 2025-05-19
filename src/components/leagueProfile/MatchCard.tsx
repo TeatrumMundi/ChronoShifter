@@ -10,14 +10,16 @@ import {
 } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
+import { ChampionIcon } from "./ChampionIcon";
+import { ParticipantList } from "./ParticipantList";
 
 interface MatchCardProps {
     participant: Participant;
     match: RecentMatch;
-    activeRegion: string;
+    region: string;
 }
 
-export function MatchCard({ participant, match, activeRegion: server }: MatchCardProps) {
+export function MatchCard({ participant, match, region: region }: MatchCardProps) {
     const gameMode: string = queueIdToGameMode[match.matchDetails.queueId] || "Unknown";
     const isArena: boolean = gameMode === "Arena";
     const placement = participant.arenaStats?.placement;
@@ -84,19 +86,21 @@ export function MatchCard({ participant, match, activeRegion: server }: MatchCar
                             <div className="flex flex-col sm:flex-col xl:flex-row justify-center items-center gap-1 w-full sm:min-w-[200px] sm:max-w-[300px]">
 
                                 {/* Champion Icon + Runes */}
-{/*                                 <div className="flex items-center justify-center gap-1">
+                              <div className="flex items-center justify-center gap-1">
                                     <div className="relative w-[72px] h-[72px]">
                                         <ChampionIcon champion={participant.champion} size={72} />
                                         <div className="absolute bottom-0 rounded-tr-sm rounded-bl-sm left-0 bg-black/50 text-white text-xs px-1">
                                             {participant.champLevel}
                                         </div>
                                     </div>
-                                    {participant.runes?.length > 0 && (
+
+{/*                                     {participant.runes?.length > 0 && (
                                         <div className="flex-shrink-0 w-[40px] min-w-[40px]">
                                             <RuneDisplay runes={participant.runes} />
                                         </div>
-                                    )}
-                                </div> */}
+                                    )} */}
+
+                                </div>
 
                                 {/* Items and Augments */}
 
@@ -120,13 +124,13 @@ export function MatchCard({ participant, match, activeRegion: server }: MatchCar
                         </div>
 
                         {/* Right: Participants */}
-{/*                         <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] lg:w-[360px] lg:max-w-[380px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
+                        <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] lg:w-[360px] lg:max-w-[380px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
                             <ParticipantList
-                                participants={match.participants}
+                                participants={match.matchDetails.participants}
                                 gameMode={gameMode}
-                                server={server}
+                                region={region}
                             />
-                        </div> */}
+                        </div>
                     </div>
                 </div>
             </div>

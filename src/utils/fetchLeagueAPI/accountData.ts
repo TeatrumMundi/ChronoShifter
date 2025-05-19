@@ -3,6 +3,7 @@ import {fetchFromRiotAPI} from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
 import { extractItems } from './extractItems';
+import { getChampionById } from '../getLeagueAssets/getLOLObject';
 
 async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails>{
     const response : Response = await fetchFromRiotAPI(
@@ -111,8 +112,6 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     riotIdTagline: participantData.riotIdTagline,
                     summonerName: participantData.summonerName,
                     champLevel: participantData.champLevel,
-                    championId: participantData.championId,
-                    championName: participantData.championName,
                     teamId: participantData.teamId,
                     teamPosition: participantData.teamPosition,
 
@@ -142,6 +141,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     win: participantData.win,
 
                     items: await extractItems(participantData),
+                    champion: (await getChampionById(participantData.championId)) ?? { id: 0, name: 'Unknown', alias: 'Unknown', squarePortraitPath: '', roles: [] },
                     runePage: runePage,
                     arenaStats: arenaStats,
                 };

@@ -165,3 +165,20 @@ export function getMinionsPerMinute(seconds: number, totalMinions: number): stri
 export function getParticipantByPuuid(matchData: RecentMatch, puuid: string): Participant | null {
     return matchData.matchDetails.participants.find(participant => participant.puuid === puuid) ?? null;
 }
+
+export const ServerMAP: Record<string, string> = {
+    EUN1: "eune",
+    EUW1: "euw",
+    JP1: "jp",
+    KR: "kr",
+    LA1: "lan",
+    LA2: "las",
+    ME1: "me",
+    NA1: "na",
+    OC1: "oce",
+    RU: "ru",
+    SG2: "sea",
+    TR1: "tr",
+    TW2: "tw",
+    VN2: "vn"
+};
