@@ -135,3 +135,56 @@ export interface RuneSelection {
     var2: number;
     var3: number;
 }
+
+export interface Rune {
+    id: number;
+    name: string;
+    tooltip: string;
+    shortDesc: string;
+    longDesc: string;
+    iconPath: string;
+    runeTree?: string;
+}
+
+export type Augment = {
+    apiName: string;
+    calculations: object;
+    dataValues: object;
+    desc: string;
+    iconLarge: string;
+    iconSmall: string;
+    id: number;
+    name: string;
+    rarity: number;
+    tooltip: string;
+};
+
+export interface Champion {
+    id: number;
+    name: string;
+    alias: string;
+    squarePortraitPath: string;
+    roles: string[];
+}
+
+export interface Item {
+    id: number;
+    name: string;
+    description: string;
+    active: boolean;
+    inStore: boolean;
+    from: number[];
+    to: number[];
+    categories: string[];
+    maxStacks: number;
+    requiredChampion: string;
+    requiredAlly: string;
+    requiredBuffCurrencyName: string;
+    requiredBuffCurrencyCost: number;
+    specialRecipe: number;
+    isEnchantment: boolean;
+    price: number;
+    priceTotal: number;
+    displayInItemSets: boolean;
+    iconPath: string;
+}

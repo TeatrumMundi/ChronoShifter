@@ -1,0 +1,6 @@
+{
+  "runes": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perks.json",
+  "items": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/items.json",
+  "augments": "https://raw.communitydragon.org/latest/cdragon/arena/en_us.json",
+  "champions": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json"
+}
