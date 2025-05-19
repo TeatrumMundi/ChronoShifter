@@ -14,7 +14,18 @@ export default async function Home({params}:
 
     if (!riotAccount) {notFound();}
 
-    return <AccountProfile riotAccount={riotAccount}/>;
+    return (
+        <div className="relative w-full bg-gradient-to-br from-purple-900 via-indigo-900 to-gray-900 min-h-screen">
+            {/* MAIN CONTENT */}
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-12 mt-10">
+                        <AccountProfile riotAccount={riotAccount} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export async function generateMetadata({ params }: 

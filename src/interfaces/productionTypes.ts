@@ -14,7 +14,8 @@ export interface RiotAccountDetails
 export interface LeagueAccount
 {
     leagueAccountsDetails : LeagueAccountDetails;
-    leagueRank : LeagueRank[];
+    leagueSoloRank : LeagueRank;
+    leagueFlexRank : LeagueRank;
     recentMatches: RecentMatches[];
 }
 
@@ -23,6 +24,8 @@ export interface LeagueAccountDetails
     id : string;
     accountId : string;
     puuid : string;
+    region: string;
+    activeRegion: string;
     profileIconId : number;
     revisionDate : number;
     summonerLevel : number;

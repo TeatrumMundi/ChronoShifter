@@ -9,11 +9,17 @@ async function getAccountByRiotID(tagLine: string, gameName: string, region: str
     return await response.json() as Promise<RiotAccountDetails>;
 }
 
-async function getSummonerByPuuid(puuid: string, server: string): Promise<LeagueAccountDetails>{
-    const response : Response = await fetchFromRiotAPI(
-        `https://${server}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`
+async function getSummonerByPuuid(puuid: string, region: string, activeRegion: string): Promise<LeagueAccountDetails> {
+    const response: Response = await fetchFromRiotAPI(
+        `https://${activeRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`
     );
-    return await response.json() as Promise<LeagueAccountDetails>;
+    const data = await response.json();
+
+    return {
+        ...data,
+        region,
+        activeRegion
+    } as LeagueAccountDetails;
 }
 
 async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string>{
@@ -136,16 +142,35 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
 
 export async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
     // Get the League account details
-    const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, activeRegion);
+    const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, region, activeRegion);
     if (!leagueAccountsDetails) {
         throw new Error("League account details not found");
     }
 
-    // Get the ranked league entries
-    const leagueRank: LeagueRank[] = await getRankedLeagueEntries(puuid, activeRegion);
-    if (!leagueRank) {
-        throw new Error("League rank not found");
-    }
+    const leagueRanks: LeagueRank[] = await getRankedLeagueEntries(puuid, activeRegion);
+
+    const leagueSoloRank = leagueRanks.find(r => r.queueType === "RANKED_SOLO_5x5") ?? {
+        queueType: "RANKED_SOLO_5x5",
+        tier: "UNRANKED",
+        rank: "",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0,
+        winRate: 0,
+        hotStreak: false
+    };
+
+    const leagueFlexRank = leagueRanks.find(r => r.queueType === "RANKED_FLEX_SR") ?? {
+        queueType: "RANKED_FLEX_SR",
+        tier: "UNRANKED",
+        rank: "",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0,
+        winRate: 0,
+        hotStreak: false
+    };
+    
 
     // Get the recent matches IDs
     let recentMatchesIDs: string[] = [];
@@ -171,7 +196,7 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
     // Filter out any null values from the recent matches
     const recentMatches = recentMatchesRaw.filter((m): m is { matchId: string; matchDetails: MatchDetails } => m !== null);
 
-    return { leagueAccountsDetails, leagueRank, recentMatches };
+    return { leagueAccountsDetails, leagueSoloRank, leagueFlexRank, recentMatches };
 }
 
 export async function createRiotAccount(tagLine: string, gameName: string, region: string): Promise<RiotAccount> {

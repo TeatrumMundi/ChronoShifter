@@ -1,108 +1,140 @@
 "use client";
 
-import { RiotAccount } from "@/interfaces/productionTypes";
+import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-export default function AccountProfile({ riotAccount }: { riotAccount: RiotAccount }) {
-  const { leagueAccount } = riotAccount;
-  return (
-    <div>
-      <p>PUUID: {riotAccount.riotAccountDetails.puuid}</p>
-      <p>TagLine: {riotAccount.riotAccountDetails.tagLine}</p>
-      <p>GameName: {riotAccount.riotAccountDetails.gameName}</p>
-      <p>Summoner Level: {leagueAccount.leagueAccountsDetails.summonerLevel}</p>
-      <p>Profile Icon ID: {leagueAccount.leagueAccountsDetails.profileIconId}</p>
-      {leagueAccount.leagueRank[1] && (
+interface AccountProfileProps {
+    riotAccount: RiotAccount;
+}
+
+export default function AccountProfile({ riotAccount }: AccountProfileProps) {
+    const { leagueAccountsDetails, leagueSoloRank, leagueFlexRank } = riotAccount.leagueAccount;
+    const { gameName, tagLine } = riotAccount.riotAccountDetails;
+
+    const getRankedIconUrl = (tier: string) =>
+        `/rankedIcons/${tier.toLowerCase()}.webp`;
+
+    const summonerIconUrl = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${leagueAccountsDetails.profileIconId}.jpg`;
+
+    return (
         <>
-          <p>Rank: {leagueAccount.leagueRank[1].rank}</p>
-          <p>League Points: {leagueAccount.leagueRank[1].leaguePoints}</p>
-          <p>Queue Type: {leagueAccount.leagueRank[1].queueType}</p>
-          <p>Tier: {leagueAccount.leagueRank[1].tier}</p>
-          <p>Wins: {leagueAccount.leagueRank[1].wins}</p>
-          <p>Losses: {leagueAccount.leagueRank[1].losses}</p>
-          <p>Win Rate: {leagueAccount.leagueRank[1].winRate}</p>
-          <p>Hot Streak: {leagueAccount.leagueRank[1].hotStreak ? "Hot Streak" : "Not Hot Streak"}</p>
+            <motion.div
+                className="relative w-full rounded-lg"
+                style={{ fontFamily: "var(--font-verminVibes)" }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+            >
+                <div className="relative z-10 p-6 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6">
+                    <SummonerIcon url={summonerIconUrl} level={leagueAccountsDetails.summonerLevel.toString()} />
+
+                    <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="text-center lg:text-left">
+                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-widest leading-tight">
+                                {gameName}
+                            </h2>
+                            <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 justify-center lg:justify-start">
+                                <h3 className="text-lg md:text-xl text-white/90 tracking-widest">
+                                    #{tagLine}
+                                </h3>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-6 items-center tracking-widest">
+                            <RankSection
+                                title="Solo Queue"
+                                ranked={leagueSoloRank}
+                                iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
+                            />
+                            <RankSection
+                                title="Flex Queue"
+                                ranked={leagueFlexRank}
+                                iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
+
+            <div className="relative">
+                {/* <MatchHistory
+                    puuid={riotAccount.leagueAccount.leagueAccountsDetails.puuid}
+                    server={riotAccount.leagueAccount.leagueAccountsDetails.activeRegion}
+                /> */}
+            </div>
         </>
-      )}
-      {leagueAccount.leagueRank[0] && (
-        <>
-          <p>Rank: {leagueAccount.leagueRank[0].rank}</p>
-          <p>League Points: {leagueAccount.leagueRank[0].leaguePoints}</p>
-          <p>Queue Type: {leagueAccount.leagueRank[0].queueType}</p>
-          <p>Tier: {leagueAccount.leagueRank[0].tier}</p>
-          <p>Wins: {leagueAccount.leagueRank[0].wins}</p>
-          <p>Losses: {leagueAccount.leagueRank[0].losses}</p>
-          <p>Win Rate: {leagueAccount.leagueRank[0].winRate}</p>
-          <p>Hot Streak: {leagueAccount.leagueRank[0].hotStreak ? "Hot Streak" : "Not Hot Streak"}</p>
-        </>
-      )}
-      <br /><br />
-      <p>Match ID: {leagueAccount.recentMatches[0].matchId}</p>
-      <p>Game Duration: {leagueAccount.recentMatches[0].matchDetails.gameDuration}</p>
-      <p>Game Creation: {leagueAccount.recentMatches[0].matchDetails.gameCreation}</p>
-      <p>Game End Timestamp: {leagueAccount.recentMatches[0].matchDetails.gameEndTimestamp}</p>
-      <p>Game Mode: {leagueAccount.recentMatches[0].matchDetails.gameMode}</p>
-      <p>Game Type: {leagueAccount.recentMatches[0].matchDetails.gameType}</p>
-      <br /><br />
-      {leagueAccount.recentMatches[0].matchDetails.participants.map((participant) => (
-        <div key={participant.puuid}>
-          <p>participantPuuid: {participant.puuid}</p>
-          <p>Summoner ID: {participant.riotIdGameName}#{participant.riotIdTagline}</p>
-          <p>Summoner Name: {participant.summonerName}</p> {/* Error */}
-          <p>Champ level: {participant.champLevel}</p>
-          <p>Champ id: {participant.championId}</p>
-          <p>Team ID: {participant.teamId}</p>
-          <p>Champion Name: {participant.championName}</p>
-          <p>K/D/A: {participant.kills}/{participant.deaths}/{participant.assists}</p>
-          <p>Total minions killed: {participant.totalMinionsKilled}</p>
-          <p>Neutral Minions Killed: {participant.neutralMinionsKilled}</p>
-          <p>All Minions Killed: {participant.allMinionsKilled}</p>
-          <p>Gold Earned: {participant.goldEarned}</p>
-          <p>Total Heals On Teammates: {participant.totalHealsOnTeammates}</p>
-          <p>Total Damage Shielded On Teammates: {participant.totalDamageShieldedOnTeammates}</p>
-          <p>Total Damage Taken: {participant.totalDamageTaken}</p>
-          <p>Total Damage Dealt To Champions: {participant.totalDamageDealtToChampions}</p>
-          <p>Individual Position: {participant.individualPosition}</p>
-          <p>Items:</p>
-          <p>Items: {participant.items.join(', ')}</p>
-          <p>RunePage:</p>
-          <ul>
-            <li>
-              <strong>Stat Perks:</strong>
-              <ul>
-                <li>Defense: {participant.runePage.statPerks.defense}</li>
-                <li>Flex: {participant.runePage.statPerks.flex}</li>
-                <li>Offense: {participant.runePage.statPerks.offense}</li>
-              </ul>
-            </li>
-            <li>
-              <strong>Styles:</strong>
-              <ul>
-                {participant.runePage.styles.map((style, idx) => (
-                  <li key={idx}>
-                    <div>Description: {style.description}</div>
-                    <div>Style: {style.style}</div>
-                    <div>Selections:</div>
-                    <ul>
-                      {style.selections.map((sel, i) => (
-                        <li key={i}>
-                          Perk: {sel.perk}, Var1: {sel.var1}, Var2: {sel.var2}, Var3: {sel.var3}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          </ul>
-          <p>Arena Stats:</p>
-          <ul>
-            <li>Placement: {participant.arenaStats.placement}</li>
-            <li>Player Subteam ID: {participant.arenaStats.playerSubteamId}</li>
-            <li>Augments: {participant.arenaStats.augments.join(', ')}</li>
-          </ul>
-          <br />
+    );
+}
+
+interface RankSectionProps {
+    title: string;
+    ranked: LeagueRank;
+    iconUrl: string;
+}
+
+function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
+    const getWinRateColor = (winRate: number) =>
+        winRate >= 50 ? "text-green-400" : "text-red-500";
+
+    return (
+        <div className="flex items-center gap-4 text-white">
+            <div className="border-l-2 border-white/20 h-30 hidden md:block" />
+            <div className="flex flex-col items-center text-center">
+                <span className="text-lg font-semibold tracking-widest">{title}</span>
+                <span className="text-2xl mt-1 tracking-widest">
+                    {ranked.tier} {ranked.rank}
+                </span>
+                <div className="flex gap-1 text-lg tracking-widest mt-1">
+                    <span className="text-green-400">{ranked.wins}W</span>
+                    <span>:</span>
+                    <span className="text-red-500">{ranked.losses}L</span>
+                    <span>
+                        (
+                        <span className={getWinRateColor(ranked.winRate)}>{ranked.winRate}%</span>
+                        )
+                    </span>
+                </div>
+                <span className="text-sm mt-1">{ranked.leaguePoints} LP</span>
+            </div>
+            <RankIcon url={iconUrl} title={title} />
         </div>
-      ))}
-    </div>
-  );
+    );
+}
+
+function SummonerIcon({ url, level }: { url: string; level: string }) {
+    return (
+        <div className="relative flex-shrink-0">
+            <div className="relative h-24 w-24">
+                <Image
+                    src={url}
+                    alt="Summoner Icon"
+                    fill
+                    className="rounded-lg border border-gray-500 object-cover"
+                    sizes="96px"
+                    quality={50}
+                    loading="eager"
+                    priority
+                />
+            </div>
+            <div className="absolute bottom-0 w-full bg-black/70 rounded-b-lg px-2 py-1 text-xs text-white text-center shadow-md tracking-widest font-sans">
+                {level}
+            </div>
+        </div>
+    );
+}
+
+function RankIcon({ url, title }: { url: string; title: string }) {
+    return (
+        <Image
+            src={url}
+            alt={`${title} Icon`}
+            width={110}
+            height={110}
+            quality={50}
+            loading="eager"
+            sizes="110px"
+            priority
+        />
+    );
 }
