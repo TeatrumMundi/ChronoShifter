@@ -1,17 +1,12 @@
 ﻿"use client";
 
 import { Participant, RecentMatch } from "@/interfaces/productionTypes";
-import {
-    formatRole,
-    getOrdinalPlacement,
-    queueIdToGameMode,
-    secToHHMMSS,
-    timeAgo,
-} from "@/utils/helpers";
+import { formatRole, getOrdinalPlacement, queueIdToGameMode, secToHHMMSS, timeAgo } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
 import { ChampionIcon } from "./ChampionIcon";
 import { ParticipantList } from "./ParticipantList";
+import { RuneDisplay } from "./RuneDisplay";
 
 interface MatchCardProps {
     participant: Participant;
@@ -94,16 +89,16 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                         </div>
                                     </div>
 
-{/*                                     {participant.runes?.length > 0 && (
+                                    {/* Runes */}
+                                    {participant.runes?.length > 0 && (
                                         <div className="flex-shrink-0 w-[40px] min-w-[40px]">
                                             <RuneDisplay runes={participant.runes} />
                                         </div>
-                                    )} */}
+                                    )}
 
                                 </div>
 
                                 {/* Items and Augments */}
-
                                <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center gap-3">
                                     <ItemDisplay items={participant.items} />
 {/*                                     {gameMode === "Arena" &&

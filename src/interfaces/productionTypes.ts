@@ -96,7 +96,7 @@ export interface Participant
 
     champion: Champion;
     arenaStats : ArenaStats;
-    runePage : RunePage;
+    runes : Rune[];
     items : Item[];
 }
 
@@ -105,34 +105,6 @@ export interface ArenaStats
     placement : number;
     augments : number[];
     playerSubteamId : number;
-}
-
-// Whole rune page
-export interface RunePage {
-    statPerks: StatPerks;
-    styles: RuneStyle[];
-}
-
-// Stat perks section
-export interface StatPerks {
-    defense: number;
-    flex: number;
-    offense: number;
-}
-
-// Rune tree section
-export interface RuneStyle {
-    description: string;
-    selections: RuneSelection[];
-    style: number;
-}
-
-// Single rune selection
-export interface RuneSelection {
-    perk: number;
-    var1: number;
-    var2: number;
-    var3: number;
 }
 
 export interface Rune {

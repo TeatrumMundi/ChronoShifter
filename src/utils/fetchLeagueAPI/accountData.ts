@@ -1,9 +1,9 @@
-﻿import {ArenaStats, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, RunePage, RuneSelection, RuneStyle} from '@/interfaces/productionTypes';
+﻿import {ArenaStats, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
 import {fetchFromRiotAPI} from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
 import { extractItems } from './extractItems';
-import { getChampionById } from '../getLeagueAssets/getLOLObject';
+import { getChampionById, getRuneById } from '../getLeagueAssets/getLOLObject';
 
 async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails>{
     const response : Response = await fetchFromRiotAPI(
@@ -87,24 +87,6 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     playerSubteamId: participantData.playerSubteamId ?? 0,
                 };
 
-                // Build runePage
-                const runePage: RunePage = {
-                    statPerks: {
-                        defense: participantData.perks?.statPerks?.defense ?? 0,
-                        flex: participantData.perks?.statPerks?.flex ?? 0,
-                        offense: participantData.perks?.statPerks?.offense ?? 0,
-                    },
-                    styles: (participantData.perks?.styles ?? []).map((styleData: RuneStyle): RuneStyle => ({
-                        description: styleData.description,
-                        selections: (styleData.selections ?? []).map((selectionData: RuneSelection): RuneSelection => ({
-                            perk: selectionData.perk,
-                            var1: selectionData.var1,
-                            var2: selectionData.var2,
-                            var3: selectionData.var3,
-                        })),
-                        style: styleData.style,
-                    })),
-                };
 
                 return {
                     puuid: participantData.puuid,
@@ -142,7 +124,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
 
                     items: await extractItems(participantData),
                     champion: (await getChampionById(participantData.championId)) ?? { id: 0, name: 'Unknown', alias: 'Unknown', squarePortraitPath: '', roles: [] },
-                    runePage: runePage,
+                    runes: await fetchParticipantRunes(participantData),
                     arenaStats: arenaStats,
                 };
             })
@@ -230,4 +212,14 @@ export async function createRiotAccount(tagLine: string, gameName: string, regio
     const leagueAccount: LeagueAccount = await createLeagueAccount(riotAccountDetails.puuid, region, activeRegion);
 
     return { riotAccountDetails, leagueAccount };
+}
+
+async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
+    const runeIds = participant.perks?.styles.flatMap(style =>
+        style.selections.map(selection => selection.perk)
+    ) ?? [];
+
+    const runePromises = runeIds.map(runeId => getRuneById(runeId));
+    const runeObjects = await Promise.all(runePromises);
+    return runeObjects.filter((rune): rune is Rune => rune !== null);
 }
