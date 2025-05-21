@@ -73,12 +73,12 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                             className="flex flex-row items-stretch w-full gap-2 h-full"
                         >
                             {/* Left Player */}
-                            <div className="flex items-center justify-between bg-blue-900/80 p-1 rounded flex-1 hover:bg-blue-900/40 transition-colors h-full">
+                            <div className="flex items-center justify-between bg-blue-900/80 pl-1 rounded flex-1 hover:bg-blue-900/40 transition-colors h-full">
                             {leftPlayer && (
                                     <>
                                         <Link
                                             href={`/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${region}`}
-                                            className="text-xs text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                                            className="text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
                                             title={`${leftPlayer.riotIdGameName}#${leftPlayer.riotIdTagline}`}
                                             aria-label={`View profile for ${leftPlayer.riotIdGameName}`}
                                         >
@@ -86,23 +86,23 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                                         </Link>
                                         <ChampionIcon
                                             champion={leftPlayer.champion}
-                                            size={16}
+                                            size={20}
                                         />
                                     </>
                                 )}
                             </div>
 
                             {/* Right Player */}
-                            <div className="flex items-center justify-between gap-1 bg-violet-900/80 p-1 rounded flex-1 hover:bg-violet-900/40 transition-colors h-full">
+                            <div className="flex items-center justify-between gap-1 bg-violet-900/80 pr-1 rounded flex-1 hover:bg-violet-900/40 transition-colors h-full">
                             {rightPlayer && (
                                     <>
                                         <ChampionIcon
                                             champion={rightPlayer.champion}
-                                            size={16}
+                                            size={20}
                                         />
                                         <Link
                                             href={`/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${region}`}
-                                            className="text-xs text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                                            className="text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
                                             title={`${rightPlayer.riotIdGameName}#${rightPlayer.riotIdTagline}`}
                                             aria-label={`View profile for ${rightPlayer.riotIdGameName}`}
                                         >
