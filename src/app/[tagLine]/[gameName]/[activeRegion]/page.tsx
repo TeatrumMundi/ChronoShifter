@@ -2,6 +2,7 @@ import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
 import { RiotAccount } from "@/interfaces/productionTypes";
 import AccountProfile from "@/components/leagueProfile/AccountProfile";
 import { notFound } from "next/navigation";
+import Navbar from "@/components/common/Navbar";
 
 export default async function Home({params}: 
 { params: 
@@ -15,6 +16,8 @@ export default async function Home({params}:
 
     return (
         <div className="relative w-full bg-gradient-to-br from-purple-900 via-indigo-900 to-gray-900 min-h-screen">
+            {/* NAVBAR */}
+            <Navbar/>
             {/* MAIN CONTENT */}
             <div className="container mx-auto px-4 relative z-10">
                 <div className="grid grid-cols-12 gap-4">

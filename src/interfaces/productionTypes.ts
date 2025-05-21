@@ -80,7 +80,7 @@ export interface Participant
     totalMinionsKilled : number;
     neutralMinionsKilled: number;
     allMinionsKilled: number;
-    minionsPerMinute: string;
+    minionsPerMinute: number;
 
     // Performance Stats
     visionScore : number;

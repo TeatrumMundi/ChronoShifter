@@ -102,7 +102,6 @@ export function MatchStats({participant, gameMode,}: {
                 }
             );
         } else {
-            const minionsPerMinute = parseFloat(participant.minionsPerMinute);
             stats.push(
                 {
                     label: "Damage",
@@ -112,10 +111,10 @@ export function MatchStats({participant, gameMode,}: {
                 },
                 {
                     label: "Minions",
-                    value: `${participant.allMinionsKilled} (${participant.minionsPerMinute})`,
+                    value: `${participant.allMinionsKilled} (${Number(participant.minionsPerMinute).toFixed(1)})`,
                     tooltip: "Minions killed (and per minute)",
                     icon: <BarChart3 className="w-3 h-3 text-muted-foreground shrink-0" />,
-                    className: minionsPerMinute > 8 ? "text-green-500 font-semibold" : "",
+                    className: participant.minionsPerMinute > 8 ? "text-green-500 font-semibold" : "",
                 }
             );
         }

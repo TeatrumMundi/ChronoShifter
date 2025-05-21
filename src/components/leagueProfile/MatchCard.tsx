@@ -8,6 +8,7 @@ import { ChampionIcon } from "./ChampionIcon";
 import { ParticipantList } from "./ParticipantList";
 import { RuneDisplay } from "./RuneDisplay";
 import { AugmentDisplay } from "./AugmentDisplay";
+import { ChevronDown } from "lucide-react";
 
 interface MatchCardProps {
     participant: Participant;
@@ -35,14 +36,23 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
     return (
         <div className="relative flex flex-col h-full w-full">
             {/* Vertical win/loss bar */}
-            <div
-                className={`absolute left-0 top-0 h-full w-[18px] rounded-l-sm
-                    ${participant.win ? "bg-green-400" : "bg-red-400"}`}
-            />
+            <div className="absolute left-0 top-0 h-full w-[30px] rounded-l-sm flex flex-col z-10">
+                {/* Vertical win/loss bar fills the whole height */}
+                <div className={`w-full h-full ${participant.win ? "bg-green-400" : "bg-red-400"} rounded-l-sm`} />
+
+                {/* Chevron button overlays the bar at the bottom center */}
+                <button
+                    className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-sm p-0.15 shadow flex items-center justify-center
+                    ${participant.win ? "bg-green-800 hover:bg-green-800/50" : "bg-red-800 hover:bg-red-800/50"}`}
+                    onClick={() => {/* your handler here */}}
+                >
+                    <ChevronDown size={20} className="text-white" />
+                </button>
+            </div>
 
             {/* Main Card */}
             <div
-                className={`p-5 rounded-sm shadow-lg font-sans ${bgColor} ml-[4px] flex-1 overflow-visible`}
+                className={`p-5 pl-[34px] rounded-sm shadow-lg font-sans ${bgColor} flex-1 overflow-visible`}
             >
                 <div className="flex flex-col sm:flex-row gap-4 w-full">
                     <div
