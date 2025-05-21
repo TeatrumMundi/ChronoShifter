@@ -103,8 +103,8 @@ export interface Participant
 export interface ArenaStats
 {
     placement : number;
-    augments : number[];
     playerSubteamId : number;
+    augments : Augment[];
 }
 
 export interface Rune {

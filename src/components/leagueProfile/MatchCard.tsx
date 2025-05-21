@@ -7,6 +7,7 @@ import { ItemDisplay } from "./ItemDisplay";
 import { ChampionIcon } from "./ChampionIcon";
 import { ParticipantList } from "./ParticipantList";
 import { RuneDisplay } from "./RuneDisplay";
+import { AugmentDisplay } from "./AugmentDisplay";
 
 interface MatchCardProps {
     participant: Participant;
@@ -35,9 +36,8 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
         <div className="relative flex flex-col h-full w-full">
             {/* Vertical win/loss bar */}
             <div
-                className={`absolute left-0 top-0 h-full w-[18px] ${
-                    participant.win ? "bg-green-400" : "bg-red-400"
-                } rounded-l-sm`}
+                className={`absolute left-0 top-0 h-full w-[18px] rounded-l-sm
+                    ${participant.win ? "bg-green-400" : "bg-red-400"}`}
             />
 
             {/* Main Card */}
@@ -101,13 +101,13 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 {/* Items and Augments */}
                                <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center gap-3">
                                     <ItemDisplay items={participant.items} />
-{/*                                     {gameMode === "Arena" &&
-                                        participant.arenaData &&
-                                        participant.arenaData.playerAugments.length > 0 && (
+                                     {gameMode === "Arena" &&
+                                        participant.arenaStats &&
+                                        participant.arenaStats.augments.length > 0 && (
                                             <div className="w-full 2xl:w-auto">
-                                                <AugmentDisplay augments={participant.arenaData.playerAugments} />
+                                                <AugmentDisplay augments={participant.arenaStats.augments} />
                                             </div>
-                                        )} */}
+                                        )}
                                 </div>
 
                             </div>

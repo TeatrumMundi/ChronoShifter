@@ -110,14 +110,14 @@ function SummonerIcon({ url, level }: { url: string; level: string }) {
                     src={url}
                     alt="Summoner Icon"
                     fill
-                    className="rounded-lg border border-gray-500 object-cover"
+                    className="rounded-sm border border-gray-500 object-cover"
                     sizes="96px"
                     quality={50}
                     loading="eager"
                     priority
                 />
             </div>
-            <div className="absolute bottom-0 w-full bg-black/70 rounded-b-lg px-2 py-1 text-xs text-white text-center shadow-md tracking-widest font-sans">
+            <div className="absolute bottom-0 w-full bg-black/70 rounded-b-sm px-2 py-0.25 text-xs text-white text-center tracking-widest">
                 {level}
             </div>
         </div>

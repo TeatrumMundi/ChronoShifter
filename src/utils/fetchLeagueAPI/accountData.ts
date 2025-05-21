@@ -1,17 +1,98 @@
-﻿import {ArenaStats, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
-import {fetchFromRiotAPI} from './fetchFromRiotAPI';
+﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
+import { fetchFromRiotAPI } from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
-import { extractItems } from './extractItems';
-import { getChampionById, getRuneById } from '../getLeagueAssets/getLOLObject';
+import { getAugmentById, getChampionById, getItemById, getRuneById } from '../getLeagueAssets/getLOLObject';
 
-async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails>{
-    const response : Response = await fetchFromRiotAPI(
+/**
+ * Extracts all item objects for a participant by fetching from local items.json.
+ */
+async function extractItems(participant: RawParticipant): Promise<Item[]> {
+    const itemIds: number[] = [
+        participant.item0,
+        participant.item1,
+        participant.item2,
+        participant.item3,
+        participant.item4,
+        participant.item5,
+    ];
+
+    const itemPromises = itemIds
+        .filter(id => id && id > 0)
+        .map(async (id) => {
+            const item = await getItemById(id);
+            if (!item) {
+                throw new Error(`Item with ID ${id} not found in items.json`);
+            }
+            return item;
+        });
+
+    return await Promise.all(itemPromises);
+}
+
+/**
+ * Fetches the runes for a participant by extracting the rune IDs from the participant's perks.
+ */
+async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
+    const runeIds = participant.perks?.styles.flatMap(style =>
+        style.selections.map(selection => selection.perk)
+    ) ?? [];
+
+    const runePromises = runeIds.map(runeId => getRuneById(runeId));
+    const runeObjects = await Promise.all(runePromises);
+    return runeObjects.filter((rune): rune is Rune => rune !== null);
+}
+
+/**
+ * Creates an ArenaStats object based on participant data.
+ */
+async function extractArenaStats(participantData: RawParticipant): Promise<ArenaStats> {
+    // Get augments as objects
+    const augmentIds = [
+        participantData.playerAugment1,
+        participantData.playerAugment2,
+        participantData.playerAugment3,
+        participantData.playerAugment4,
+        participantData.playerAugment5,
+        participantData.playerAugment6,
+    ].filter(aug => aug !== 0 && aug !== undefined) as number[];
+
+    const augments = (
+        await Promise.all(augmentIds.map(id => getAugmentById(id)))
+    ).filter((a): a is Augment => a !== undefined);
+
+    // Build and return the full ArenaStats object
+    return {
+        placement: participantData.placement ?? 0,
+        augments,
+        playerSubteamId: participantData.playerSubteamId ?? 0,
+    };
+}
+
+/**
+ * Fetch Riot account details by Riot ID.
+ */
+async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails> {
+    const response: Response = await fetchFromRiotAPI(
         `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`
     );
     return await response.json() as Promise<RiotAccountDetails>;
 }
 
+/**
+ * Fetch the active region for a given PUUID.
+ */
+async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string> {
+    const response: Response = await fetchFromRiotAPI(
+        `https://${region}.api.riotgames.com/riot/account/v1/region/by-game/${game}/by-puuid/${puuid}`
+    );
+    const data = await response.json();
+    return data.region;
+}
+
+/**
+ * Fetch League account details by PUUID.
+ */
 async function getSummonerByPuuid(puuid: string, region: string, activeRegion: string): Promise<LeagueAccountDetails> {
     const response: Response = await fetchFromRiotAPI(
         `https://${activeRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`
@@ -25,14 +106,9 @@ async function getSummonerByPuuid(puuid: string, region: string, activeRegion: s
     } as LeagueAccountDetails;
 }
 
-async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string>{
-    const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/riot/account/v1/region/by-game/${game}/by-puuid/${puuid}`
-    );
-    const data = await response.json();
-    return data.region;
-}
-
+/**
+ * Fetch ranked league entries for a given PUUID.
+ */
 async function getRankedLeagueEntries(puuid: string, activeRegion: string): Promise<LeagueRank[]> {
     const response: Response = await fetchFromRiotAPI(
         `https://${activeRegion}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`
@@ -52,14 +128,19 @@ async function getRankedLeagueEntries(puuid: string, activeRegion: string): Prom
     }));
 }
 
-async function getRecentMatchesIDsByPuuid(puuid: string, region: string, start: number = 0, number: number = 20) : Promise<string[]>
-{
+/**
+ * Fetch recent match IDs for a given PUUID.
+ */
+async function getRecentMatchesIDsByPuuid(puuid: string, region: string, start: number = 0, number: number = 20): Promise<string[]> {
     const response: Response = await fetchFromRiotAPI(
         `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${number}`
     )
     return await response.json() as Promise<string[]>;
 }
 
+/**
+ * Fetch match details by match ID.
+ */
 async function getMatchDetailsByMatchID(matchID: string, region: string): Promise<MatchDetails> {
     const response: Response = await fetchFromRiotAPI(
         `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchID}`
@@ -75,19 +156,6 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
         queueId: data.info.queueId,
         participants: await Promise.all(
             data.info.participants.map(async (participantData: RawParticipant): Promise<Participant> => {
-                // Build arenaStats
-                const arenaStats: ArenaStats = {
-                    placement: participantData.placement ?? 0,
-                    augments: [
-                        participantData.playerAugment1,
-                        participantData.playerAugment2,
-                        participantData.playerAugment3,
-                        participantData.playerAugment4,
-                    ].filter(aug => aug !== 0 && aug !== undefined) as number[],
-                    playerSubteamId: participantData.playerSubteamId ?? 0,
-                };
-
-
                 return {
                     puuid: participantData.puuid,
                     riotIdGameName: participantData.riotIdGameName,
@@ -102,7 +170,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     deaths: participantData.deaths,
                     assists: participantData.assists,
                     kda: getKDA(participantData.kills, participantData.deaths, participantData.assists),
-                    
+
                     // Minions Info
                     totalMinionsKilled: participantData.totalMinionsKilled,
                     neutralMinionsKilled: participantData.neutralMinionsKilled,
@@ -114,7 +182,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore),
                     wardsPlaced: participantData.wardsPlaced,
                     goldEarned: participantData.goldEarned,
-                    
+
                     totalHealsOnTeammates: participantData.totalHealsOnTeammates,
                     totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates,
                     totalDamageTaken: participantData.totalDamageTaken,
@@ -125,7 +193,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     items: await extractItems(participantData),
                     champion: (await getChampionById(participantData.championId)) ?? { id: 0, name: 'Unknown', alias: 'Unknown', squarePortraitPath: '', roles: [] },
                     runes: await fetchParticipantRunes(participantData),
-                    arenaStats: arenaStats,
+                    arenaStats: await extractArenaStats(participantData),
                 };
             })
         ),
@@ -134,7 +202,10 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
     return matchDetails;
 }
 
-export async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
+/**
+ * Creates a LeagueAccount object for a given PUUID.
+ */
+async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
     // Get the League account details
     const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, region, activeRegion);
     if (!leagueAccountsDetails) {
@@ -164,11 +235,11 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         winRate: 0,
         hotStreak: false
     };
-    
 
     // Get the recent matches IDs
     let recentMatchesIDs: string[] = [];
-    try {recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
+    try {
+        recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
     } catch (error) {
         console.error("Failed to fetch recent matches IDs:", error);
         recentMatchesIDs = [];
@@ -193,6 +264,9 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
     return { leagueAccountsDetails, leagueSoloRank, leagueFlexRank, recentMatches };
 }
 
+/**
+ * Creates a RiotAccount object for a given Riot ID.
+ */
 export async function createRiotAccount(tagLine: string, gameName: string, region: string): Promise<RiotAccount> {
     if (!tagLine || !gameName || !region) {
         throw new Error("Invalid parameters");
@@ -212,14 +286,4 @@ export async function createRiotAccount(tagLine: string, gameName: string, regio
     const leagueAccount: LeagueAccount = await createLeagueAccount(riotAccountDetails.puuid, region, activeRegion);
 
     return { riotAccountDetails, leagueAccount };
-}
-
-async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
-    const runeIds = participant.perks?.styles.flatMap(style =>
-        style.selections.map(selection => selection.perk)
-    ) ?? [];
-
-    const runePromises = runeIds.map(runeId => getRuneById(runeId));
-    const runeObjects = await Promise.all(runePromises);
-    return runeObjects.filter((rune): rune is Rune => rune !== null);
 }

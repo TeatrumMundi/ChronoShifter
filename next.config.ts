@@ -2,9 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "raw.communitydragon.org",
-      "ddragon.leagueoflegends.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "raw.communitydragon.org",
+      },
+      {
+        protocol: "https",
+        hostname: "ddragon.leagueoflegends.com",
+      },
     ],
   },
 };

@@ -1,4 +1,4 @@
-﻿import { Champion, Rune } from "@/interfaces/productionTypes";
+﻿import { Augment, Champion, Rune } from "@/interfaces/productionTypes";
 
 const GAME_VERSION = process.env.NEXT_PUBLIC_GAME_VERSION || "15.6.1";
 const CDN_BASE = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1";
@@ -44,4 +44,35 @@ export function getRuneTreeIconUrl(rune: Rune): string | null {
     if (!filename) return null;
 
     return `${CDN_BASE}/perk-images/styles/${filename}`;
+}
+
+
+/**
+ * Returns the full URL to the augment icon from Community Dragon.
+ * Falls back to public/augments if the CDN icon is not available or known to fail.
+ * @param augment The augment object.
+ * @param size Optional icon size: 'small' (default) or 'large'.
+ * @returns A fully qualified image URL.
+ */
+export function getAugmentIconUrl(augment: Augment, size: "small" | "large" = "small"): string {
+    const iconFile = augment.apiName.toLowerCase() + `_${size}.png`;
+
+    const cdnUrl = `https://raw.communitydragon.org/latest/game/assets/ux/cherry/augments/icons/${iconFile}`;
+    const localUrl = `/augments/${iconFile}`; // File stored in public/augments/
+
+    // List of known broken CDN files – use local directly
+    const alwaysLocal = new Set([
+        "prismaticegg_small.png",
+        "divineintervention_small.png",
+        "ultimateroulette_small.png",
+        "dreadbringer_small.png"
+    ]);
+
+    // If the icon is known to fail on CDN, skip and return local only
+    if (alwaysLocal.has(iconFile)) {
+        return localUrl;
+    }
+
+    // Default behavior: return cdn#local fallback
+    return `${cdnUrl}#${localUrl}`;
 }

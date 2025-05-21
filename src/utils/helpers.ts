@@ -156,6 +156,7 @@ export function getKDA(kills: number, deaths: number, assists: number): string {
     const kda = ((kills + assists) / deaths).toFixed(2);
     return kda.toString();
 }
+
 export function getMinionsPerMinute(seconds: number, totalMinions: number): string {
     const minutes = Math.floor((seconds % 3600) / 60);
     if (minutes === 0) return "0"; // Avoid division by zero
