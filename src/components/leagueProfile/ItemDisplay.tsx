@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { BoxPlaceHolder, TooltipBubble } from "@/components/common";
 import { Item } from "@/interfaces/productionTypes";
 import { getItemIcon } from "@/utils/getLeagueAssets/getLOLAssets";
@@ -22,8 +23,7 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
     return (
         <div className="w-full sm:w-auto">
             <div
-                className="grid grid-cols-4 grid-rows-2 gap-x-1 gap-y-2 items-center"
-                style={{ minWidth: 148 }}
+                className="grid grid-cols-3 sm:grid-cols-4 grid-rows-2 gap-y-2 items-center sm:min-w-[150px]"
             >
                 {/* First row: items 0,1,2 */}
                 {[0, 1, 2].map((idx) =>
@@ -38,8 +38,8 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
                         <BoxPlaceHolder key={`ph-${idx}`} />
                     )
                 )}
-                {/* 7th item: row-span-2, col-start-4, centered vertically */}
-                <div className="row-span-2 flex items-center justify-center">
+                {/* 7th item: only show on sm and up */}
+                <div className="hidden sm:flex row-span-2 items-center justify-center max-w-[32px]">
                     {items[6] && items[6]!.id !== 0 ? (
                         <ItemSlot
                             item={items[6]!}
@@ -68,7 +68,6 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
     );
 }
 
-// Helper for item slot rendering
 function ItemSlot({
     item,
     hoveredItem,
@@ -79,18 +78,15 @@ function ItemSlot({
     setHoveredItem: (item: Item | null) => void;
 }) {
     return (
-        <div
-            className="relative"
+        <IconBox
+            src={getItemIcon(item.id)}
+            alt={`Item ${item.name}`}
+            size={32}
+            childrenSize={32}
+            className="cursor-pointer"
             onMouseEnter={() => setHoveredItem(item)}
             onMouseLeave={() => setHoveredItem(null)}
         >
-            <IconBox
-                src={getItemIcon(item.id)}
-                alt={`Item ${item.name}`}
-                size={32}
-                childrenSize={32}
-                className="cursor-pointer"
-            />
             {hoveredItem === item && (
                 <TooltipBubble>
                     <div className="flex justify-between items-center mb-1">
@@ -104,6 +100,6 @@ function ItemSlot({
                     </div>
                 </TooltipBubble>
             )}
-        </div>
+        </IconBox>
     );
 }

@@ -153,7 +153,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                     </div>
 
                                 {/* Right: Participants */}
-                                <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] lg:w-[360px] lg:max-w-[450px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
+                                <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
                                     <ParticipantList
                                         participants={match.matchDetails.participants}
                                         gameMode={gameMode}

@@ -1,7 +1,6 @@
 "use client";
 
 import { Participant } from "@/interfaces/productionTypes";
-import { motion } from "framer-motion";
 import { Swords, Eye, Coins, Flame, BarChart3, Cross, ShieldPlus, RadioTower } from "lucide-react";
 import { useState, useEffect, JSX } from "react";
 
@@ -13,27 +12,14 @@ type StatItem = {
     className?: string;
 } | null;
 
-export function MatchStats({participant, gameMode,}: {
+export function MatchStats({ participant, gameMode }: {
     participant: Participant;
     gameMode: string;
 }) {
     const isArena = gameMode === "Arena";
     const isSupport = participant.teamPosition === "UTILITY";
-    const [isOpen, setIsOpen] = useState(true);
-    const [isMobile, setIsMobile] = useState(false);
     const [formattedStats, setFormattedStats] = useState<StatItem[]>([]);
-
-    useEffect(() => {
-        const handleResize = () => {
-            const mobile = window.innerWidth < 640;
-            setIsMobile(mobile);
-            setIsOpen(!mobile); // Close on mobile, open otherwise
-        };
-
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    const isWin : boolean = participant.win;
 
     useEffect(() => {
         const kda = parseFloat(participant.kda);
@@ -50,18 +36,18 @@ export function MatchStats({participant, gameMode,}: {
                     <>
                         {participant.kills}/
                         <span className="text-red-500">{participant.deaths}</span>/
-                        {participant.assists}{" "}
+                        {participant.assists}
                         <span className={`ml-1 ${kdaColor}`}>({participant.kda})</span>
                     </>
                 ),
                 tooltip: "Kills / Deaths / Assists (KDA)",
-                icon: <Swords className="w-3 h-3 text-muted-foreground shrink-0" />,
+                icon: <Swords className="w-4 h-4" />,
             },
             {
                 label: "Gold",
                 value: formatNumber(participant.goldEarned),
                 tooltip: "Gold earned in the match",
-                icon: <Coins className="w-3 h-3 text-muted-foreground shrink-0" />,
+                icon: <Coins className="w-4 h-4" />,
             },
         ];
 
@@ -71,19 +57,19 @@ export function MatchStats({participant, gameMode,}: {
                     label: "Healed",
                     value: formatNumber(participant.totalHealsOnTeammates),
                     tooltip: "Total heals on teammates",
-                    icon: <Cross className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <Cross className="w-4 h-4" />,
                 },
                 {
                     label: "Shielded",
                     value: formatNumber(participant.totalDamageShieldedOnTeammates),
                     tooltip: "Total shields on teammates",
-                    icon: <ShieldPlus className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <ShieldPlus className="w-4 h-4" />,
                 },
                 {
                     label: "Damage",
                     value: formatNumber(participant.totalDamageDealtToChampions),
                     tooltip: "Total damage dealt",
-                    icon: <Flame className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <Flame className="w-4 h-4" />,
                 }
             );
         } else if (isSupport) {
@@ -92,13 +78,13 @@ export function MatchStats({participant, gameMode,}: {
                     label: "Healed",
                     value: formatNumber(participant.totalHealsOnTeammates),
                     tooltip: "Total heals on teammates",
-                    icon: <Cross className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <Cross className="w-4 h-4" />,
                 },
                 {
                     label: "Shielded",
                     value: formatNumber(participant.totalDamageShieldedOnTeammates),
                     tooltip: "Total shields on teammates",
-                    icon: <ShieldPlus className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <ShieldPlus className="w-4 h-4" />,
                 }
             );
         } else {
@@ -107,13 +93,13 @@ export function MatchStats({participant, gameMode,}: {
                     label: "Damage",
                     value: formatNumber(participant.totalDamageDealtToChampions),
                     tooltip: "Total damage dealt",
-                    icon: <Flame className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <Flame className="w-4 h-4" />,
                 },
                 {
                     label: "Minions",
                     value: `${participant.allMinionsKilled} (${Number(participant.minionsPerMinute).toFixed(1)})`,
                     tooltip: "Minions killed (and per minute)",
-                    icon: <BarChart3 className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <BarChart3 className="w-4 h-4" />,
                     className: participant.minionsPerMinute >= 8 ? "text-green-500 font-semibold" : "",
                 }
             );
@@ -125,14 +111,14 @@ export function MatchStats({participant, gameMode,}: {
                     label: "Vision",
                     value: `${participant.visionScore.toString()}  (${participant.visionPerMinute})`,
                     tooltip: "Vision Score",
-                    icon: <Eye className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <Eye className="w-4 h-4" />,
                     className: participant.visionPerMinute >= 2 ? "text-green-500 font-semibold" : "",
                 },
                 {
                     label: "Wards",
                     value: participant.wardsPlaced.toString(),
                     tooltip: "Wards Placed",
-                    icon: <RadioTower className="w-3 h-3 text-muted-foreground shrink-0" />,
+                    icon: <RadioTower className="w-4 h-4" />,
                 }
             );
         }
@@ -140,52 +126,45 @@ export function MatchStats({participant, gameMode,}: {
         setFormattedStats(stats);
     }, [participant, gameMode, isArena, isSupport]);
 
-
     return (
-        <div className="w-full">
-            {isMobile && (
-                <div className="mb-1 flex justify-center">
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        className="text-xs px-2 py-1 rounded-sm border border-border bg-muted/40 hover:bg-muted transition-colors text-muted-foreground tracking-widest"
-                    >
-                        {isOpen ? "Hide stats" : "Show stats"}
-                    </button>
-                </div>
-            )}
-
-            {(isOpen || !isMobile) && (
-                <motion.div
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="w-full grid gap-1 tracking-wide transition-all duration-300 grid-cols-1 xl:grid-cols-2 xl:grid-rows-3"
-                >
-                {formattedStats.map((stat, index) => {
-                        if (!stat) return <div key={index} className="invisible h-0" />;
-
-                        return (
-                            <div
-                                key={stat.label}
-                                title={stat.tooltip}
-                                className={`flex items-center justify-between px-2.5 py-1.5 text-[11px] border rounded-sm bg-muted/40 dark:bg-zinc-800 transition-shadow hover:shadow-sm col-span-1`}
-                            >
-                                <div className="flex items-center gap-1 truncate text-muted-foreground">
+        <div 
+            className={`w-full px-2 py-2 rounded-sm bg-gradient-to-br shadow-inner border border-zinc-700 flex flex-col gap-2
+            ${isWin ? "from-green-300/80 to-green-400/80" : "from-red-300/80 to-red-400/80"}
+        `}>
+            <div
+                className={`
+                    grid 
+                    grid-cols-2 
+                    sm:grid-cols-3 
+                    gap-x-2 gap-y-2 
+            `}
+            >
+                {formattedStats.map((stat) =>
+                    stat ? (
+                        <div
+                            key={stat.label}
+                            title={stat.tooltip}
+                            className={`
+                            flex flex-col items-center justify-center 
+                            w-full h-full
+                            px-2 py-1 rounded-sm 
+                            bg-zinc-900/80 border border-zinc-700 
+                            hover:border-blue-400 transition-all shadow-sm
+                        `}
+                        >
+                            <div className="flex items-center justify-center mb-1">
+                                <span className="inline-flex items-center justify-center rounded-sm bg-zinc-800 border border-zinc-700 w-7 h-7 mr-1">
                                     {stat.icon}
-                                    <span className="truncate">{stat.label}</span>
-                                </div>
-                                <span
-                                    className={`text-right font-medium truncate text-foreground ${
-                                        stat.className ?? ""
-                                    }`}
-                                >
-                                    {stat.value}
                                 </span>
+                                <span className="text-xs text-zinc-400 font-semibold">{stat.label}</span>
                             </div>
-                        );
-                    })}
-                </motion.div>
-            )}
+                            <span className={`text-sm font-bold text-zinc-100 ${stat.className ?? ""}`}>
+                                {stat.value}
+                            </span>
+                        </div>
+                    ) : null
+                )}
+            </div>
         </div>
     );
 }
