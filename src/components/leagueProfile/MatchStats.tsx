@@ -114,20 +114,19 @@ export function MatchStats({participant, gameMode,}: {
                     value: `${participant.allMinionsKilled} (${Number(participant.minionsPerMinute).toFixed(1)})`,
                     tooltip: "Minions killed (and per minute)",
                     icon: <BarChart3 className="w-3 h-3 text-muted-foreground shrink-0" />,
-                    className: participant.minionsPerMinute > 8 ? "text-green-500 font-semibold" : "",
+                    className: participant.minionsPerMinute >= 8 ? "text-green-500 font-semibold" : "",
                 }
             );
         }
 
         if (!isArena) {
-            const visionPerMinute = parseFloat(participant.visionPerMinute);
             stats.push(
                 {
                     label: "Vision",
                     value: `${participant.visionScore.toString()}  (${participant.visionPerMinute})`,
                     tooltip: "Vision Score",
                     icon: <Eye className="w-3 h-3 text-muted-foreground shrink-0" />,
-                    className: visionPerMinute > 2 ? "text-green-500 font-semibold" : "",
+                    className: participant.visionPerMinute >= 2 ? "text-green-500 font-semibold" : "",
                 },
                 {
                     label: "Wards",

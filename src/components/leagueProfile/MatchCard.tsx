@@ -19,6 +19,7 @@ interface MatchCardProps {
 
 export function MatchCard({ participant, match, region: region }: MatchCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState<"game" | "performance" | "build" | "stats">("game");
 
     const gameMode: string = queueIdToGameMode[match.matchDetails.queueId] || "Unknown";
     const isArena: boolean = gameMode === "Arena";
@@ -30,7 +31,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
     const winTextColor = isArena
         ? placement && placement <= 4 ? "neon-green" : "neon-red"
-        : participant.win ? "neon-green" : "neon-red";
+        : participant.win ? "text-green-300" : "text-red-300";
 
     const bgColor = isArena
         ? placement && placement <= 4 ? "bg-green-900/90" : "bg-red-900/90"
@@ -48,7 +49,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                             ${isDetailsOpen ? "rounded-b-none" : ""}`} />
 
                         <button
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-sm p-0.15 shadow flex items-center justify-center
+                            className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-xs p-0.15 shadow flex items-center justify-center
                             ${participant.win ? "bg-green-800 hover:bg-green-800/50" : "bg-red-800 hover:bg-red-800/50"}`}
                             onClick={() => setIsDetailsOpen((prev) => !prev)}
                         >
@@ -99,7 +100,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 {/* Left: Champion + Items + Runes + Augments + Stats */}
                                 <div className="flex flex-col gap-4 flex-1 sm:flex-row">
                                     {/* Champion + Items + Runes + Augments */}
-                                    <div className="flex flex-col sm:flex-col xl:flex-row justify-center items-center gap-1 w-full sm:min-w-[200px] sm:max-w-[250px]">
+                                    <div className="flex flex-row sm:flex-col xl:flex-row justify-center items-center gap-1 w-full sm:min-w-[200px] sm:max-w-[250px]">
 
                                         {/* Champion Icon + Runes */}
                                         <div className="flex items-center justify-center gap-1">
@@ -156,11 +157,58 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                 {isDetailsOpen && (
                     <div
                         className="w-full bg-gray-900/95 rounded-b-sm p-4 border-t border-gray-700 animate-fade-in transition-all duration-300"
-                        style={{ minHeight: 80 }}
                     >
+                        {/* Top row with 4 buttons */}
+                        <div className="flex flex-row gap-3 mb-4">
+                            <button
+                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
+                                    activeTab === "game"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-700 text-white hover:bg-gray-600"
+                                }`}
+                                onClick={() => setActiveTab("game")}
+                            >
+                                Game
+                            </button>
+                            <button
+                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
+                                    activeTab === "performance"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-700 text-white hover:bg-gray-600"
+                                }`}
+                                onClick={() => setActiveTab("performance")}
+                            >
+                                Performance
+                            </button>
+                            <button
+                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
+                                    activeTab === "build"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-700 text-white hover:bg-gray-600"
+                                }`}
+                                onClick={() => setActiveTab("build")}
+                            >
+                                Build
+                            </button>
+                            <button
+                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
+                                    activeTab === "stats"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-700 text-white hover:bg-gray-600"
+                                }`}
+                                onClick={() => setActiveTab("stats")}
+                            >
+                                Stats
+                            </button>
+                        </div>
                         <div className="text-white">
                             <strong>Match details:</strong>
-                            <p></p>
+                            <p>
+                                {activeTab === "game" && "Game tab content goes here."}
+                                {activeTab === "performance" && "Performance tab content goes here."}
+                                {activeTab === "build" && "Build tab content goes here."}
+                                {activeTab === "stats" && "Stats tab content goes here."}
+                            </p>
                         </div>
                     </div>
                 )}

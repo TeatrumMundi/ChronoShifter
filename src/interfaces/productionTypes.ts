@@ -84,7 +84,7 @@ export interface Participant
 
     // Performance Stats
     visionScore : number;
-    visionPerMinute : string;
+    visionPerMinute : number;
     wardsPlaced : number;
     goldEarned : number;
     totalHealsOnTeammates : number;

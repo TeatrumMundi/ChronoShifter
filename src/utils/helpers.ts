@@ -157,10 +157,10 @@ export function getKDA(kills: number, deaths: number, assists: number): string {
     return kda.toString();
 }
 
-export function getMinionsPerMinute(seconds: number, totalMinions: number): string {
+export function getMinionsPerMinute(seconds: number, totalMinions: number): number {
     const minutes = Math.floor((seconds % 3600) / 60);
-    if (minutes === 0) return "0"; // Avoid division by zero
-    return (totalMinions / minutes).toFixed(2);
+    if (minutes === 0) return 0; // Avoid division by zero
+    return Number((totalMinions / minutes).toFixed(2));
 }
 
 export function getParticipantByPuuid(matchData: RecentMatch, puuid: string): Participant | null {
