@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { BoxPlaceHolder, TooltipBubble } from "@/components/common";
 import { Item } from "@/interfaces/productionTypes";
 import { getItemIcon } from "@/utils/getLeagueAssets/getLOLAssets";
@@ -17,7 +16,7 @@ export const cleanItemDescription = (text: string): string => {
         .trim();
 };
 
-export function ItemDisplay({ items }: { items: (Item | null)[] }) {
+export function ItemDisplay({items, itemSize = 32,}: {items: (Item | null)[]; itemSize?: number;}) {
     const [hoveredItem, setHoveredItem] = useState<Item | null>(null);
 
     return (
@@ -33,6 +32,7 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
                             item={items[idx]!}
                             hoveredItem={hoveredItem}
                             setHoveredItem={setHoveredItem}
+                            itemSize={itemSize}
                         />
                     ) : (
                         <BoxPlaceHolder key={`ph-${idx}`} />
@@ -45,6 +45,7 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
                             item={items[6]!}
                             hoveredItem={hoveredItem}
                             setHoveredItem={setHoveredItem}
+                            itemSize={itemSize}
                         />
                     ) : (
                         <BoxPlaceHolder />
@@ -58,6 +59,7 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
                             item={items[idx]!}
                             hoveredItem={hoveredItem}
                             setHoveredItem={setHoveredItem}
+                            itemSize={itemSize}
                         />
                     ) : (
                         <BoxPlaceHolder key={`ph-${idx}`} />
@@ -68,21 +70,18 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
     );
 }
 
-function ItemSlot({
-    item,
-    hoveredItem,
-    setHoveredItem,
-}: {
+function ItemSlot({ item, hoveredItem, setHoveredItem, itemSize = 32}: {
     item: Item;
     hoveredItem: Item | null;
     setHoveredItem: (item: Item | null) => void;
+    itemSize?: number;
 }) {
     return (
         <IconBox
             src={getItemIcon(item.id)}
             alt={`Item ${item.name}`}
-            size={32}
-            childrenSize={32}
+            size={itemSize}
+            childrenSize={itemSize}
             className="cursor-pointer"
             onMouseEnter={() => setHoveredItem(item)}
             onMouseLeave={() => setHoveredItem(null)}

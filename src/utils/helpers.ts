@@ -183,3 +183,48 @@ export const ServerMAP: Record<string, string> = {
     TW2: "tw",
     VN2: "vn"
 };
+
+export function calculatePerformanceScore(participant: Participant): number {
+    // Wagi dla różnych pozycji
+    const isUtility = participant.individualPosition.toUpperCase() === "UTILITY";
+
+    // Normalizacja statystyk (przykładowe wartości maksymalne, można dostosować)
+    const maxStats = {
+        kills: 20,
+        deaths: 15,
+        assists: 30,
+        goldEarned: 20000,
+        visionScore: 60,
+        wardsPlaced: 30,
+        totalHealsOnTeammates: 10000,
+        totalDamageShieldedOnTeammates: 8000,
+        totalDamageDealtToChampions: 50000,
+        minionsPerMinute: 12,
+    };
+
+    // Utility - heal, shield, wardy mają większą wagę
+    if (isUtility) {
+        const score =
+            (participant.totalHealsOnTeammates / maxStats.totalHealsOnTeammates) * 30 +
+            (participant.totalDamageShieldedOnTeammates / maxStats.totalDamageShieldedOnTeammates) * 25 +
+            (participant.wardsPlaced / maxStats.wardsPlaced) * 15 +
+            (participant.visionScore / maxStats.visionScore) * 10 +
+            (participant.assists / maxStats.assists) * 10 +
+            (participant.kills / maxStats.kills) * 5 +
+            (participant.deaths > 0 ? (1 - participant.deaths / maxStats.deaths) * 5 : 5);
+
+        return Math.max(0, Math.min(100, Math.round(score)));
+    }
+
+    // Inne pozycje - klasyczne statystyki
+    const score =
+        (participant.kills / maxStats.kills) * 25 +
+        (participant.assists / maxStats.assists) * 15 +
+        (participant.goldEarned / maxStats.goldEarned) * 15 +
+        (participant.totalDamageDealtToChampions / maxStats.totalDamageDealtToChampions) * 20 +
+        (participant.minionsPerMinute / maxStats.minionsPerMinute) * 10 +
+        (participant.visionScore / maxStats.visionScore) * 5 +
+        (participant.deaths > 0 ? (1 - participant.deaths / maxStats.deaths) * 10 : 10);
+
+    return Math.max(0, Math.min(100, Math.round(score)));
+}
