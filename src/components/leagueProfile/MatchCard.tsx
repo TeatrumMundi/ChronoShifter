@@ -121,7 +121,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                         </div>
 
                                         {/* Items and Augments */}
-                                        <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center gap-3">
+                                        <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center">
                                             <ItemDisplay items={participant.items} />
                                             {gameMode === "Arena" &&
                                                 participant.arenaStats &&

@@ -15,17 +15,37 @@ async function extractItems(participant: RawParticipant): Promise<Item[]> {
         participant.item3,
         participant.item4,
         participant.item5,
+        participant.item6,
     ];
 
-    const itemPromises = itemIds
-        .filter(id => id && id > 0)
-        .map(async (id) => {
-            const item = await getItemById(id);
-            if (!item) {
-                throw new Error(`Item with ID ${id} not found in items.json`);
-            }
-            return item;
-        });
+    const itemPromises = itemIds.map(async (id) => {
+        const item = await getItemById(id);
+        if (!item) {
+            // Return a default empty item object if not found
+            return {
+                id: 0,
+                name: "",
+                description: "",
+                active: false,
+                inStore: false,
+                from: [],
+                to: [],
+                categories: [],
+                maxStacks: 0,
+                requiredChampion: "",
+                requiredAlly: "",
+                requiredBuffCurrencyName: "",
+                requiredBuffCurrencyCost: 0,
+                specialRecipe: 0,
+                isEnchantment: false,
+                price: 0,
+                priceTotal: 0,
+                displayInItemSets: false,
+                iconPath: "",
+            } as Item;
+        }
+        return item;
+    });
 
     return await Promise.all(itemPromises);
 }
