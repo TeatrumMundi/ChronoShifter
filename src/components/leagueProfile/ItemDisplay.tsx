@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState } from "react";
-import Image from "next/image";
 import { BoxPlaceHolder, TooltipBubble } from "@/components/common";
 import { Item } from "@/interfaces/productionTypes";
 import { getItemIcon } from "@/utils/getLeagueAssets/getLOLAssets";
+import { IconBox } from "@/components/common/IconBox";
 
 // Helper function to clean and format the item description.
 // It replaces <br> and <li> tags with newlines, then removes remaining tags.
@@ -84,16 +84,13 @@ function ItemSlot({
             onMouseEnter={() => setHoveredItem(item)}
             onMouseLeave={() => setHoveredItem(null)}
         >
-            <div className="rounded-sm">
-                <Image
-                    src={getItemIcon(item.id)}
-                    alt={`Item ${item.name}`}
-                    width={32}
-                    height={32}
-                    className="rounded-sm cursor-pointer w-[32px] h-[32px] min-w-[32px] min-h-[32px] max-w-[32px] max-h-[32px] object-contain"
-                    quality={50}
-                />
-            </div>
+            <IconBox
+                src={getItemIcon(item.id)}
+                alt={`Item ${item.name}`}
+                size={32}
+                childrenSize={32}
+                className="cursor-pointer"
+            />
             {hoveredItem === item && (
                 <TooltipBubble>
                     <div className="flex justify-between items-center mb-1">
