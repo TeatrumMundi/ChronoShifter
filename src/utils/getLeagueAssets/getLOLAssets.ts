@@ -1,4 +1,4 @@
-﻿import { Augment, Champion, Rune } from "@/interfaces/productionTypes";
+﻿import { Augment, Champion, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 
 const GAME_VERSION = process.env.NEXT_PUBLIC_GAME_VERSION || "15.6.1";
 const CDN_BASE = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1";
@@ -75,4 +75,11 @@ export function getAugmentIconUrl(augment: Augment, size: "small" | "large" = "s
 
     // Default behavior: return cdn#local fallback
     return `${cdnUrl}#${localUrl}`;
+}
+
+export function getSummonerSpellIcon(summonerSpell : SummonerSpell): string {
+    const path = summonerSpell.iconPath.toLowerCase();
+    const fileName = path.substring(path.lastIndexOf("/") + 1);
+
+    return "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/" + fileName;
 }

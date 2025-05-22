@@ -159,7 +159,7 @@ export function MatchStats({participant, gameMode,}: {
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.25 }}
-                    className="w-full grid gap-1 tracking-widest transition-all duration-300 grid-cols-1 xl:grid-cols-2 xl:grid-rows-3"
+                    className="w-full grid gap-1 tracking-wide transition-all duration-300 grid-cols-1 xl:grid-cols-2 xl:grid-rows-3"
                 >
                 {formattedStats.map((stat, index) => {
                         if (!stat) return <div key={index} className="invisible h-0" />;

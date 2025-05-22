@@ -94,6 +94,8 @@ export interface Participant
     individualPosition : string;
     win : boolean;
 
+    summonerSpell1 : SummonerSpell;
+    summonerSpell2 : SummonerSpell;
     champion: Champion;
     arenaStats : ArenaStats;
     runes : Rune[];
@@ -157,5 +159,15 @@ export interface Item {
     price: number;
     priceTotal: number;
     displayInItemSets: boolean;
+    iconPath: string;
+}
+
+export interface SummonerSpell {
+    id: number;
+    name: string;
+    description: string;
+    summonerLevel: number;
+    cooldown: number;
+    gameModes: string[];
     iconPath: string;
 }

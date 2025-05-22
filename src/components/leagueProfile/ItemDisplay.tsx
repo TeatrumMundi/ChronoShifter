@@ -22,7 +22,7 @@ export function ItemDisplay({ items }: { items: (Item | null)[] }) {
     return (
         <div className="w-full sm:w-auto">
             <div
-                className="grid grid-cols-4 grid-rows-2 gap-2 items-center"
+                className="grid grid-cols-4 grid-rows-2 gap-x-1 gap-y-2 items-center"
                 style={{ minWidth: 148 }}
             >
                 {/* First row: items 0,1,2 */}

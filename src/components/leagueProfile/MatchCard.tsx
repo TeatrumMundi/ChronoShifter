@@ -10,6 +10,7 @@ import { RuneDisplay } from "./RuneDisplay";
 import { AugmentDisplay } from "./AugmentDisplay";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
 
 interface MatchCardProps {
     participant: Participant;
@@ -95,14 +96,14 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 </div>
                             </div>
 
-                            {/* Main Content + Participant List */}
+                            {/* Main Content + Participant List + Stats*/}
                             <div className="flex flex-col lg:flex-row flex-1 min-w-0 gap-4">
-                                {/* Left: Champion + Items + Runes + Augments + Stats */}
-                                <div className="flex flex-col gap-4 flex-1 sm:flex-row">
+                                {/* Left: Champion + Items + Runes + Augments */}
+                                <div className="flex flex-col gap-4 flex-1 sm:flex-row items-center justify-center">
                                     {/* Champion + Items + Runes + Augments */}
-                                    <div className="flex flex-row sm:flex-col xl:flex-row justify-center items-center gap-1 w-full sm:min-w-[200px] sm:max-w-[250px]">
+                                    <div className="flex flex-row lg:flex-col  xl:flex-row gap-1 w-full sm:min-w-[200px] justify-center">
 
-                                        {/* Champion Icon + Runes */}
+                                        {/* Champion Icon + Runes + SummonerSpells */}
                                         <div className="flex items-center justify-center gap-1">
                                             <div className="relative w-[72px] h-[72px]">
                                                 <ChampionIcon champion={participant.champion} size={72} />
@@ -111,9 +112,19 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                                 </div>
                                             </div>
 
+                                            {/* Summoner Spells */}
+                                            {(participant.summonerSpell1.id !== 0 || participant.summonerSpell2.id !== 0) && (
+                                                <div className="flex-shrink-0 w-[32px] min-w-[32px]">
+                                                    <SummonerSpellDisplay
+                                                        summonerSpell1={participant.summonerSpell1}
+                                                        summonerSpell2={participant.summonerSpell2}
+                                                    />
+                                                </div>
+                                            )}
+
                                             {/* Runes */}
                                             {participant.runes?.length > 0 && (
-                                                <div className="flex-shrink-0 w-[40px] min-w-[40px]">
+                                                <div className="flex-shrink-0 w-[32px] min-w-[32px]">
                                                     <RuneDisplay runes={participant.runes} />
                                                 </div>
                                             )}
@@ -134,14 +145,15 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                                     </div>
 
-                                    {/* Stats */}
+                                    
+                                </div>
+                                {/* Stats */}
                                     <div className="flex flex-col justify-center w-full min-w-0">
                                         <MatchStats participant={participant} gameMode={gameMode} />
                                     </div>
-                                </div>
 
                                 {/* Right: Participants */}
-                                <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] lg:w-[360px] lg:max-w-[380px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
+                                <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] lg:w-[360px] lg:max-w-[450px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
                                     <ParticipantList
                                         participants={match.matchDetails.participants}
                                         gameMode={gameMode}

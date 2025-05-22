@@ -2,7 +2,7 @@
 import { fetchFromRiotAPI } from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
-import { getAugmentById, getChampionById, getItemById, getRuneById } from '../getLeagueAssets/getLOLObject';
+import { getAugmentById, getChampionById, getItemById, getRuneById, getSummonerSpellByID } from '../getLeagueAssets/getLOLObject';
 
 /**
  * Extracts all item objects for a participant by fetching from local items.json.
@@ -210,6 +210,8 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     individualPosition: participantData.individualPosition,
                     win: participantData.win,
 
+                    summonerSpell1: await getSummonerSpellByID(participantData.summoner1Id),
+                    summonerSpell2: await getSummonerSpellByID(participantData.summoner2Id),
                     items: await extractItems(participantData),
                     champion: (await getChampionById(participantData.championId)) ?? { id: 0, name: 'Unknown', alias: 'Unknown', squarePortraitPath: '', roles: [] },
                     runes: await fetchParticipantRunes(participantData),

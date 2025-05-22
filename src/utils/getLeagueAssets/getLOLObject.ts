@@ -1,6 +1,6 @@
 import path from "path";
 ﻿import {promises as fs} from "fs";
-import { Augment, Champion, Item, Rune } from "@/interfaces/productionTypes";
+import { Augment, Champion, Item, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 
 const getAssetPath = (file: string) =>
     path.join(process.cwd(), "src", "utils", "getLeagueAssets",  file);
@@ -80,5 +80,41 @@ export async function getRuneById(id: number): Promise<Rune | null> {
     } catch (err) {
         console.error("Failed to load rune:", err);
         return null;
+    }
+}
+
+export async function getSummonerSpellByID(id: number): Promise<SummonerSpell> {
+    const filePath = getAssetPath("summonerSpells.json");
+
+    try 
+    {
+        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
+        const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
+
+        const found = parsed.find((spell: SummonerSpell) => spell.id === id);
+        if (found) return found;
+
+        return {
+            id: 0,
+            name: "",
+            description: "",
+            summonerLevel: 0,
+            cooldown: 0,
+            gameModes: [],
+            iconPath: ""
+        };
+    }
+    catch (error)
+    {
+        console.error(`Failed to load summoner spell ID ${id}:`, error);
+        return {
+            id: 0,
+            name: "",
+            description: "",
+            summonerLevel: 0,
+            cooldown: 0,
+            gameModes: [],
+            iconPath: ""
+        };
     }
 }
