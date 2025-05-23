@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Rune } from "@/interfaces/productionTypes";
-import { cleanItemDescription } from "./ItemDisplay";
 import { getRuneIconUrl, getRuneTreeIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { TooltipBubble } from "../common";
 import { IconBox } from "../common/IconBox";
+import { cleanItemDescription } from "@/utils/helpers";
 
-export const PRIMARY_RUNE_ICON_SIZE = 28;
-export const SECONDARY_RUNE_ICON_SIZE = 20;
-export const RUNE_ICON_BOX_SIZE = 32;
+interface RuneDisplayProps {
+    runes: Rune[];
+    boxSize: number;
+    keyStoneIconSize: number;
+    secendaryRuneIconSize: number;
+}
 
-export function RuneDisplay({ runes }: { runes: Rune[] }) {
-    const [hoveredRune, setHoveredRune] = useState<Rune | null>(null);
-
+export function RuneDisplay({ runes, boxSize, keyStoneIconSize, secendaryRuneIconSize}: RuneDisplayProps) {
     if (!runes || runes.length < 2) return null;
 
     const primaryRune = runes[0];
@@ -29,37 +29,33 @@ export function RuneDisplay({ runes }: { runes: Rune[] }) {
             <IconBox
                 src={primaryIconUrl}
                 alt={primaryRune.name}
-                size={RUNE_ICON_BOX_SIZE}
-                childrenSize={PRIMARY_RUNE_ICON_SIZE}
-                onMouseEnter={() => setHoveredRune(primaryRune)}
-                onMouseLeave={() => setHoveredRune(null)}
-            >
-                {hoveredRune === primaryRune && (
-                    <TooltipBubble className="w-60">
+                size={boxSize}
+                childrenSize={keyStoneIconSize}
+                tooltip={
+                    <>
                         <div className="font-bold text-blue-400">{primaryRune.name}</div>
                         <div className="text-xs text-gray-300 mt-1">
                             {cleanItemDescription(primaryRune.shortDesc)}
                         </div>
-                    </TooltipBubble>
-                )}
-            </IconBox>
+                    </>
+                }
+                tooltipClassName="w-60"
+            />
 
 
             {/* Secondary Rune Tree Icon */}
             <IconBox
                 src={secondaryIconUrl || ""}
                 alt={secondaryRune.runeTree || "Rune Tree"}
-                size={RUNE_ICON_BOX_SIZE}
-                childrenSize={SECONDARY_RUNE_ICON_SIZE}
-                onMouseEnter={() => setHoveredRune(secondaryRune)}
-                onMouseLeave={() => setHoveredRune(null)}
-            >
-                {hoveredRune === secondaryRune && secondaryRune.runeTree && (
-                    <TooltipBubble className="w-48">
+                size={boxSize}
+                childrenSize={secendaryRuneIconSize}
+                tooltip={
+                    secondaryRune.runeTree ? (
                         <div className="font-bold text-blue-400">{secondaryRune.runeTree}</div>
-                    </TooltipBubble>
-                )}
-            </IconBox>
+                    ) : undefined
+                }
+                tooltipClassName="w-48"
+            />
         </div>
     );
 }

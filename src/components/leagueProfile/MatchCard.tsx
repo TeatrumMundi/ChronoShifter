@@ -118,6 +118,8 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                                     <SummonerSpellDisplay
                                                         summonerSpell1={participant.summonerSpell1}
                                                         summonerSpell2={participant.summonerSpell2}
+                                                        summonerspellIconsSize={28}
+                                                        boxSize={32}
                                                     />
                                                 </div>
                                             )}
@@ -125,7 +127,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                             {/* Runes */}
                                             {participant.runes?.length > 0 && (
                                                 <div className="flex-shrink-0 w-[32px] min-w-[32px]">
-                                                    <RuneDisplay runes={participant.runes} />
+                                                    <RuneDisplay boxSize={32} keyStoneIconSize={30} secendaryRuneIconSize={20} runes={participant.runes} />
                                                 </div>
                                             )}
 
@@ -133,14 +135,12 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                                         {/* Items and Augments */}
                                         <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center">
-                                            <ItemDisplay items={participant.items} />
-                                            {gameMode === "Arena" &&
-                                                participant.arenaStats &&
-                                                participant.arenaStats.augments.length > 0 && (
-                                                    <div className="w-full 2xl:w-auto">
-                                                        <AugmentDisplay augments={participant.arenaStats.augments} />
-                                                    </div>
-                                                )}
+                                            <ItemDisplay itemSize={32} items={participant.items} />
+                                            {gameMode === "Arena" && participant.arenaStats && participant.arenaStats.augments.length > 0 && (
+                                                <div className="w-full 2xl:w-auto">
+                                                    <AugmentDisplay itemSize={32} augments={participant.arenaStats.augments} />
+                                                </div>
+                                            )}
                                         </div>
 
                                     </div>

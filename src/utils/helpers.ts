@@ -228,3 +228,13 @@ export function calculatePerformanceScore(participant: Participant): number {
 
     return Math.max(0, Math.min(100, Math.round(score)));
 }
+
+// Helper function to clean and format the item description.
+// It replaces <br> and <li> tags with newlines, then removes remaining tags.
+export const cleanItemDescription = (text: string): string => {
+    return text
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<li>/gi, "\n")
+        .replace(/<\/?[^>]+(>|$)/g, "")
+        .trim();
+};
