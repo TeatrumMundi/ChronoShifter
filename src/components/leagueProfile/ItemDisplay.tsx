@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React from "react";
 import { BoxPlaceHolder } from "@/components/common";
 import { Item } from "@/interfaces/productionTypes";
 import { getItemIcon } from "@/utils/getLeagueAssets/getLOLAssets";
@@ -10,13 +10,16 @@ import { cleanItemDescription } from "@/utils/helpers";
 interface ItemDisplayProps {
     items: (Item | null)[];
     itemSize: number;
+    smMinWidth?: number;
+    trinketMaxWidth?: number;
 }
 
-export function ItemDisplay({items, itemSize = 32}: ItemDisplayProps) {
+export function ItemDisplay({items, itemSize = 32, smMinWidth = 150, trinketMaxWidth = 32}: ItemDisplayProps) {
     return (
-        <div className="w-full sm:w-auto">
+        <div className="sm:w-auto">
             <div
-                className="grid grid-cols-3 sm:grid-cols-4 grid-rows-2 gap-y-2 items-center sm:min-w-[150px]"
+                className="grid grid-cols-3 sm:grid-cols-4 grid-rows-2 gap-y-2 items-center"
+                style={{ minWidth: smMinWidth }}
             >
                 {[0, 1, 2].map((idx) =>
                     items[idx] && items[idx]!.id !== 0 ? (
@@ -29,7 +32,10 @@ export function ItemDisplay({items, itemSize = 32}: ItemDisplayProps) {
                         <BoxPlaceHolder size={itemSize} key={`ph-${idx}`} />
                     )
                 )}
-                <div className="hidden sm:flex row-span-2 items-center justify-center max-w-[32px]">
+                <div
+                    className="hidden sm:flex row-span-2 items-center justify-center"
+                    style={{ maxWidth: trinketMaxWidth }}
+                >
                     {items[6] && items[6]!.id !== 0 ? (
                         <ItemSlot
                             item={items[6]!}

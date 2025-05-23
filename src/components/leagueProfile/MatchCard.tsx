@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { Participant, RecentMatch } from "@/interfaces/productionTypes";
-import { calculatePerformanceScore, formatRole, getOrdinalPlacement, queueIdToGameMode, secToHHMMSS, timeAgo } from "@/utils/helpers";
+import { formatRole, getOrdinalPlacement, queueIdToGameMode, secToHHMMSS, timeAgo } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
 import { ChampionIcon } from "./ChampionIcon";
@@ -11,6 +11,7 @@ import { AugmentDisplay } from "./AugmentDisplay";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
+import { MatchDetails } from "./matchDeatils/MatchDetails";
 
 interface MatchCardProps {
     participant: Participant;
@@ -20,7 +21,6 @@ interface MatchCardProps {
 
 export function MatchCard({ participant, match, region: region }: MatchCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<"game" | "performance" | "build" | "stats">("game");
 
     const gameMode: string = queueIdToGameMode[match.matchDetails.queueId] || "Unknown";
     const isArena: boolean = gameMode === "Arena";
@@ -167,116 +167,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                 {/* Match details - expandable box */}
                 {isDetailsOpen && (
-                    <div
-                        className="w-full bg-gray-900/95 rounded-b-sm p-4 border-t border-gray-700 animate-fade-in transition-all duration-300"
-                    >
-                        {/* Top row with 4 buttons */}
-                        <div className="flex flex-row gap-3 mb-4">
-                            <button
-                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
-                                    activeTab === "game"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
-                                }`}
-                                onClick={() => setActiveTab("game")}
-                            >
-                                Game
-                            </button>
-                            <button
-                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
-                                    activeTab === "performance"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
-                                }`}
-                                onClick={() => setActiveTab("performance")}
-                            >
-                                Performance
-                            </button>
-                            <button
-                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
-                                    activeTab === "build"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
-                                }`}
-                                onClick={() => setActiveTab("build")}
-                            >
-                                Build
-                            </button>
-                            <button
-                                className={`flex-1 px-4 py-1 rounded-xs font-semibold transition ${
-                                    activeTab === "stats"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
-                                }`}
-                                onClick={() => setActiveTab("stats")}
-                            >
-                                Stats
-                            </button>
-                        </div>
-                        <div className="text-white">
-                            <strong>Match details:</strong>
-                            <div>
-                                {activeTab === "game" && (
-                                    <div className="overflow-x-auto mt-2">
-                                        <table className="min-w-full border border-gray-700 text-xs sm:text-sm">
-                                            <thead>
-                                                <tr className="bg-blue-900/80 text-blue-200">
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-left">Player</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">Carry</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">KDA</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">Damage</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">Gold</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">CS</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">Wards</th>
-                                                    <th className="px-2 py-1 border-b border-gray-700 text-center">Items</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {[...Array(5)].map((_, i) => (
-                                                    <tr key={i} className="bg-gray-900/70">
-                                                        <td className="px-2 py-1 border-b border-gray-800">{match.matchDetails.participants[i].riotIdGameName}</td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {calculatePerformanceScore(match.matchDetails.participants[i])}
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {match.matchDetails.participants[i].kills}/
-                                                            {match.matchDetails.participants[i].deaths}/
-                                                            {match.matchDetails.participants[i].assists}
-                                                            {" "}({match.matchDetails.participants[i].kda})
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {match.matchDetails.participants[i].totalDamageDealtToChampions}
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {match.matchDetails.participants[i].goldEarned}
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {match.matchDetails.participants[i].totalMinionsKilled +
-                                                                match.matchDetails.participants[i].neutralMinionsKilled}
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            {match.matchDetails.participants[i].wardsPlaced}
-                                                        </td>
-                                                        <td className="px-2 py-1 border-b border-gray-800 text-center">
-                                                            <div className="flex justify-center w-[40px] mx-auto">
-                                                                <ItemDisplay 
-                                                                    items={match.matchDetails.participants[i].items}
-                                                                    itemSize={20}
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
-                                {activeTab === "performance" && "Performance tab content goes here."}
-                                {activeTab === "build" && "Build tab content goes here."}
-                                {activeTab === "stats" && "Stats tab content goes here."}
-                            </div>
-                        </div>
-                    </div>
+                    <MatchDetails match={match} mainPlayerPUUID={participant.puuid}/>
                 )}
             </div>
         </>
