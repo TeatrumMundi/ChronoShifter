@@ -28,9 +28,7 @@ export function ItemDisplay({items, itemSize = 32, smMinWidth = 150, trinketMaxW
                             item={items[idx]!}
                             itemSize={itemSize}
                         />
-                    ) : (
-                        <BoxPlaceHolder size={itemSize} key={`ph-${idx}`} />
-                    )
+                    ) : (<BoxPlaceHolder size={itemSize} key={`ph-${idx}`} />)
                 )}
                 <div
                     className="hidden sm:flex row-span-2 items-center justify-center"
@@ -41,9 +39,7 @@ export function ItemDisplay({items, itemSize = 32, smMinWidth = 150, trinketMaxW
                             item={items[6]!}
                             itemSize={itemSize}
                         />
-                    ) : (
-                        <BoxPlaceHolder size={itemSize} />
-                    )}
+                    ) : (<BoxPlaceHolder size={itemSize} />)}
                 </div>
                 {[3, 4, 5].map((idx) =>
                     items[idx] && items[idx]!.id !== 0 ? (
@@ -52,9 +48,7 @@ export function ItemDisplay({items, itemSize = 32, smMinWidth = 150, trinketMaxW
                             item={items[idx]!}
                             itemSize={itemSize}
                         />
-                    ) : (
-                        <BoxPlaceHolder size={itemSize} key={`ph-${idx}`} />
-                    )
+                    ) : (<BoxPlaceHolder size={itemSize} key={`ph-${idx}`} />)
                 )}
             </div>
         </div>
