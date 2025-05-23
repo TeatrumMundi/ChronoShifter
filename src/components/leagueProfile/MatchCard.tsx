@@ -105,12 +105,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                                         {/* Champion Icon + Runes + SummonerSpells */}
                                         <div className="flex items-center justify-center gap-1">
-                                            <div className="relative w-[72px] h-[72px]">
-                                                <ChampionIcon champion={participant.champion} size={72} />
-                                                <div className="absolute bottom-0 rounded-tr-sm rounded-bl-sm left-0 bg-black/50 text-white text-xs px-1">
-                                                    {participant.champLevel}
-                                                </div>
-                                            </div>
+                                            <ChampionIcon champion={participant.champion} size={72} level={participant.champLevel}/>
 
                                             {/* Summoner Spells */}
                                             {(participant.summonerSpell1.id !== 0 || participant.summonerSpell2.id !== 0) && (
@@ -167,7 +162,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                 {/* Match details - expandable box */}
                 {isDetailsOpen && (
-                    <MatchDetails match={match} mainPlayerPUUID={participant.puuid}/>
+                    <MatchDetails match={match} mainPlayerPUUID={participant.puuid} region={region}/>
                 )}
             </div>
         </>
