@@ -68,7 +68,9 @@ export function IconBox({
             />
             {children}
             {showTooltip && hovered && tooltip && (
-                <TooltipBubble className={tooltipClassName}>{tooltip}</TooltipBubble>
+                <TooltipBubble className={tooltipClassName} iconBoxSize={size}>
+                    {tooltip}
+                </TooltipBubble>
             )}
         </div>
     );
