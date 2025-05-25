@@ -135,6 +135,7 @@ function RankIcon({ url, title }: { url: string; title: string }) {
             loading="eager"
             sizes="110px"
             priority
+            className="hidden xs:block"
         />
     );
 }

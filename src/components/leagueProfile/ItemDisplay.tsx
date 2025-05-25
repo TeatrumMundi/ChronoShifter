@@ -14,11 +14,11 @@ interface ItemDisplayProps {
     trinketMaxWidth?: number;
 }
 
-export function ItemDisplay({items, itemSize = 32, smMinWidth = 150, trinketMaxWidth = 32}: ItemDisplayProps) {
+export function ItemDisplay({items, itemSize = 32, smMinWidth, trinketMaxWidth = 32}: ItemDisplayProps) {
     return (
         <div className="sm:w-auto">
             <div
-                className="grid grid-cols-3 sm:grid-cols-4 grid-rows-2 gap-y-2 items-center"
+                className="grid grid-cols-3 sm:grid-cols-4 grid-rows-2 gap-y-2 items-center gap-1 min-w-[100px] md:min-w-[150px]"
                 style={{ minWidth: smMinWidth }}
             >
                 {[0, 1, 2].map((idx) =>

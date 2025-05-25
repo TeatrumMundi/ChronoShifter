@@ -17,9 +17,9 @@ export function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsPro
     return (
         <div className="w-full bg-gray-900/95 animate-fade-in transition-all duration-300 rounded-b-sm">
             {/* Top row with 4 buttons */}
-            <div className="flex flex-row gap-3 m-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 m-4">
                 <button
-                    className={`flex-1 px-4 py-2 rounded-xs font-semibold transition ${
+                    className={`w-full px-4 py-2 rounded-xs font-semibold transition ${
                         activeTab === "game"
                             ? "bg-blue-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
@@ -29,7 +29,7 @@ export function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsPro
                     Game
                 </button>
                 <button
-                    className={`flex-1 px-4 py-2 rounded-xs font-semibold transition ${
+                    className={`w-full px-4 py-2 rounded-xs font-semibold transition ${
                         activeTab === "performance"
                             ? "bg-blue-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
@@ -39,7 +39,7 @@ export function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsPro
                     Performance
                 </button>
                 <button
-                    className={`flex-1 px-4 py-2 rounded-xs font-semibold transition ${
+                    className={`w-full px-4 py-2 rounded-xs font-semibold transition ${
                         activeTab === "build"
                             ? "bg-blue-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
@@ -49,7 +49,7 @@ export function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsPro
                     Build
                 </button>
                 <button
-                    className={`flex-1 px-4 py-2 rounded-xs font-semibold transition ${
+                    className={`w-full px-4 py-2 rounded-xs font-semibold transition ${
                         activeTab === "stats"
                             ? "bg-blue-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
