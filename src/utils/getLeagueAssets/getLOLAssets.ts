@@ -83,3 +83,32 @@ export function getSummonerSpellIcon(summonerSpell : SummonerSpell): string {
 
     return "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/data/spells/icons2d/" + fileName;
 }
+
+/**
+ * Returns the full URL to the summoner icon from Community Dragon.
+ * Falls back to a default icon if the specific icon is not available.
+ * @param profileIconId The profile icon ID from summoner data.
+ * @returns A fully qualified image URL with fallback support.
+ */
+export function getSummonerIconUrl(profileIconId: number): string {
+    // Validate input
+    if (!profileIconId || profileIconId <= 0) {
+        return "/summonerIcons/default.jpg";
+    }
+
+    const cdnUrl = `${CDN_BASE}/profile-icons/${profileIconId}.jpg`;
+    const localFallback = `/summonerIcons/${profileIconId}.jpg`;
+    const defaultIcon = "/summonerIcons/default.jpg";
+
+    // Known problematic icon IDs that should use local/default directly
+    const problematicIcons = new Set([
+        0, -1 // Add any known broken icon IDs here
+    ]);
+
+    if (problematicIcons.has(profileIconId)) {
+        return defaultIcon;
+    }
+
+    // Return CDN URL with multiple fallbacks
+    return `${cdnUrl}#${localFallback}#${defaultIcon}`;
+}

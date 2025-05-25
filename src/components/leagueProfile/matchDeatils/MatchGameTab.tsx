@@ -191,7 +191,7 @@ export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGam
                             />
                         ))}
                         <tr>
-                            <th colSpan={8} className={`px-2 py-1 border-b border-gray-700 text-left ${team2[0].win ? "bg-green-900/80 text-green-200" : "bg-red-900/80 text-red-200"}`}>
+                            <th colSpan={8} className={`px-2 py-1 text-left ${team2[0].win ? "bg-green-900/80 text-green-200" : "bg-red-900/80 text-red-200"}`}>
                                 {team2[0].win
                                     ? <span className="text-green-400 font-bold">Victory</span>
                                     : <span className="text-red-400 font-bold">Defeat</span>

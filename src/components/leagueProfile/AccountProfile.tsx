@@ -4,6 +4,7 @@ import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { MatchHistory } from "./MatchHistory";
+import { getSummonerIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
 
 interface AccountProfileProps {
     riotAccount: RiotAccount;
@@ -16,8 +17,6 @@ export default function AccountProfile({ riotAccount }: AccountProfileProps) {
     const getRankedIconUrl = (tier: string) =>
         `/rankedIcons/${tier.toLowerCase()}.webp`;
 
-    const summonerIconUrl = `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/${leagueAccountsDetails.profileIconId}.jpg`;
-
     return (
         <>
             <motion.div
@@ -28,7 +27,7 @@ export default function AccountProfile({ riotAccount }: AccountProfileProps) {
                 transition={{ duration: 0.4 }}
             >
                 <div className="relative z-10 p-6 mb-5 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6 rounded-sm">
-                    <SummonerIcon url={summonerIconUrl} level={leagueAccountsDetails.summonerLevel.toString()} />
+                    <SummonerIcon prfileIconID={leagueAccountsDetails.profileIconId} level={leagueAccountsDetails.summonerLevel.toString()} />
 
                     <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                         <div className="text-center lg:text-left">
@@ -102,12 +101,12 @@ function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
     );
 }
 
-function SummonerIcon({ url, level }: { url: string; level: string }) {
+function SummonerIcon({ prfileIconID, level }: { prfileIconID: number; level: string }) {
     return (
         <div className="relative flex-shrink-0">
             <div className="relative h-24 w-24">
                 <Image
-                    src={url}
+                    src={getSummonerIconUrl(prfileIconID)}
                     alt="Summoner Icon"
                     fill
                     className="rounded-sm border border-gray-500 object-cover"
@@ -115,6 +114,10 @@ function SummonerIcon({ url, level }: { url: string; level: string }) {
                     quality={50}
                     loading="eager"
                     priority
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/summonerIcons/default.jpg';
+                    }}
                 />
             </div>
             <div className="absolute bottom-0 w-full bg-black/70 rounded-b-sm px-2 py-0.25 text-xs text-white text-center tracking-widest">
@@ -135,7 +138,7 @@ function RankIcon({ url, title }: { url: string; title: string }) {
             loading="eager"
             sizes="110px"
             priority
-            className="hidden xs:block"
+            className="hidden sm:block"
         />
     );
 }
