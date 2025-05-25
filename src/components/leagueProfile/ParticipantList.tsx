@@ -61,8 +61,8 @@ function StandardParticipantList({participants, region,}: { participants: Partic
     }, [participants]);
 
     return (
-        <div className="h-full w-full text-xs text-gray-400 tracking-normal">
-            <div className="grid grid-rows-5 gap-1 h-full">
+        <div className="h-full w-full text-xs text-gray-400">
+            <div className="grid grid-rows-5 gap-0.5 h-full">
                 {Array.from({ length: 5 }).map((_, i) => {
                     const leftPlayer = teams.leftTeam[i];
                     const rightPlayer = teams.rightTeam[i];

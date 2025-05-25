@@ -4,6 +4,7 @@ import { debounce } from "lodash";
 
 // Lazy load heavy components
 const MatchGameTab = lazy(() => import("./MatchGameTab").then(m => ({ default: m.MatchGameTab })));
+const MatchPerformanceTab = lazy(() => import("./MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 
 interface MatchDetailsProps {
     match: RecentMatch;
@@ -39,6 +40,12 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             case "performance":
                 return (
                     <Suspense fallback={<LoadingSpinner />}>
+                        <MatchPerformanceTab
+                            team1={team1}
+                            team2={team2}
+                            mainPlayerPUUID={mainPlayerPUUID}
+                            region={region}
+                        />
                     </Suspense>
                 );
             case "build":

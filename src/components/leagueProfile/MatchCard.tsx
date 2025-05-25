@@ -8,7 +8,7 @@ import { ChampionIcon } from "./ChampionIcon";
 import { ParticipantList } from "./ParticipantList";
 import { RuneDisplay } from "./RuneDisplay";
 import { AugmentDisplay } from "./AugmentDisplay";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
 import { MatchDetails } from "./matchDeatils/MatchDetails";
@@ -54,17 +54,18 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                             ${participant.win ? "bg-green-800 hover:bg-green-800/50" : "bg-red-800 hover:bg-red-800/50"}`}
                             onClick={() => setIsDetailsOpen((prev) => !prev)}
                         >
-                            {isDetailsOpen ? (
-                                <ChevronUp size={20} className="text-white" />
-                            ) : (
-                                <ChevronDown size={20} className="text-white" />
-                            )}
+                            <ChevronDown 
+                                size={20} 
+                                className={`text-white transition-transform duration-300 ease-in-out ${
+                                    isDetailsOpen ? "rotate-180" : "rotate-0"
+                                }`} 
+                            />
                         </button>
                     </div>
 
                     {/* Main Card */}
                     <div
-                        className={`p-5 pl-[34px] shadow-lg font-sans ${bgColor} flex-1 overflow-visible rounded-sm 
+                        className={`p-3 pl-[34px] shadow-lg font-sans ${bgColor} flex-1 overflow-visible rounded-sm 
                             ${isDetailsOpen ? "rounded-b-none" : ""}`}
                     >
                         <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -73,7 +74,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 border-b sm:border-b-0 sm:border-r border-gray-500/50
                                 pb-2 sm:pb-0 sm:pr-2
                                 w-full sm:w-auto sm:flex-none sm:basis-[120px] sm:min-w-[100px] sm:max-w-[140px]
-                                space-y-1"
+                                "
                             >
                                 {/* Game Mode */}
                                 <div className="whitespace-normal text-sm sm:text-lg font-semibold text-gray-100">

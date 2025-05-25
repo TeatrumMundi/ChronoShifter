@@ -1,13 +1,11 @@
 "use client";
 
 import { Participant } from "@/interfaces/productionTypes";
-import { Swords, Eye, Coins, Flame, BarChart3, Cross, ShieldPlus, RadioTower } from "lucide-react";
 import { useState, useEffect, JSX } from "react";
 
 type StatItem = {
     label: string;
     value: string | JSX.Element;
-    icon: JSX.Element;
     tooltip?: string;
     className?: string;
 } | null;
@@ -37,17 +35,15 @@ export function MatchStats({ participant, gameMode }: {
                         {participant.kills}/
                         <span className="text-red-500">{participant.deaths}</span>/
                         {participant.assists}
-                        <span className={`ml-1 ${kdaColor}`}>({participant.kda})</span>
+                        <span className={`ml-1 ${kdaColor} tr`}>({participant.kda})</span>
                     </>
                 ),
                 tooltip: "Kills / Deaths / Assists (KDA)",
-                icon: <Swords className="w-4 h-4" />,
             },
             {
                 label: "Gold",
                 value: formatNumber(participant.goldEarned),
                 tooltip: "Gold earned in the match",
-                icon: <Coins className="w-4 h-4" />,
             },
         ];
 
@@ -57,19 +53,16 @@ export function MatchStats({ participant, gameMode }: {
                     label: "Healed",
                     value: formatNumber(participant.totalHealsOnTeammates),
                     tooltip: "Total heals on teammates",
-                    icon: <Cross className="w-4 h-4" />,
                 },
                 {
                     label: "Shielded",
                     value: formatNumber(participant.totalDamageShieldedOnTeammates),
                     tooltip: "Total shields on teammates",
-                    icon: <ShieldPlus className="w-4 h-4" />,
                 },
                 {
                     label: "Damage",
                     value: formatNumber(participant.totalDamageDealtToChampions),
                     tooltip: "Total damage dealt",
-                    icon: <Flame className="w-4 h-4" />,
                 }
             );
         } else if (isSupport) {
@@ -78,13 +71,11 @@ export function MatchStats({ participant, gameMode }: {
                     label: "Healed",
                     value: formatNumber(participant.totalHealsOnTeammates),
                     tooltip: "Total heals on teammates",
-                    icon: <Cross className="w-4 h-4" />,
                 },
                 {
                     label: "Shielded",
                     value: formatNumber(participant.totalDamageShieldedOnTeammates),
                     tooltip: "Total shields on teammates",
-                    icon: <ShieldPlus className="w-4 h-4" />,
                 }
             );
         } else {
@@ -93,13 +84,11 @@ export function MatchStats({ participant, gameMode }: {
                     label: "Damage",
                     value: formatNumber(participant.totalDamageDealtToChampions),
                     tooltip: "Total damage dealt",
-                    icon: <Flame className="w-4 h-4" />,
                 },
                 {
                     label: "Minions",
                     value: `${participant.allMinionsKilled} (${Number(participant.minionsPerMinute).toFixed(1)})`,
                     tooltip: "Minions killed (and per minute)",
-                    icon: <BarChart3 className="w-4 h-4" />,
                     className: participant.minionsPerMinute >= 8 ? "text-green-500 font-semibold" : "",
                 }
             );
@@ -111,14 +100,12 @@ export function MatchStats({ participant, gameMode }: {
                     label: "Vision",
                     value: `${participant.visionScore.toString()}  (${participant.visionPerMinute})`,
                     tooltip: "Vision Score",
-                    icon: <Eye className="w-4 h-4" />,
                     className: participant.visionPerMinute >= 2 ? "text-green-500 font-semibold" : "",
                 },
                 {
                     label: "Wards",
                     value: participant.wardsPlaced.toString(),
                     tooltip: "Wards Placed",
-                    icon: <RadioTower className="w-4 h-4" />,
                 }
             );
         }
@@ -145,19 +132,14 @@ export function MatchStats({ participant, gameMode }: {
                             key={stat.label}
                             title={stat.tooltip}
                             className={`
-                            flex flex-col items-center justify-center 
+                            flex items-center justify-center 
                             w-full h-full
                             px-2 py-1 rounded-sm 
                             bg-zinc-900/80 border border-zinc-700 
-                            hover:border-blue-400 transition-all shadow-sm
+                            gap-2
                         `}
                         >
-                            <div className="flex items-center justify-center mb-1">
-                                <span className="inline-flex items-center justify-center rounded-sm bg-zinc-800 border border-zinc-700 w-7 h-7 mr-1">
-                                    {stat.icon}
-                                </span>
-                                <span className="text-xs text-zinc-400 font-semibold">{stat.label}</span>
-                            </div>
+                            <span className="text-xs text-zinc-400 font-semibold">{stat.label}</span>
                             <span className={`text-sm font-bold text-zinc-100 ${stat.className ?? ""}`}>
                                 {stat.value}
                             </span>

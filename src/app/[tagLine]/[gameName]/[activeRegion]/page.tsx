@@ -34,13 +34,12 @@ export default async function Home({params}:
     );
 }
 
-export async function generateMetadata({ params }: 
-{ params: 
-  Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) {
-  const { tagLine, gameName, activeRegion } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
+{
+    const { tagLine, gameName, activeRegion } = await params;
 
-  return {
-    title: `ChronoShifter - ${gameName}#${tagLine.toUpperCase()} - ${activeRegion}`,
-    description: `Riot account data for ${gameName}#${tagLine} in ${activeRegion}`,
-  };
+    return {
+      title: `ChronoShifter - ${gameName}#${tagLine.toUpperCase()} - ${activeRegion}`,
+      description: `Riot account data for ${gameName}#${tagLine} in ${activeRegion}`,
+    };
 }
