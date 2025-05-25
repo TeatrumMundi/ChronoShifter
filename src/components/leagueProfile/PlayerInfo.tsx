@@ -3,14 +3,13 @@
 import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { MatchHistory } from "./MatchHistory";
 import { getSummonerIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
 
-interface AccountProfileProps {
+interface PlayerInfoProps {
     riotAccount: RiotAccount;
 }
 
-export default function AccountProfile({ riotAccount }: AccountProfileProps) {
+export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
     const { leagueAccountsDetails, leagueSoloRank, leagueFlexRank } = riotAccount.leagueAccount;
     const { gameName, tagLine } = riotAccount.riotAccountDetails;
 
@@ -18,51 +17,43 @@ export default function AccountProfile({ riotAccount }: AccountProfileProps) {
         `/rankedIcons/${tier.toLowerCase()}.webp`;
 
     return (
-        <>
-            <motion.div
-                className="relative w-full"
-                style={{ fontFamily: "var(--font-verminVibes)" }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-            >
-                <div className="relative z-10 p-6 mb-5 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6 rounded-sm">
-                    <SummonerIcon prfileIconID={leagueAccountsDetails.profileIconId} level={leagueAccountsDetails.summonerLevel.toString()} />
+        <motion.div
+            className="relative w-full"
+            style={{ fontFamily: "var(--font-verminVibes)" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+        >
+            <div className="relative z-10 p-6 mb-5 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6 rounded-sm">
+                <SummonerIcon prfileIconID={leagueAccountsDetails.profileIconId} level={leagueAccountsDetails.summonerLevel.toString()} />
 
-                    <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="text-center lg:text-left">
-                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-widest leading-tight">
-                                {gameName}
-                            </h2>
-                            <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 justify-center lg:justify-start">
-                                <h3 className="text-lg md:text-xl text-white/90 tracking-widest">
-                                    #{tagLine}
-                                </h3>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col md:flex-row gap-6 items-center tracking-widest">
-                            <RankSection
-                                title="Solo Queue"
-                                ranked={leagueSoloRank}
-                                iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
-                            />
-                            <RankSection
-                                title="Flex Queue"
-                                ranked={leagueFlexRank}
-                                iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
-                            />
+                <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div className="text-center lg:text-left">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-widest leading-tight">
+                            {gameName}
+                        </h2>
+                        <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 justify-center lg:justify-start">
+                            <h3 className="text-lg md:text-xl text-white/90 tracking-widest">
+                                #{tagLine}
+                            </h3>
                         </div>
                     </div>
-                </div>
-            </motion.div>
 
-            <div className="relative">
-                <MatchHistory
-                    riotAccount={riotAccount}
-                />
+                    <div className="flex flex-col md:flex-row gap-6 items-center tracking-widest">
+                        <RankSection
+                            title="Solo Queue"
+                            ranked={leagueSoloRank}
+                            iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
+                        />
+                        <RankSection
+                            title="Flex Queue"
+                            ranked={leagueFlexRank}
+                            iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
+                        />
+                    </div>
+                </div>
             </div>
-        </>
+        </motion.div>
     );
 }
 

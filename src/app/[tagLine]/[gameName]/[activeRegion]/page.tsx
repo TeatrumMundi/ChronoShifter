@@ -1,6 +1,7 @@
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
 import { RiotAccount } from "@/interfaces/productionTypes";
-import AccountProfile from "@/components/leagueProfile/AccountProfile";
+import PlayerInfo from "@/components/leagueProfile/PlayerInfo";
+import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
 
@@ -22,7 +23,10 @@ export default async function Home({params}:
             <div className="container mx-auto px-4 relative z-10">
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-12 mt-10">
-                        <AccountProfile riotAccount={riotAccount} />
+                        <PlayerInfo riotAccount={riotAccount} />
+                    </div>
+                    <div className="col-span-12">
+                        <MatchHistory riotAccount={riotAccount} />
                     </div>
                 </div>
             </div>
