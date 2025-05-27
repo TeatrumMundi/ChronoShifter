@@ -77,8 +77,8 @@ export async function getRuneById(id: number): Promise<Rune | null> {
             ...match,
             runeTree
         };
-    } catch (err) {
-        console.error("Failed to load rune:", err);
+    } catch (fileReadError) {
+        console.error("Failed to load rune:", fileReadError);
         return null;
     }
 }

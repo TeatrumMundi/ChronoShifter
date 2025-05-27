@@ -1,6 +1,7 @@
 import { useState, useMemo, memo, lazy, Suspense } from "react";
 import { RecentMatch } from "@/interfaces/productionTypes";
 import { debounce } from "lodash";
+import { MatchBuildTab } from "./MatchBuildTab";
 
 // Lazy load heavy components
 const MatchGameTab = lazy(() => import("./MatchGameTab").then(m => ({ default: m.MatchGameTab })));
@@ -20,6 +21,11 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
         team1: match.matchDetails.participants.slice(0, 5),
         team2: match.matchDetails.participants.slice(5, 10)
     }), [match.matchDetails.participants]);
+
+    const mainPlayer = useMemo(() =>
+        match.matchDetails.participants.find(p => p.puuid === mainPlayerPUUID),
+        [match.matchDetails.participants, mainPlayerPUUID]
+    );
 
     // Memoize tab content to prevent unnecessary re-renders
     const tabContent = useMemo(() => {
@@ -51,6 +57,11 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             case "build":
                 return (
                     <Suspense fallback={<LoadingSpinner />}>
+                        {mainPlayer ? (
+                            <MatchBuildTab mainPlayer={mainPlayer} />
+                        ) : (
+                            <div className="p-4 text-center text-red-400">Main player not found.</div>
+                        )}
                     </Suspense>
                 );
             case "stats":
@@ -61,7 +72,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region]);
+    }, [activeTab, team1, team2, mainPlayerPUUID, region, mainPlayer]);
 
     // Debounce tab changes if users click rapidly
     const debouncedSetActiveTab = useMemo(

@@ -301,9 +301,6 @@ export async function createRiotAccount(tagLine: string, gameName: string, regio
 
     // Get the active region for the account
     const activeRegion: string = await getActiveRegionByPuuid(riotAccountDetails.puuid, region);
-    if (!activeRegion) {
-        throw new Error("Active region not found");
-    }
 
     const leagueAccount: LeagueAccount = await createLeagueAccount(riotAccountDetails.puuid, region, activeRegion);
 
