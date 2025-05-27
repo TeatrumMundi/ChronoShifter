@@ -17,7 +17,7 @@ export function getItemIcon(itemId: number): string {
 }
 
 export function getChampionIconUrl(champion: Champion): string {
-    return `https://ddragon.leagueoflegends.com/cdn/${GAME_VERSION}/img/champion/${champion.name}.png`;
+    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${champion.id}.png`;
 }
 
 /**
