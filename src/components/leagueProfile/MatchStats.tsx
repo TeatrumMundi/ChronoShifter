@@ -35,7 +35,7 @@ export function MatchStats({ participant, gameMode }: {
                         {participant.kills}/
                         <span className="text-red-500">{participant.deaths}</span>/
                         {participant.assists}
-                        <span className={`ml-1 ${kdaColor} tr`}>({participant.kda})</span>
+                        <span className={`ml-1 ${kdaColor}`}>({participant.kda})</span>
                     </>
                 ),
                 tooltip: "Kills / Deaths / Assists (KDA)",
@@ -121,9 +121,11 @@ export function MatchStats({ participant, gameMode }: {
             <div
                 className={`
                     grid 
-                    grid-cols-2 
+                    grid-cols-1
+                    xs:grid-cols-2
                     sm:grid-cols-3 
-                    gap-x-2 gap-y-2 
+                    gap-x-2
+                    sm:gap-y-2
             `}
             >
                 {formattedStats.map((stat) =>

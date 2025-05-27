@@ -44,7 +44,7 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
                     className="flex w-full relative shadow-md transition-shadow duration-200 backdrop-blur-sm"
                     style={{ fontFamily: "var(--font-verminVibes)" }}
                 >
-                <div className="flex-shrink-0 min-w-0 xs:w-24 sm:w-32">
+                <div className="flex-shrink-0 min-w-0 w-16 xs:w-24 sm:w-32">
                     <RegionSelector region={region} setRegion={setRegion} />
                 </div>
                 <div className="flex-1 flex flex-col relative min-w-0">
@@ -52,7 +52,7 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
                     type="text"
                     name="nickTag"
                     placeholder="NICKNAME#TAG"
-                    className="min-w-0 px-3 py-2 text-sm xs:text-base sm:text-lg md:text-xl 
+                    className="min-w-0 px-2 xs:px-3 py-2 text-xs xs:text-sm sm:text-lg md:text-xl 
                     bg-white/20 border-t border-b border-r border-white/30 
                     rounded-r-sm
                     focus:outline-none text-white placeholder-white/30 tracking-widest transition-all duration-200"
@@ -98,11 +98,11 @@ function RegionSelector({ region, setRegion }: { region: string, setRegion: (r: 
             {({ open }) => (
                 <div className="relative min-w-0">
                     <ListboxButton
-                        className={`xs:w-24 sm:w-32 px-3 py-2 text-sm xs:text-base sm:text-lg md:text-xl
+                        className={`w-full px-1 xs:px-3 py-2 text-xs xs:text-sm sm:text-lg md:text-xl
                             bg-white/20 border-t border-b border-l border-white/30 rounded-l-sm
                             focus:outline-none text-white tracking-widest
                             ${open ? "rounded-bl-none border-b-transparent" : ""}
-                            min-w-0 xs:truncate xs:overflow-hidden xs:text-ellipsis
+                            min-w-0 truncate overflow-hidden text-ellipsis
                         `}
                     >
                         {region}
@@ -111,9 +111,9 @@ function RegionSelector({ region, setRegion }: { region: string, setRegion: (r: 
                         className="absolute z-[9999] w-full left-0 bg-white/20 text-white rounded-b-sm
                         outline-none border-b border-l border-r border-white/30 tracking-widest min-w-0"
                     >
-                        <ListboxOption value="AMERICAS" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'AMERICAS'}</ListboxOption>
-                        <ListboxOption value="EUROPE" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'EUROPE'}</ListboxOption>
-                        <ListboxOption value="ASIA" className="cursor-pointer px-4 py-2 hover:bg-white/5 tracking-wide xs:truncate xs:overflow-hidden xs:text-ellipsis">{'ASIA'}</ListboxOption>
+                        <ListboxOption value="AMERICAS" className="cursor-pointer px-1 xs:px-3 py-2 hover:bg-white/5 tracking-wide text-xs xs:text-sm truncate overflow-hidden text-ellipsis">{'AMERICAS'}</ListboxOption>
+                        <ListboxOption value="EUROPE" className="cursor-pointer px-1 xs:px-3 py-2 hover:bg-white/5 tracking-wide text-xs xs:text-sm truncate overflow-hidden text-ellipsis">{'EUROPE'}</ListboxOption>
+                        <ListboxOption value="ASIA" className="cursor-pointer px-1 xs:px-3 py-2 hover:bg-white/5 tracking-wide text-xs xs:text-sm truncate overflow-hidden text-ellipsis">{'ASIA'}</ListboxOption>
                     </ListboxOptions>
                 </div>
             )}
