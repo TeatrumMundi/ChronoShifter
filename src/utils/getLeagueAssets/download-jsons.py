@@ -66,7 +66,7 @@ async def update_game_version(script_dir: Path) -> None:
             print("Warning: versions.json is empty or not an array")
             return
         
-        latest_version = versions[0]  # First version is the latest
+        latest_version = versions[0]  # type: ignore # First version is the latest
         print(f"Latest version found: {latest_version}")
         
         # Check if .env file exists
@@ -165,8 +165,8 @@ async def main() -> None:
         async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
             # Create tasks for all downloads
             tasks = [
-                download_file(session, key, url, script_dir)
-                for key, url in update_data.items()
+                download_file(session, key, url, script_dir) # type: ignore
+                for key, url in update_data.items() # type: ignore
                 if isinstance(url, str)  # Ensure URL is a string
             ]
             
