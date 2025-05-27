@@ -46,6 +46,65 @@ async def save_json(file_path: Path, data: Dict[str, Any]) -> None:
         await f.write(json.dumps(data, indent=2, ensure_ascii=False))
 
 
+async def update_game_version(script_dir: Path) -> None:
+    """
+    Update NEXT_PUBLIC_GAME_VERSION in .env file with the latest version.
+    
+    Args:
+        script_dir: Directory where the script is located
+    """
+    versions_path = script_dir / "versions.json"
+    env_path = script_dir / "../../../.env"
+    
+    try:
+        # Read versions.json
+        async with aiofiles.open(versions_path, 'r', encoding='utf-8') as f:
+            content = await f.read()
+            versions = json.loads(content)
+        
+        if not isinstance(versions, list) or not versions:
+            print("Warning: versions.json is empty or not an array")
+            return
+        
+        latest_version = versions[0]  # First version is the latest
+        print(f"Latest version found: {latest_version}")
+        
+        # Check if .env file exists
+        env_content = ""
+        try:
+            async with aiofiles.open(env_path, 'r', encoding='utf-8') as f:
+                env_content = await f.read()
+        except FileNotFoundError:
+            print("Creating new .env file...")
+        
+        # Update or add NEXT_PUBLIC_GAME_VERSION
+        lines = env_content.split('\n') if env_content else []
+        version_updated = False
+        
+        for i, line in enumerate(lines):
+            if line.startswith("NEXT_PUBLIC_GAME_VERSION="):
+                old_version = line.split("=", 1)[1] if "=" in line else ""
+                if old_version != latest_version:
+                    lines[i] = f"NEXT_PUBLIC_GAME_VERSION={latest_version}"
+                    print(f"✔ Updated NEXT_PUBLIC_GAME_VERSION from {old_version} to {latest_version}")
+                else:
+                    print(f"✔ NEXT_PUBLIC_GAME_VERSION is already up to date ({latest_version})")
+                version_updated = True
+                break
+        
+        # If NEXT_PUBLIC_GAME_VERSION was not found, add it
+        if not version_updated:
+            lines.append(f"NEXT_PUBLIC_GAME_VERSION={latest_version}")
+            print(f"✔ Added NEXT_PUBLIC_GAME_VERSION={latest_version} to .env")
+        
+        # Write back to .env file
+        async with aiofiles.open(env_path, 'w', encoding='utf-8') as f:
+            await f.write('\n'.join(lines))
+            
+    except Exception as e:
+        print(f"✖ Failed to update game version: {e}")
+
+
 async def download_file(session: aiohttp.ClientSession, key: str, url: str, script_dir: Path) -> None:
     """
     Download and save a single JSON file.
@@ -83,6 +142,9 @@ async def main() -> None:
         sys.exit(1)
     
     try:
+        # First, update the game version
+        await update_game_version(script_dir)
+        
         # Read and parse update.json
         async with aiofiles.open(update_path, 'r', encoding='utf-8') as f:
             content = await f.read()
