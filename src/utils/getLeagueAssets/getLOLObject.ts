@@ -1,22 +1,18 @@
-import path from "path";
-﻿import {promises as fs} from "fs";
 import { Augment, Champion, Item, Rune, SummonerSpell } from "@/interfaces/productionTypes";
-
-const getAssetPath = (file: string) =>
-    path.join(process.cwd(), "src", "utils", "getLeagueAssets",  file);
+import augmentsData from "./augments.json";
+import championsData from "./champions.json";
+import itemsData from "./items.json";
+import runesData from "./runes.json";
+import summonerSpellsData from "./summonerSpells.json";
 
 /**
  * Load an augment from local augments.json by its ID.
- * Returns the full Augment object if found.
+ * @param id - The augment ID to search for
+ * @returns Promise resolving to the Augment object if found, undefined otherwise
  */
 export async function getAugmentById(id: number): Promise<Augment | undefined> {
     try {
-        const filePath = getAssetPath("augments.json");
-
-        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
-        const parsed = JSON.parse(raw.replace(/^\uFEFF/, "")); // Remove BOM if present
-
-        return parsed.augments.find((augment: Augment) => augment.id === id);
+        return augmentsData.augments.find((augment: Augment) => augment.id === id);
     } catch (error) {
         console.error(`Failed to load augment ID ${id}:`, error);
         return undefined;
@@ -25,15 +21,12 @@ export async function getAugmentById(id: number): Promise<Augment | undefined> {
 
 /**
  * Loads and returns a Champion object from local champions.json by its ID.
+ * @param id - The champion ID to search for
+ * @returns Promise resolving to the Champion object if found, undefined otherwise
  */
 export async function getChampionById(id: number): Promise<Champion | undefined> {
     try {
-        const filePath : string = getAssetPath("champions.json")
-
-        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
-        const champions: Champion[] = JSON.parse(raw.replace(/^\uFEFF/, ""));
-
-        return champions.find((champion) => champion.id === id);
+        return championsData.find((champion: Champion) => champion.id === id);
     } catch (error) {
         console.error(`Failed to load champion ID ${id}:`, error);
         return undefined;
@@ -42,15 +35,12 @@ export async function getChampionById(id: number): Promise<Champion | undefined>
 
 /**
  * Loads and returns an Item object from local items.json by its ID.
+ * @param itemId - The item ID to search for
+ * @returns Promise resolving to the Item object if found, undefined otherwise
  */
 export async function getItemById(itemId: number): Promise<Item | undefined> {
     try {
-        const filePath = getAssetPath("items.json")
-
-        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
-        const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
-
-        return parsed.find((item: Item) => item.id === itemId);
+        return itemsData.find((item: Item) => item.id === itemId);
     } catch (error) {
         console.error(`Failed to load item ID ${itemId}:`, error);
         return undefined;
@@ -59,15 +49,13 @@ export async function getItemById(itemId: number): Promise<Item | undefined> {
 
 /**
  * Loads and returns a Rune object from local runes.json by its ID.
+ * Includes additional processing to extract and add the rune tree information.
+ * @param runeId - The rune ID to search for
+ * @returns Promise resolving to the enhanced Rune object if found, null otherwise
  */
-export async function getRuneById(id: number): Promise<Rune | null> {
-    const filePath = getAssetPath("runes.json");
-
+export async function getRuneById(runeId: number): Promise<Rune | null> {
     try {
-        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
-        const data: Rune[] = JSON.parse(raw.replace(/^\uFEFF/, ""));
-
-        const match = data.find((r) => r.id === id);
+        const match = runesData.find((r: Rune) => r.id === runeId);
         if (!match) return null;        
 
         const runeTreeMatch = match.iconPath.match(/Styles\/([^/]+)\//);
@@ -77,21 +65,21 @@ export async function getRuneById(id: number): Promise<Rune | null> {
             ...match,
             runeTree
         };
-    } catch (fileReadError) {
-        console.error("Failed to load rune:", fileReadError);
+    } catch (error) {
+        console.error("Failed to load rune:", error);
         return null;
     }
 }
 
-export async function getSummonerSpellByID(id: number): Promise<SummonerSpell> {
-    const filePath = getAssetPath("summonerSpells.json");
-
-    try 
-    {
-        const raw = await fs.readFile(filePath, { encoding: "utf-8" });
-        const parsed = JSON.parse(raw.replace(/^\uFEFF/, ""));
-
-        const found = parsed.find((spell: SummonerSpell) => spell.id === id);
+/**
+ * Loads and returns a SummonerSpell object from local summonerSpells.json by its ID.
+ * Returns a default empty spell object if the specified ID is not found.
+ * @param summonerSpellId - The summoner spell ID to search for
+ * @returns Promise resolving to the SummonerSpell object, or default empty object if not found
+ */
+export async function getSummonerSpellByID(summonerSpellId: number): Promise<SummonerSpell> {
+    try {
+        const found = summonerSpellsData.find((spell: SummonerSpell) => spell.id === summonerSpellId);
         if (found) return found;
 
         return {
@@ -103,10 +91,8 @@ export async function getSummonerSpellByID(id: number): Promise<SummonerSpell> {
             gameModes: [],
             iconPath: ""
         };
-    }
-    catch (error)
-    {
-        console.error(`Failed to load summoner spell ID ${id}:`, error);
+    } catch (error) {
+        console.error(`Failed to load summoner spell ID ${summonerSpellId}:`, error);
         return {
             id: 0,
             name: "",
