@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { Participant, RecentMatch } from "@/interfaces/productionTypes";
-import { formatRole, getOrdinalPlacement, queueIdToGameMode, secToHHMMSS, timeAgo } from "@/utils/helpers";
+import { formatRole, getOrdinalPlacement, secToHHMMSS, timeAgo } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
 import { ChampionIcon } from "./ChampionIcon";
@@ -12,6 +12,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
 import { MatchDetails } from "./matchDeatils/MatchDetails";
+import queuesData from "@/utils/getLeagueAssets/queues.json";
 
 interface MatchCardProps {
     participant: Participant;
@@ -19,10 +20,15 @@ interface MatchCardProps {
     region: string;
 }
 
+const getGameModeFromQueueId = (queueId: number): string => {
+    const queue = queuesData.find(q => q.id === queueId);
+    return queue?.shortName || "Unknown";
+};
+
 export function MatchCard({ participant, match, region: region }: MatchCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-    const gameMode: string = queueIdToGameMode[match.matchDetails.queueId] || "Unknown";
+    const gameMode: string = getGameModeFromQueueId(match.matchDetails.queueId);
     const isArena: boolean = gameMode === "Arena";
     const placement = participant.arenaStats?.placement;
 

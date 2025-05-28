@@ -49,22 +49,34 @@ export async function getItemById(itemId: number): Promise<Item | undefined> {
 
 /**
  * Loads and returns a Rune object from local runes.json by its ID.
- * Includes additional processing to extract and add the rune tree information.
  * @param runeId - The rune ID to search for
- * @returns Promise resolving to the enhanced Rune object if found, null otherwise
+ * @returns Promise resolving to the Rune object if found, null otherwise
  */
 export async function getRuneById(runeId: number): Promise<Rune | null> {
     try {
-        const match = runesData.find((r: Rune) => r.id === runeId);
-        if (!match) return null;        
-
-        const runeTreeMatch = match.iconPath.match(/Styles\/([^/]+)\//);
-        const runeTree = runeTreeMatch ? runeTreeMatch[1] : "Unknown";
-
-        return {
-            ...match,
-            runeTree
-        };
+        for (const runeTree of runesData) {
+            for (const slot of runeTree.slots) {
+                const foundRune = slot.runes.find(rune => rune.id === runeId);
+                if (foundRune) {
+                    return {
+                        id: foundRune.id,
+                        key: foundRune.key,
+                        icon: foundRune.icon,
+                        name: foundRune.name,
+                        shortDesc: foundRune.shortDesc,
+                        longDesc: foundRune.longDesc,
+                        runeTree: {
+                            id: runeTree.id,
+                            key: runeTree.key,
+                            icon: runeTree.icon,
+                            name: runeTree.name
+                        }
+                    };
+                }
+            }
+        }
+        
+        return null;
     } catch (error) {
         console.error("Failed to load rune:", error);
         return null;

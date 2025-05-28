@@ -17,33 +17,21 @@ export function getItemIcon(itemId: number): string {
 }
 
 export function getChampionIconUrl(champion: Champion): string {
-    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${champion.id}.png`;
+    return `${CDN_BASE}/champion-icons/${champion.id}.png`;
 }
 
 /**
  * Returns the full URL to the rune's own icon.
  */
 export function getRuneIconUrl(rune: Rune): string {
-    const normalizedPath = rune.iconPath
-        .replace("/lol-game-data/assets/v1", "")
-        .toLowerCase();
-
-    return `${CDN_BASE}${normalizedPath}`;
+    return `https://ddragon.leagueoflegends.com/cdn/img/${rune.icon}`;
 }
 
 /**
  * Returns the full URL to the rune tree icon (Domination, Precision, etc.)
  */
-export function getRuneTreeIconUrl(rune: Rune): string | null {
-    const treeMatch = rune.iconPath.match(/Styles\/([^/]+)\//i);
-    const runeTree = treeMatch?.[1];
-
-    if (!runeTree) return null;
-
-    const filename = runeTreeToImageMap[runeTree];
-    if (!filename) return null;
-
-    return `${CDN_BASE}/perk-images/styles/${filename}`;
+export function getRuneTreeIconUrl(rune: Rune): string {
+    return `https://ddragon.leagueoflegends.com/cdn/img/${rune.runeTree.icon}`;
 }
 
 

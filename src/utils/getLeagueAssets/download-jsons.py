@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 JSON Downloader Script
-Downloads JSON files from URLs specified in update.json
+Downloads JSON files from specified URLs with dynamic game version
 """
 
 import json
@@ -11,6 +11,56 @@ import aiofiles
 from pathlib import Path
 from typing import Dict, Any
 import sys
+
+async def get_game_version() -> str:
+    """
+    Get the current game version from .env file or return default.
+    
+    Returns:
+        Game version string
+    """
+    script_dir = Path(__file__).parent
+    env_path = script_dir / "../../../.env"
+    
+    try:
+        async with aiofiles.open(env_path, 'r', encoding='utf-8') as f:
+            content = await f.read()
+            
+        for line in content.split('\n'):
+            if line.startswith("NEXT_PUBLIC_GAME_VERSION="):
+                version = line.split("=", 1)[1].strip()
+                print(f"Using game version from .env: {version}")
+                return version
+                
+    except FileNotFoundError:
+        print("Warning: .env file not found")
+    except Exception as e:
+        print(f"Warning: Failed to read .env file: {e}")
+    
+    # Fallback to default version
+    default_version = "15.10.1"
+    print(f"Using default game version: {default_version}")
+    return default_version
+
+
+async def get_api_urls() -> Dict[str, str]:
+    """
+    Get API URLs with updated game version.
+    
+    Returns:
+        Dictionary of API URLs
+    """
+    game_version = await get_game_version()
+    
+    return {
+        "runes": f"https://ddragon.leagueoflegends.com/cdn/{game_version}/data/en_US/runesReforged.json",
+        "items": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/items.json",
+        "augments": "https://raw.communitydragon.org/latest/cdragon/arena/en_us.json",
+        "champions": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json",
+        "summonerSpells": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/summoner-spells.json",
+        "versions": "https://ddragon.leagueoflegends.com/api/versions.json",
+        "queues": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/queues.json",
+    }
 
 
 async def fetch_json(session: aiohttp.ClientSession, url: str) -> Dict[str, Any]:
@@ -134,28 +184,16 @@ async def download_file(session: aiohttp.ClientSession, key: str, url: str, scri
 async def main() -> None:
     """Main function to orchestrate the download process."""
     script_dir = Path(__file__).parent
-    update_path = script_dir / "update.json"
-    
-    # Check if update.json exists
-    if not update_path.exists():
-        print(f"Error: {update_path} not found!")
-        sys.exit(1)
     
     try:
         # First, update the game version
         await update_game_version(script_dir)
         
-        # Read and parse update.json
-        async with aiofiles.open(update_path, 'r', encoding='utf-8') as f:
-            content = await f.read()
-            update_data = json.loads(content)
+        # Get API URLs with updated game version
+        api_urls = await get_api_urls()
         
-        if not isinstance(update_data, dict):
-            print("Error: update.json should contain a JSON object")
-            sys.exit(1)
-        
-        if not update_data:
-            print("Warning: update.json is empty")
+        if not api_urls:
+            print("Warning: API_URLS is empty")
             return
         
         # Create aiohttp session with timeout and connection limits
@@ -165,26 +203,15 @@ async def main() -> None:
         async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
             # Create tasks for all downloads
             tasks = [
-                download_file(session, key, url, script_dir) # type: ignore
-                for key, url in update_data.items() # type: ignore
-                if isinstance(url, str)  # Ensure URL is a string
+                download_file(session, key, url, script_dir)
+                for key, url in api_urls.items()
             ]
-            
-            if not tasks:
-                print("Warning: No valid URL entries found in update.json")
-                return
             
             # Execute all downloads concurrently
             await asyncio.gather(*tasks, return_exceptions=True)
             
         print(f"\nCompleted processing {len(tasks)} entries.")
         
-    except json.JSONDecodeError as e:
-        print(f"Failed to parse update.json: {e}")
-        sys.exit(1)
-    except FileNotFoundError:
-        print(f"Error: {update_path} not found!")
-        sys.exit(1)
     except Exception as e:
         print(f"Unexpected error: {e}")
         sys.exit(1)

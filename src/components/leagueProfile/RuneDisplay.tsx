@@ -46,12 +46,12 @@ export function RuneDisplay({ runes, boxSize, keyStoneIconSize, secendaryRuneIco
             {/* Secondary Rune Tree Icon */}
             <IconBox
                 src={secondaryIconUrl || ""}
-                alt={secondaryRune.runeTree || "Rune Tree"}
+                alt={secondaryRune.runeTree.name || "Rune Tree"}
                 size={boxSize}
                 childrenSize={secendaryRuneIconSize}
                 tooltip={
                     secondaryRune.runeTree ? (
-                        <div className="font-bold text-blue-400">{secondaryRune.runeTree}</div>
+                        <div className="font-bold text-blue-400">{secondaryRune.runeTree.name}</div>
                     ) : undefined
                 }
                 tooltipClassName="w-48"

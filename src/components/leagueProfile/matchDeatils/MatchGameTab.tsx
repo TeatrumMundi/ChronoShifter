@@ -11,15 +11,26 @@ interface MatchGameTabProps {
     team2: Participant[];
     mainPlayerPUUID: string;
     region: string;
+    time: number;
 }
 
 interface ParticipantRowProps {
     participant: Participant;
     isMain: boolean;
     region: string;
+    time: number;
 }
 
-function ParticipantRow({ participant, isMain, region}: ParticipantRowProps) {
+interface ParticipantTileProps {
+    participant: Participant;
+    isMain: boolean;
+    isWin: boolean;
+    region: string;
+    isLast?: boolean;
+    time: number;
+}
+
+function ParticipantRow({ participant, isMain, region, time}: ParticipantRowProps) {
     return (
         <tr
             className={` ${isMain 
@@ -58,7 +69,7 @@ function ParticipantRow({ participant, isMain, region}: ParticipantRowProps) {
                 </div>
             </td>
             <td className="px-2 py-1 text-center">
-                {calculatePerformanceScore(participant)}
+                {calculatePerformanceScore(participant, time)}
             </td>
             <td className="px-2 py-1 text-center">
                 {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})
@@ -89,19 +100,7 @@ function ParticipantRow({ participant, isMain, region}: ParticipantRowProps) {
     );
 }
 
-function ParticipantTile({
-    participant,
-    isMain,
-    isWin,
-    region,
-    isLast = false,
-}: {
-    participant: Participant;
-    isMain: boolean;
-    isWin: boolean;
-    region: string;
-    isLast?: boolean;
-}) {
+function ParticipantTile({participant, isMain, isWin, region, isLast = false, time}: ParticipantTileProps) {
     return (
         <div
             className={`rounded-sm p-2 mx-2 border flex flex-col
@@ -145,7 +144,7 @@ function ParticipantTile({
                 </Link>
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-1">
-                <span><b>CS Score:</b> {calculatePerformanceScore(participant)}</span>
+                <span><b>CS Score:</b> {calculatePerformanceScore(participant, time)}</span>
                 <span><b>KDA:</b> {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})</span>
                 <span><b>DMG:</b> {participant.totalDamageDealtToChampions}</span>
                 <span><b>Gold:</b> {participant.goldEarned}</span>
@@ -156,7 +155,7 @@ function ParticipantTile({
     );
 }
 
-export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGameTabProps) {
+export function MatchGameTab({ team1, team2, mainPlayerPUUID, region, time }: MatchGameTabProps) {
     return (
         <>
             <div className="hidden lg:block">
@@ -188,6 +187,7 @@ export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGam
                                 participant={participant}
                                 isMain={participant.puuid === mainPlayerPUUID}
                                 region={region}
+                                time={time}
                             />
                         ))}
                         <tr>
@@ -204,6 +204,7 @@ export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGam
                                 participant={participant}
                                 isMain={participant.puuid === mainPlayerPUUID}
                                 region={region}
+                                time={time}
                             />
                         ))}
                     </tbody>
@@ -219,6 +220,7 @@ export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGam
                         isWin={team1[0].win}
                         region={region}
                         isLast={idx === team1.length - 1 && team2.length === 0}
+                        time={time}
                     />
                 ))}
                 {team2.map((participant, idx) => (
@@ -229,6 +231,7 @@ export function MatchGameTab({ team1, team2, mainPlayerPUUID, region }: MatchGam
                         isWin={team2[0].win}
                         region={region}
                         isLast={idx === team2.length - 1}
+                        time={time}
                     />
                 ))}
             </div>
