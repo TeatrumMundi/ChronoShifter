@@ -3,14 +3,6 @@
 const GAME_VERSION = process.env.NEXT_PUBLIC_GAME_VERSION || "15.6.1";
 const CDN_BASE = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1";
 
-const runeTreeToImageMap: Record<string, string> = {
-    Domination: "7200_domination.png",
-    Precision: "7201_precision.png",
-    Sorcery: "7202_sorcery.png",
-    Inspiration: "7203_whimsy.png",
-    Resolve: "7204_resolve.png"
-};
-
 // Item Icon
 export function getItemIcon(itemId: number): string {
     return `https://ddragon.leagueoflegends.com/cdn/${GAME_VERSION}/img/item/${itemId}.png`;
