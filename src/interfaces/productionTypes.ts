@@ -111,12 +111,19 @@ export interface ArenaStats
 
 export interface Rune {
     id: number;
+    key: string;
+    icon: string;
     name: string;
-    tooltip: string;
     shortDesc: string;
     longDesc: string;
-    iconPath: string;
-    runeTree?: string;
+    runeTree: RuneTree;
+}
+
+export interface RuneTree {
+    id: number;
+    key: string;
+    icon: string;
+    name: string;
 }
 
 export type Augment = {

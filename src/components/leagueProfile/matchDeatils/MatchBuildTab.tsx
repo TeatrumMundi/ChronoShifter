@@ -12,7 +12,7 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps)
             <div className="space-y-2">
                 {mainPlayer.runes.map((rune, index) => (
                     <div key={index} className="p-2 border rounded">
-                        <strong>Rune Tree:</strong> {rune.iconPath}
+                        <strong>Rune Tree:</strong> {rune.runeTree.name}
                     </div>
                 ))}
             </div>
