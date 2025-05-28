@@ -58,7 +58,8 @@ async def get_api_urls() -> Dict[str, str]:
         "augments": "https://raw.communitydragon.org/latest/cdragon/arena/en_us.json",
         "champions": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-summary.json",
         "summonerSpells": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/summoner-spells.json",
-        "versions": "https://ddragon.leagueoflegends.com/api/versions.json"
+        "versions": "https://ddragon.leagueoflegends.com/api/versions.json",
+        "queues": "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/queues.json",
     }
 
 

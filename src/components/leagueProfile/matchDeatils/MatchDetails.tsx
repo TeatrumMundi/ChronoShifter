@@ -40,6 +40,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                             team2={team2}
                             mainPlayerPUUID={mainPlayerPUUID}
                             region={region}
+                            time={match.matchDetails.gameDuration}
                         />
                     </Suspense>
                 );
@@ -72,7 +73,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region, mainPlayer]);
+    }, [activeTab, team1, team2, mainPlayerPUUID, region, match.matchDetails.gameDuration, mainPlayer]);
 
     // Debounce tab changes if users click rapidly
     const debouncedSetActiveTab = useMemo(

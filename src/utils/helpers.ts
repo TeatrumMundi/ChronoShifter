@@ -1,88 +1,5 @@
 import { Participant, RecentMatch } from "@/interfaces/productionTypes";
 
-export const queueIdToGameMode: { [key: number]: string } = {
-    0: "Custom games",
-    2: "Blind Pick",
-    4: "Ranked Solo",
-    6: "Ranked Premade",
-    7: "Co-op vs AI",
-    8: "Normal 3v3",
-    9: "Ranked 3v3",
-    14: "Normal 5v5 Draft Pick",
-    16: "Dominion 5v5 Blind Pick",
-    17: "Dominion 5v5 Draft Pick",
-    25: "Dominion Co-op vs AI",
-    31: "Co-op vs AI Intro Bot",
-    32: "Co-op vs AI Beginner Bot",
-    33: "Co-op vs AI Intermediate Bot",
-    41: "Ranked Team 3v3",
-    42: "Ranked Team 5v5",
-    52: "Twisted Treeline Co-op vs AI",
-    61: "Team Builder",
-    65: "ARAM",
-    70: "One for All",
-    72: "Snowdown Showdown 1v1",
-    73: "Snowdown Showdown 2v2",
-    75: "Hexakill Summoner's Rift",
-    76: "URF",
-    78: "One For All: Mirror Mode",
-    83: "Co-op vs AI URF",
-    91: "Doom Bots Rank 1",
-    92: "Doom Bots Rank 2",
-    93: "Doom Bots Rank 5",
-    96: "Ascension",
-    98: "Hexakill Twisted Treeline",
-    100: "ARAM Butcher's Bridge",
-    300: "Legend of the Poro King",
-    310: "Nemesis",
-    313: "Black Market Brawlers",
-    317: "Definitely Not Dominion",
-    325: "All Random",
-    400: "Normal 5v5 Draft Pick",
-    410: "Ranked Dynamic Queue",
-    420: "Ranked Solo/Duo",
-    430: "Normal 5v5 Blind Pick",
-    440: "Ranked Flex",
-    450: "ARAM",
-    460: "Normal 3v3 Blind Pick",
-    470: "Ranked Flex 3v3",
-    600: "Blood Hunt Assassin",
-    610: "Dark Star: Singularity",
-    700: "Clash",
-    800: "Co-op vs. AI Intermediate Bot",
-    810: "Co-op vs. AI Intro Bot",
-    820: "Co-op vs. AI Beginner Bot",
-    830: "Co-op vs. AI Intro Bot",
-    840: "Co-op vs. AI Beginner Bot",
-    850: "Co-op vs. AI Intermediate Bot",
-    900: "ARURF",
-    910: "Ascension",
-    920: "Legend of the Poro King",
-    940: "Nexus Siege",
-    950: "Doom Bots Voting",
-    960: "Doom Bots Standard",
-    980: "Star Guardian Invasion: Normal",
-    990: "Star Guardian Invasion: Onslaught",
-    1000: "PROJECT: Hunters",
-    1010: "Snow ARURF",
-    1020: "One for All",
-    1030: "Odyssey Extraction: Intro",
-    1040: "Odyssey Extraction: Cadet",
-    1050: "Odyssey Extraction: Crewmember",
-    1060: "Odyssey Extraction: Captain",
-    1070: "Odyssey Extraction: Onslaught",
-    1090: "Teamfight Tactics",
-    1100: "Ranked Teamfight Tactics",
-    1110: "Teamfight Tactics Tutorial",
-    1111: "Teamfight Tactics test",
-    1200: "Nexus Blitz",
-    1300: "Nexus Blitz",
-    1400: "Ultimate Spellbook",
-    1700: "Arena",
-    1701: "1v0 (Arena)",
-    1704: "4v0 (Arena)"
-};
-
 export function formatRole(position?: string): string {
     const roleMap: Record<string, string> = {
         BOTTOM: "ADC",
@@ -184,47 +101,73 @@ export const ServerMAP: Record<string, string> = {
     VN2: "vn"
 };
 
-export function calculatePerformanceScore(participant: Participant): number {
-    // Wagi dla różnych pozycji
+export function calculatePerformanceScore(participant: Participant, timeInSeconds: number): number {
     const isUtility = participant.individualPosition.toUpperCase() === "UTILITY";
-
-    // Normalizacja statystyk (przykładowe wartości maksymalne, można dostosować)
-    const maxStats = {
-        kills: 20,
-        deaths: 15,
-        assists: 30,
-        goldEarned: 20000,
-        visionScore: 60,
-        wardsPlaced: 30,
-        totalHealsOnTeammates: 10000,
-        totalDamageShieldedOnTeammates: 8000,
-        totalDamageDealtToChampions: 50000,
-        minionsPerMinute: 12,
+    const timeInMinutes = timeInSeconds / 60;
+    
+    // Per-minute benchmarks (good performance rates)
+    const benchmarks = {
+        killsPerMinute: 0.4,
+        assistsPerMinute: 0.6,
+        deathsPerMinute: 0.25,
+        goldPerMinute: 350,
+        visionScorePerMinute: 1.2,
+        wardsPerMinute: 0.5,
+        damagePerMinute: 800,
+        healsPerMinute: 150,
+        shieldsPerMinute: 120,
     };
 
-    // Utility - heal, shield, wardy mają większą wagę
+    // Calculate per-minute stats
+    const stats = {
+        killsPerMin: participant.kills / timeInMinutes,
+        assistsPerMin: participant.assists / timeInMinutes,
+        deathsPerMin: participant.deaths / timeInMinutes,
+        goldPerMin: participant.goldEarned / timeInMinutes,
+        visionScorePerMin: participant.visionScore / timeInMinutes,
+        wardsPerMin: participant.wardsPlaced / timeInMinutes,
+        damagePerMin: participant.totalDamageDealtToChampions / timeInMinutes,
+        healsPerMin: participant.totalHealsOnTeammates / timeInMinutes,
+        shieldsPerMin: participant.totalDamageShieldedOnTeammates / timeInMinutes,
+    };
+
+    // Normalize stats against benchmarks (cap at 100% for each metric)
+    const normalizedStats = {
+        kills: Math.min(1, stats.killsPerMin / benchmarks.killsPerMinute),
+        assists: Math.min(1, stats.assistsPerMin / benchmarks.assistsPerMinute),
+        deaths: Math.min(1, 1 - (stats.deathsPerMin / benchmarks.deathsPerMinute)), // Inverted (fewer deaths = better)
+        gold: Math.min(1, stats.goldPerMin / benchmarks.goldPerMinute),
+        visionScore: Math.min(1, stats.visionScorePerMin / benchmarks.visionScorePerMinute),
+        wards: Math.min(1, stats.wardsPerMin / benchmarks.wardsPerMinute),
+        damage: Math.min(1, stats.damagePerMin / benchmarks.damagePerMinute),
+        heals: Math.min(1, stats.healsPerMin / benchmarks.healsPerMinute),
+        shields: Math.min(1, stats.shieldsPerMin / benchmarks.shieldsPerMinute),
+        cs: Math.min(1, participant.minionsPerMinute / 8), // 8 CS/min is good benchmark
+    };
+
+    let score: number;
+
     if (isUtility) {
-        const score =
-            (participant.totalHealsOnTeammates / maxStats.totalHealsOnTeammates) * 30 +
-            (participant.totalDamageShieldedOnTeammates / maxStats.totalDamageShieldedOnTeammates) * 25 +
-            (participant.wardsPlaced / maxStats.wardsPlaced) * 15 +
-            (participant.visionScore / maxStats.visionScore) * 10 +
-            (participant.assists / maxStats.assists) * 10 +
-            (participant.kills / maxStats.kills) * 5 +
-            (participant.deaths > 0 ? (1 - participant.deaths / maxStats.deaths) * 5 : 5);
-
-        return Math.max(0, Math.min(100, Math.round(score)));
+        // Support scoring - emphasize vision, healing, shielding, and assists
+        score =
+            normalizedStats.heals * 25 +
+            normalizedStats.shields * 20 +
+            normalizedStats.visionScore * 15 +
+            normalizedStats.wards * 10 +
+            normalizedStats.assists * 15 +
+            normalizedStats.kills * 5 +
+            normalizedStats.deaths * 10;
+    } else {
+        // Other roles - emphasize damage, kills, gold, and CS
+        score =
+            normalizedStats.kills * 25 +
+            normalizedStats.damage * 20 +
+            normalizedStats.gold * 15 +
+            normalizedStats.cs * 15 +
+            normalizedStats.assists * 10 +
+            normalizedStats.visionScore * 5 +
+            normalizedStats.deaths * 10;
     }
-
-    // Inne pozycje - klasyczne statystyki
-    const score =
-        (participant.kills / maxStats.kills) * 25 +
-        (participant.assists / maxStats.assists) * 15 +
-        (participant.goldEarned / maxStats.goldEarned) * 15 +
-        (participant.totalDamageDealtToChampions / maxStats.totalDamageDealtToChampions) * 20 +
-        (participant.minionsPerMinute / maxStats.minionsPerMinute) * 10 +
-        (participant.visionScore / maxStats.visionScore) * 5 +
-        (participant.deaths > 0 ? (1 - participant.deaths / maxStats.deaths) * 10 : 10);
 
     return Math.max(0, Math.min(100, Math.round(score)));
 }
