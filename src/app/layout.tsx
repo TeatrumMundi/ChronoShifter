@@ -31,9 +31,9 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
   return (
     <html lang="en">
       <body className={`antialiased ${lato.variable} ${verminVibes.variable}`}>
+        {children}
         <Analytics/>
         <SpeedInsights/>
-        {children}
       </body>
     </html>
   );
