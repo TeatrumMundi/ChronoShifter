@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Lato } from "next/font/google";
 import "./globals.css";
 import React from "react";
@@ -28,6 +30,8 @@ export const metadata: Metadata = {
 export default function RootLayout({children,}: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
+      <Analytics/>
+      <SpeedInsights/>
       <body className={`antialiased ${lato.variable} ${verminVibes.variable}`}>
         {children}
       </body>
