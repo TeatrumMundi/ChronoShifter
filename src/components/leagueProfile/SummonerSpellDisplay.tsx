@@ -3,7 +3,7 @@
 import React from "react";
 import { SummonerSpell } from "@/interfaces/productionTypes";
 import { getSummonerSpellIcon } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "../common/IconBox";
+import { IconBox } from "../common/Icons/IconBox";
 import { cleanItemDescription } from "@/utils/helpers";
 
 export interface SummonerSpellDisplayProps {

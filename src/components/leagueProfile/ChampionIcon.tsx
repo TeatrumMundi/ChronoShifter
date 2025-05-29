@@ -2,7 +2,7 @@
 
 import { Champion } from "@/interfaces/productionTypes";
 import { getChampionIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "@/components/common/IconBox";
+import { IconBox } from "@/components/common/Icons/IconBox";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
 

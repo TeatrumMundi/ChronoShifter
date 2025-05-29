@@ -3,7 +3,7 @@
 import React from "react";
 import { BoxPlaceHolder } from "@/components/common";
 import { Item } from "@/interfaces/productionTypes";
-import { ItemIcon } from "../common/ItemIcon";
+import { ItemIcon } from "../common/Icons/ItemIcon";
 
 interface ItemDisplayProps {
     items: (Item | null)[];

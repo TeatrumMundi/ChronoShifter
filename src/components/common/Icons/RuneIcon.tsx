@@ -1,24 +1,25 @@
 import { Rune } from "@/interfaces/productionTypes";
 import { getRuneIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
 import { cleanItemDescription } from "@/utils/helpers";
-import { IconBox } from "../IconBox";
+import { IconBox } from "./IconBox";
 
 interface RuneIconProps {
     rune: Rune;
+    size: number;
+    childrenSize: number;
     selectedRune?: Rune;
 }
 
-export function RuneIcon({ rune, selectedRune }: RuneIconProps) {
+export function RuneIcon({ rune, selectedRune, size, childrenSize }: RuneIconProps) {
     const isSelected = !!selectedRune;
-    const iconUrl = selectedRune ? getRuneIconUrl(selectedRune) : `https://ddragon.leagueoflegends.com/cdn/img/${rune.icon}`;
 
     return (
         <IconBox
+            src={getRuneIconUrl(rune)}
             key={rune.id}
-            src={iconUrl}
             alt={rune.name}
-            size={44}
-            childrenSize={36}
+            size={size}
+            childrenSize={childrenSize}
             className={`border transition-all
                 ${isSelected ? "opacity-100" : "opacity-30"}`}
             tooltip={

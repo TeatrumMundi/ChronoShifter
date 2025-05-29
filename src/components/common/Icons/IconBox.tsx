@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { TooltipBubble } from "./Tooltip";
+import { TooltipBubble } from "../Tooltip";
+import { BoxPlaceHolder } from "./IconPlaceholder";
 
 interface IconBoxProps {
-    src: string;
+    src: string | undefined;
     alt: string;
     size: number;
     childrenSize: number;
@@ -32,6 +33,7 @@ export function IconBox({
     showTooltip = true,
 }: IconBoxProps) {
     const [hovered, setHovered] = useState(false);
+    const [imageError, setImageError] = useState(false);
 
     const handleMouseEnter = () => {
         setHovered(true);
@@ -43,6 +45,10 @@ export function IconBox({
         onMouseLeave?.();
     };
 
+    const handleImageError = () => {
+        setImageError(true);
+    };
+
     return (
         <div
             className={`relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer`}
@@ -50,21 +56,29 @@ export function IconBox({
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            <Image
-                src={src}
-                alt={alt}
-                width={size}
-                height={size}
-                className={`rounded-sm object-contain ${className}`}
-                style={{
-                    width: childrenSize,
-                    height: childrenSize,
-                    minWidth: childrenSize,
-                    minHeight: childrenSize,
-                    maxWidth: childrenSize,
-                    maxHeight: childrenSize,
-                }}
-            />
+            {imageError || !src ? (
+                <BoxPlaceHolder
+                    size={childrenSize}
+                    className={className}
+                />
+            ) : (
+                <Image
+                    src={src}
+                    alt={alt}
+                    width={size}
+                    height={size}
+                    className={`rounded-sm object-contain ${className}`}
+                    style={{
+                        width: childrenSize,
+                        height: childrenSize,
+                        minWidth: childrenSize,
+                        minHeight: childrenSize,
+                        maxWidth: childrenSize,
+                        maxHeight: childrenSize,
+                    }}
+                    onError={handleImageError}
+                />
+            )}
             {children}
             {showTooltip && hovered && tooltip && (
                 <TooltipBubble iconBoxSize={size}>

@@ -2,7 +2,7 @@ import { Participant } from "@/interfaces/productionTypes";
 import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame } from "@/interfaces/proudctionTimeLapTypes";
 import Image from "next/image";
 import { getRuneTreeIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { ItemIcon } from "@/components/common/ItemIcon";
+import { ItemIcon } from "@/components/common/Icons/ItemIcon";
 import { RuneIcon } from "@/components/common/Icons/RuneIcon";
 import runesData from "@/utils/getLeagueAssets/runes.json";
 import { useEffect, useState } from "react";
@@ -110,20 +110,42 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                         <div key={runeTree.id} className="px-3 flex-1 first:pl-0">
                             {/* Sloty run */}
                             <div className="space-y-2">
-                                {runeTree.slots.map((slot, slotIndex) => (
-                                    <div key={slotIndex} className="flex gap-1 justify-center">
-                                        {slot.runes.map((rune) => {
-                                            const selectedRune = mainPlayer.runes.find(r => r.id === rune.id);
-                                            return (
-                                                <RuneIcon
-                                                    key={rune.id}
-                                                    rune={{ ...rune, runeTree }}
-                                                    selectedRune={selectedRune}
-                                                />
-                                            );
-                                        })}
-                                    </div>
-                                ))}
+                                {runeTree.slots.map((slot, slotIndex) => {                             
+                                    return (
+                                        <div key={slotIndex} className="flex gap-3 justify-center">
+                                            {slot.runes.map((rune) => {
+                                                const selectedRune = mainPlayer.runes.find(r => r.id === rune.id);
+                                                
+                                                // Na mobile ukryj nieaktywne runy
+                                                if (!selectedRune) {
+                                                    return (
+                                                        <div 
+                                                            key={rune.id} 
+                                                            className="w-10 h-10 sm:block hidden"
+                                                        >
+                                                            <RuneIcon
+                                                                size={40}
+                                                                childrenSize={36}
+                                                                rune={{ ...rune, runeTree }}
+                                                                selectedRune={selectedRune}
+                                                            />
+                                                        </div>
+                                                    );
+                                                }
+                                                
+                                                return (
+                                                    <RuneIcon
+                                                        key={rune.id}
+                                                        size={40}
+                                                        childrenSize={36}
+                                                        rune={{ ...rune, runeTree }}
+                                                        selectedRune={selectedRune}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     ))}
@@ -140,7 +162,7 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                             {itemEvents.length === 0 ? (
                                 renderEmptyState("No item events during this match")
                             ) : (
-                                <div className="flex items-center gap-2 pb-2 flex-wrap">
+                                <div className="flex items-center gap-y-4 pb-2 flex-wrap">
                                     {Object.entries(
                                         itemEvents.reduce((groups, itemEvent) => {
                                             const timeInMinutes = Math.floor(itemEvent.timestamp / 60000);
@@ -151,7 +173,7 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                                             return groups;
                                         }, {} as Record<number, ItemEvent[]>)
                                     ).map(([minute, events], groupIndex, array) => (
-                                        <div key={groupIndex} className="flex items-center gap-1">
+                                        <div key={groupIndex} className="flex items-center">
                                             <div className="bg-white/10 rounded-sm p-2">
                                                 <div className="flex items-center gap-2 mb-2">
                                                     {events.map((itemEvent, index) => {
@@ -190,9 +212,8 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                                             </div>
                                             
                                             {groupIndex < array.length - 1 && (
-                                                <div className="text-gray-400 text-lg">
-                                                    &rarr;
-                                                </div>
+                                                <span className="bg-white/10 p-2 px-3">
+                                                </span>
                                             )}
                                         </div>
                                     ))}

@@ -21,6 +21,7 @@ export default function Navbar() {
                                 alt="ChronoShifter Logo"
                                 width={80}
                                 height={80}
+                                priority
                                 className="object-cover transition-transform duration-200 h-full w-auto"
                             />
                         </Link>

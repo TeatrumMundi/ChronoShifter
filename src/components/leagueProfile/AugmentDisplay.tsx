@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { BoxPlaceHolder } from "@/components/common";
 import { Augment } from "@/interfaces/productionTypes";
 import { getAugmentIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "@/components/common/IconBox";
+import { IconBox } from "@/components/common/Icons/IconBox";
 import { cleanItemDescription } from "@/utils/helpers";
 
 const rarityColors = ["text-slate-400", "text-yellow-400", "text-fuchsia-500"];
