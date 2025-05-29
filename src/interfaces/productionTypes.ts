@@ -102,6 +102,7 @@ export interface Participant
     champion: Champion;
     arenaStats : ArenaStats;
     runes : Rune[];
+    statPerks : StatPerks;
     items : Item[];
 
     timelineData?: ParticipantTimelineData;
@@ -122,6 +123,20 @@ export interface Rune {
     shortDesc: string;
     longDesc: string;
     runeTree: RuneTree;
+}
+
+export interface StatPerks {
+    defense: Perk;
+    flex: Perk;
+    offense: Perk;
+}
+
+export interface Perk {
+    id: number;
+    name: string;
+    desc: string;
+    longDesc: string;
+    path: string;
 }
 
 export interface RuneTree {

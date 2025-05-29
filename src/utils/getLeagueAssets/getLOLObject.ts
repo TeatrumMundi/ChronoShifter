@@ -1,10 +1,11 @@
-import { Augment, Item, Rune, SummonerSpell } from "@/interfaces/productionTypes";
+import { Augment, Item, Perk, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 import augmentsData from "./augments.json";
 import championsData from "./champions.json";
 import itemsData from "./items.json";
 import runesData from "./runes.json";
 import summonerSpellsData from "./summonerSpells.json";
 import { Champion } from "@/interfaces/ChampionType";
+import statPerksData from "./statPerks.json";
 
 /**
  * Load an augment from local augments.json by its ID.
@@ -321,4 +322,52 @@ export async function getSummonerSpellByID(summonerSpellId: number): Promise<Sum
             iconPath: ""
         };
     }
+}
+
+/**
+ * Loads and returns a Perk object from local statPerks.json by its ID.
+ * Returns a default perk object if the specified ID is not found.
+ * @param perkId - The stat perk ID to search for
+ * @returns Promise resolving to the Perk object, or default perk if not found
+ */
+export async function getStatPerkById(perkId: number): Promise<Perk> {
+    try {
+        const allStatPerks = [
+            ...statPerksData.offense,
+            ...statPerksData.flex,
+            ...statPerksData.defense,
+        ];
+        
+        const foundPerk = allStatPerks.find(perk => perk.id === perkId);
+        
+        if (foundPerk) {
+            return {
+                id: foundPerk.id,
+                name: foundPerk.name,
+                desc: foundPerk.desc,
+                longDesc: foundPerk.longDesc,
+                path: foundPerk.path
+            };
+        }
+
+        return getDefaultPerk(perkId);
+    } catch (error) {
+        console.error(`Failed to load stat perk ID ${perkId}:`, error);
+        return getDefaultPerk(perkId);
+    }
+}
+
+/**
+ * Returns a default perk object for cases where perk data is not found.
+ * @param perkId - The original perk ID
+ * @returns Default Perk object
+ */
+function getDefaultPerk(perkId: number): Perk {
+    return {
+        id: perkId,
+        name: "Unknown Stat",
+        desc: "Unknown Stat Perk",
+        longDesc: "Stat perk data not available",
+        path: "statmodsadaptiveforceicon.png"
+    };
 }

@@ -1,0 +1,71 @@
+{
+  "offense": [
+    {
+      "id": 5008,
+      "name": "Adaptive Force",
+      "desc": "+9 Adaptive Force",
+      "longDesc": "Grants 9 Attack Damage or 15 Ability Power (Adaptive)",
+      "path": "StatModsAdaptiveForceIcon.png"
+    },
+    {
+      "id": 5005,
+      "name": "Attack Speed",
+      "desc": "+10% Attack Speed",
+      "longDesc": "Grants 10% bonus Attack Speed",
+      "path": "StatModsAttackSpeedIcon.png"
+    },
+    {
+      "id": 5007,
+      "name": "Ability Haste",
+      "desc": "+8 Ability Haste",
+      "longDesc": "Grants 8 Ability Haste",
+      "path": "StatModsCDRScalingIcon.png"
+    }
+  ],
+  "flex": [
+    {
+      "id": 5008,
+      "name": "Adaptive Force",
+      "desc": "+9 Adaptive Force",
+      "longDesc": "Grants 9 Attack Damage or 15 Ability Power (Adaptive)",
+      "path": "StatModsAdaptiveForceIcon.png"
+    },
+    {
+      "id": 5014,
+      "name": "Movement Speed",
+      "desc": "+2% Movement Speed",
+      "longDesc": "Grants 2% bonus Movement Speed",
+      "path": "StatModsMovementSpeedIcon.png"
+    },
+    {
+      "id": 5001,
+      "name": "Health Scaling",
+      "desc": "+15-140 Health (based on level)",
+      "longDesc": "Grants 15-140 Health based on champion level",
+      "path": "StatModsHealthPlusIcon.png"
+    }
+  ],
+  "defense": [
+    {
+      "id": 5011,
+      "name": "Health",
+      "desc": "+65 Health",
+      "longDesc": "Grants 65 Health",
+      "path": "StatModsHealthScalingIcon.png"
+    },
+    {
+      "id": 5013,
+      "name": "Tenacity and Slow Resist",
+      "desc": "+5% Tenacity and Slow Resist",
+      "longDesc": "Grants 5% Tenacity and Slow Resistance",
+      "path": "StatModsTenacityIcon.png"
+    },
+    {
+      "id": 5001,
+      "name": "Health Scaling",
+      "desc": "+15-140 Health (based on level)",
+      "longDesc": "Grants 15-140 Health based on champion level",
+      "path": "StatModsHealthPlusIcon.png"
+    }
+  ]
+}

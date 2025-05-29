@@ -1,5 +1,5 @@
 ﻿import { Champion } from "@/interfaces/ChampionType";
-import { Augment, Rune, SummonerSpell } from "@/interfaces/productionTypes";
+import { Augment, Perk, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 
 const GAME_VERSION = process.env.NEXT_PUBLIC_GAME_VERSION || "15.6.1";
 const CDN_BASE = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1";
@@ -102,4 +102,12 @@ export function getSummonerIconUrl(profileIconId: number): string {
 
     // Return CDN URL with multiple fallbacks
     return `${cdnUrl}#${localFallback}#${defaultIcon}`;
+}
+
+/**
+ * Returns the full URL to the stat perk icon (stat shards like +9 Adaptive Force, +6 Armor, etc.)
+ * Maps stat perk IDs to their corresponding icon names from Data Dragon
+ */
+export function getPerkIconUrl(perk: Perk): string {
+    return `https://ddragon.leagueoflegends.com/cdn/img/perk-images/StatMods/${perk.path}`;
 }

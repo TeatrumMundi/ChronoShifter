@@ -37,7 +37,6 @@ export function ChampionIcon({
     ) : undefined;
 
     return (
-        console.log("ChampionIcon rendered", getChampionIconUrl(champion)),
         <div className="relative inline-block">
             <IconBox
                 src={getChampionIconUrl(champion)}

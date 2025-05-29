@@ -2,7 +2,7 @@
 import { fetchFromRiotAPI } from './fetchFromRiotAPI';
 import { RawMatchData, RawParticipant, RawTimelineData, RawTimelineEvent } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
-import { getAugmentById, getChampionById, getItemById, getRuneById, getSummonerSpellByID } from '../getLeagueAssets/getLOLObject';
+import { getAugmentById, getChampionById, getItemById, getRuneById, getStatPerkById, getSummonerSpellByID } from '../getLeagueAssets/getLOLObject';
 import { ParticipantTimelineData } from '@/interfaces/proudctionTimeLapTypes';
 
 /**
@@ -229,6 +229,11 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     items: await extractItems(participantData),
                     champion: await getChampionById(participantData.championId),
                     runes: await fetchParticipantRunes(participantData),
+                    statPerks: {
+                        defense: await getStatPerkById(participantData.perks.statPerks.defense),
+                        flex: await getStatPerkById(participantData.perks.statPerks.flex),
+                        offense: await getStatPerkById(participantData.perks.statPerks.offense)
+                    },
                     arenaStats: await extractArenaStats(participantData),
                     
                     // Dodaj timeline data
