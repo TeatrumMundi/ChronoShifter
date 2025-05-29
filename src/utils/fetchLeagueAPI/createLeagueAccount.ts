@@ -1,8 +1,9 @@
-﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant, RiotAccount, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
+﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant,  RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
 import { fetchFromRiotAPI } from './fetchFromRiotAPI';
-import { RawMatchData, RawParticipant } from '@/interfaces/rawTypes';
+import { RawMatchData, RawParticipant, RawTimelineData, RawTimelineEvent } from '@/interfaces/rawTypes';
 import { getKDA, getMinionsPerMinute } from '../helpers';
 import { getAugmentById, getChampionById, getItemById, getRuneById, getSummonerSpellByID } from '../getLeagueAssets/getLOLObject';
+import { ParticipantTimelineData } from '@/interfaces/proudctionTimeLapTypes';
 
 /**
  * Extracts all item objects for a participant by fetching from local items.json.
@@ -92,7 +93,7 @@ async function extractArenaStats(participantData: RawParticipant): Promise<Arena
 /**
  * Fetch Riot account details by Riot ID.
  */
-async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails> {
+export async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails> {
     const response: Response = await fetchFromRiotAPI(
         `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`
     );
@@ -102,7 +103,7 @@ async function getAccountByRiotID(tagLine: string, gameName: string, region: str
 /**
  * Fetch the active region for a given PUUID.
  */
-async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string> {
+export async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string> {
     const response: Response = await fetchFromRiotAPI(
         `https://${region}.api.riotgames.com/riot/account/v1/region/by-game/${game}/by-puuid/${puuid}`
     );
@@ -167,6 +168,14 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
     );
     const data: RawMatchData = await response.json();
 
+    // Pobierz timeline data dla wszystkich uczestników
+    let participantsTimelineData: ParticipantTimelineData[] = [];
+    try {
+        participantsTimelineData = await getMatchTimelineByMatchID(matchID, region);
+    } catch (error) {
+        console.error(`Failed to fetch timeline data for match ${matchID}:`, error);
+    }
+
     const matchDetails: MatchDetails = {
         gameDuration: data.info.gameDuration,
         gameCreation: data.info.gameCreation,
@@ -175,7 +184,12 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
         gameType: data.info.gameType,
         queueId: data.info.queueId,
         participants: await Promise.all(
-            data.info.participants.map(async (participantData: RawParticipant): Promise<Participant> => {
+            data.info.participants.map(async (participantData: RawParticipant, index: number): Promise<Participant> => {
+                // Znajdź odpowiednie timeline data dla tego uczestnika
+                const timelineData = participantsTimelineData.find(
+                    ptd => ptd.participantId === (index + 1) // participantId w timeline zaczyna się od 1
+                );
+
                 return {
                     puuid: participantData.puuid,
                     riotIdGameName: participantData.riotIdGameName,
@@ -216,6 +230,9 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
                     champion: (await getChampionById(participantData.championId)) ?? { id: 0, name: 'Unknown', alias: 'Unknown', squarePortraitPath: '', roles: [] },
                     runes: await fetchParticipantRunes(participantData),
                     arenaStats: await extractArenaStats(participantData),
+                    
+                    // Dodaj timeline data
+                    timelineData: timelineData
                 };
             })
         ),
@@ -227,7 +244,7 @@ async function getMatchDetailsByMatchID(matchID: string, region: string): Promis
 /**
  * Creates a LeagueAccount object for a given PUUID.
  */
-async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
+export async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
     // Get the League account details
     const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, region, activeRegion);
     if (!leagueAccountsDetails) {
@@ -286,23 +303,101 @@ async function createLeagueAccount(puuid: string, region: string, activeRegion: 
     return { leagueAccountsDetails, leagueSoloRank, leagueFlexRank, recentMatches };
 }
 
-/**
- * Creates a RiotAccount object for a given Riot ID.
- */
-export async function createRiotAccount(tagLine: string, gameName: string, region: string): Promise<RiotAccount> {
-    if (!tagLine || !gameName || !region) {
-        throw new Error("Invalid parameters");
+async function getMatchTimelineByMatchID(matchID: string, region: string): Promise<ParticipantTimelineData[]> {
+    const response: Response = await fetchFromRiotAPI(
+        `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchID}/timeline`
+    );
+    
+    const timelineData: RawTimelineData = await response.json();
+    
+    const participantsTimelineData: ParticipantTimelineData[] = [];
+    
+    for (let participantId = 1; participantId <= 10; participantId++) {
+        const participantTimeline: ParticipantTimelineData = {
+            participantId: participantId,
+            frames: []
+        };
+        
+        for (const frame of timelineData.info.frames) {
+            const playerEvents = frame.events?.filter((event: RawTimelineEvent) => 
+                event.participantId === participantId ||
+                event.killerId === participantId ||
+                event.victimId === participantId ||
+                event.creatorId === participantId ||
+                (event.assistingParticipantIds && event.assistingParticipantIds.includes(participantId))
+            ) || [];
+            
+            const mappedEvents = await Promise.all(playerEvents.map(async (event: RawTimelineEvent) => {
+                const mappedEvent: RawTimelineEvent & { 
+                    itemPurchased?: Item; 
+                    itemSold?: Item; 
+                    itemDestroyed?: Item; 
+                } = {
+                    timestamp: event.timestamp || 0,
+                    type: event.type || 'PAUSE_END',
+                    ...event
+                };
+                
+                // Przypisz participantId dla eventów, które go nie mają
+                if (
+                    !mappedEvent.participantId &&
+                    ['WARD_PLACED', 'ITEM_PURCHASED', 'ITEM_DESTROYED', 'ITEM_SOLD', 'ITEM_UNDO',
+                     'SKILL_LEVEL_UP', 'LEVEL_UP', 'CHAMPION_SPECIAL_KILL', 'TURRET_PLATE_DESTROYED',
+                     'BUILDING_KILL', 'ELITE_MONSTER_KILL'].includes(mappedEvent.type ?? '')
+                ) {
+                    mappedEvent.participantId = participantId;
+                }
+                
+                if (mappedEvent.type === 'CHAMPION_KILL' && !mappedEvent.victimId) {
+                    mappedEvent.victimId = participantId;
+                }
+                
+                if (mappedEvent.type === 'WARD_KILL' && !mappedEvent.killerId) {
+                    mappedEvent.killerId = participantId;
+                }
+
+                // Konwertuj itemId na obiekt Item dla eventów itemów
+                if (mappedEvent.type === 'ITEM_PURCHASED' && mappedEvent.itemId) {
+                    const item = await getItemById(mappedEvent.itemId);
+                    if (item) {
+                        mappedEvent.itemPurchased = item;
+                        delete mappedEvent.itemId;
+                    }
+                }
+                
+                if (mappedEvent.type === 'ITEM_SOLD' && mappedEvent.itemId) {
+                    const item = await getItemById(mappedEvent.itemId);
+                    if (item) {
+                        mappedEvent.itemSold = item;
+                        delete mappedEvent.itemId;
+                    }
+                }
+                
+                if (mappedEvent.type === 'ITEM_DESTROYED' && mappedEvent.itemId) {
+                    const item = await getItemById(mappedEvent.itemId);
+                    if (item) {
+                        mappedEvent.itemDestroyed = item;
+                        delete mappedEvent.itemId;
+                    }
+                }
+
+                return mappedEvent as unknown as import('@/interfaces/proudctionTimeLapTypes').SpecificGameEvent;
+            }));
+
+            const validEvents = mappedEvents.filter((event): event is import('@/interfaces/proudctionTimeLapTypes').SpecificGameEvent => !!event.type);
+
+            if (validEvents.length > 0) {
+                participantTimeline.frames.push({
+                    timestamp: frame.timestamp,
+                    events: validEvents
+                });
+            }
+        }
+        
+        participantsTimelineData.push(participantTimeline);
     }
-
-    const riotAccountDetails: RiotAccountDetails = await getAccountByRiotID(tagLine, gameName, region);
-    if (!riotAccountDetails) {
-        throw new Error("Riot account not found");
-    }
-
-    // Get the active region for the account
-    const activeRegion: string = await getActiveRegionByPuuid(riotAccountDetails.puuid, region);
-
-    const leagueAccount: LeagueAccount = await createLeagueAccount(riotAccountDetails.puuid, region, activeRegion);
-
-    return { riotAccountDetails, leagueAccount };
+    
+    return participantsTimelineData;
 }
+
+

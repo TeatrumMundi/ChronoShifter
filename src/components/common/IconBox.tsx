@@ -29,7 +29,6 @@ export function IconBox({
     onMouseLeave,
     children,
     tooltip,
-    tooltipClassName = "",
     showTooltip = true,
 }: IconBoxProps) {
     const [hovered, setHovered] = useState(false);
@@ -46,7 +45,7 @@ export function IconBox({
 
     return (
         <div
-            className={`relative rounded-sm flex items-center justify-center bg-[#181A20] ${className} cursor-pointer`}
+            className={`relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer`}
             style={{ width: size, height: size, ...style }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -56,7 +55,7 @@ export function IconBox({
                 alt={alt}
                 width={size}
                 height={size}
-                className="rounded-sm object-contain"
+                className={`rounded-sm object-contain ${className}`}
                 style={{
                     width: childrenSize,
                     height: childrenSize,
@@ -68,7 +67,7 @@ export function IconBox({
             />
             {children}
             {showTooltip && hovered && tooltip && (
-                <TooltipBubble className={tooltipClassName} iconBoxSize={size}>
+                <TooltipBubble iconBoxSize={size}>
                     {tooltip}
                 </TooltipBubble>
             )}

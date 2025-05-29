@@ -1,9 +1,9 @@
-import { createRiotAccount } from "@/utils/fetchLeagueAPI/accountData";
 import { RiotAccount } from "@/interfaces/productionTypes";
 import PlayerInfo from "@/components/leagueProfile/PlayerInfo";
 import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
+import { createRiotAccount } from "@/utils/fetchLeagueAPI/createRiotAccount";
 
 export default async function Home({params}: 
 { params: 

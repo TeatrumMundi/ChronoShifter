@@ -1,4 +1,6 @@
-﻿export interface RiotAccount
+﻿import { ParticipantTimelineData } from "./proudctionTimeLapTypes";
+
+export interface RiotAccount
 {
     riotAccountDetails : RiotAccountDetails;
     leagueAccount: LeagueAccount;
@@ -100,6 +102,8 @@ export interface Participant
     arenaStats : ArenaStats;
     runes : Rune[];
     items : Item[];
+
+    timelineData?: ParticipantTimelineData;
 }
 
 export interface ArenaStats

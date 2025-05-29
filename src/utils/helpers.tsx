@@ -28,7 +28,7 @@ export function secToHHMMSS(seconds: number): string {
     if (minutes > 0) {
         return `${pad(minutes)}:${pad(remainingSeconds)}`;
     }
-    return `${pad(remainingSeconds)}`;
+    return `00:${pad(remainingSeconds)}`;
 }
 
 export function timeAgo(timestamp: number | bigint): string {

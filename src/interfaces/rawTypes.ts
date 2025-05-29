@@ -193,3 +193,87 @@ export interface RawTeam {
     teamId: number;
     win: boolean;
 }
+
+export interface RawTimelineData {
+    metadata: {
+        dataVersion: string;
+        matchId: string;
+        participants: string[];
+    };
+    info: {
+        endOfGameResult: string;
+        frameInterval: number;
+        frames: RawTimelineFrame[];
+        gameId: number;
+        participants: RawTimelineParticipant[];
+    };
+}
+
+export interface RawTimelineFrame {
+    events: RawTimelineEvent[];
+    participantFrames: Record<string, RawParticipantFrame>;
+    timestamp: number;
+}
+
+export interface RawTimelineEvent {
+    type?: string;
+    timestamp?: number;
+    participantId?: number;
+    itemId?: number;
+    afterId?: number;
+    beforeId?: number;
+    gold?: number;
+    victimId?: number;
+    killerId?: number;
+    assistingParticipantIds?: number[];
+    wardType?: string;
+    creatorId?: number;
+    killType?: string;
+    laneType?: string;
+    teamId?: number;
+    buildingType?: string;
+    towerType?: string;
+    skillSlot?: number;
+    levelUpType?: string;
+    monsterType?: string;
+    monsterSubType?: string;
+    position?: {
+        x: number;
+        y: number;
+    };
+    bounty?: number;
+}
+
+export interface RawParticipantFrame {
+    currentGold?: number;
+    goldPerSecond?: number;
+    jungleMinionsKilled?: number;
+    level?: number;
+    minionsKilled?: number;
+    participantId?: number;
+    position?: {
+        x: number;
+        y: number;
+    };
+    totalGold?: number;
+    xp?: number;
+    damageStats?: {
+        magicDamageDone?: number;
+        magicDamageDoneToChampions?: number;
+        magicDamageTaken?: number;
+        physicalDamageDone?: number;
+        physicalDamageDoneToChampions?: number;
+        physicalDamageTaken?: number;
+        totalDamageDone?: number;
+        totalDamageDoneToChampions?: number;
+        totalDamageTaken?: number;
+        trueDamageDone?: number;
+        trueDamageDoneToChampions?: number;
+        trueDamageTaken?: number;
+    };
+}
+
+export interface RawTimelineParticipant {
+    participantId: number;
+    puuid: string;
+}
