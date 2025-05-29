@@ -1,9 +1,9 @@
+import { SummonerSpellDisplay } from "@/components/leagueProfile/SummonerSpellDisplay";
+import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
+import { RuneDisplay } from "@/components/leagueProfile/RuneDisplay";
+import { ItemDisplay } from "@/components/leagueProfile/ItemDisplay";
 import { Participant } from "@/interfaces/productionTypes";
 import { calculatePerformanceScore } from "@/utils/helpers";
-import { ChampionIcon } from "../../common/Icons/ChampionIcon";
-import { SummonerSpellDisplay } from "../SummonerSpellDisplay";
-import { RuneDisplay } from "../RuneDisplay";
-import { ItemDisplay } from "../ItemDisplay";
 import Link from "next/link";
 
 interface MatchGameTabProps {

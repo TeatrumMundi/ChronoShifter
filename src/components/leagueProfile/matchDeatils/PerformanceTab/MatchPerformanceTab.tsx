@@ -1,8 +1,8 @@
 import { Participant } from "@/interfaces/productionTypes";
-import { ChampionIcon } from "../../common/Icons/ChampionIcon";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
+import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
 
 interface MatchPerformanceTabProps {
     team1: Participant[];

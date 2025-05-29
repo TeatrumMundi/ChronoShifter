@@ -1,11 +1,11 @@
 import { useState, useMemo, memo, lazy, Suspense } from "react";
 import { RecentMatch } from "@/interfaces/productionTypes";
 import { debounce } from "lodash";
-import { MatchBuildTab } from "./MatchBuildTab";
+import { MatchBuildTab } from "./BuildTab/MatchBuildTab";
 
 // Lazy load heavy components
-const MatchGameTab = lazy(() => import("./MatchGameTab").then(m => ({ default: m.MatchGameTab })));
-const MatchPerformanceTab = lazy(() => import("./MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
+const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
+const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 
 interface MatchDetailsProps {
     match: RecentMatch;
