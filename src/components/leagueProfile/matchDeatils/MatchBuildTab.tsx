@@ -254,26 +254,31 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                             const totalSlots = Math.max(18, skillEvents.length);
 
                             const renderSkillRow = (skill: { id: number; name: string; spellIndex: number }) => (
-                                <div key={skill.id} className="flex items-center gap-2">
-                                    <ChampionSpellIcon
-                                        champion={mainPlayer.champion}
-                                        spellIndex={skill.spellIndex}
-                                        size={32}
-                                        showTooltip={true}
-                                        showSpellKey={true}
-                                        className="rounded-sm"
-                                    />
-                                    <div className="flex gap-1">
+                                <div key={skill.id} className="flex items-start gap-3 mb-3">
+                                    <div className="flex-shrink-0">
+                                        <ChampionSpellIcon
+                                            champion={mainPlayer.champion}
+                                            spellIndex={skill.spellIndex}
+                                            size={32}
+                                            showTooltip={true}
+                                            showSpellKey={true}
+                                            className="rounded-sm"
+                                        />
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
                                         {Array.from({ length: totalSlots }, (_, index) => {
                                             const event = skillEvents[index];
                                             return (
-                                                <div key={index} className="w-6 h-6 flex items-center justify-center">
+                                                <div 
+                                                    key={index} 
+                                                    className="w-6 h-6 flex items-center justify-center flex-shrink-0"
+                                                >
                                                     {event && event.skillSlot === skill.id ? (
                                                         <div className="w-6 h-6 bg-blue-600 text-white text-xs flex items-center justify-center rounded-sm font-bold">
                                                             {index + 1}
                                                         </div>
                                                     ) : (
-                                                        <div className="w-6 h-6 bg-white/10 rounded-sm"></div>
+                                                        <div className="w-6 h-6 bg-white/10 rounded-sm" />
                                                     )}
                                                 </div>
                                             );
@@ -283,7 +288,7 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                             );
                             
                             return (
-                                <div className="space-y-2">
+                                <div>
                                     {skills.map(renderSkillRow)}
                                 </div>
                             );
