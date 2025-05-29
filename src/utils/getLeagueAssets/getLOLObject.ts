@@ -23,21 +23,220 @@ export async function getAugmentById(id: number): Promise<Augment | undefined> {
 /**
  * Loads and returns a Champion object from local champions.json by its key (ID).
  * @param id - The champion key (ID) to search for
- * @returns Promise resolving to the Champion object if found, undefined otherwise
+ * @returns Promise resolving to the Champion object, or default champion if not found
  */
-export async function getChampionById(id: number): Promise<Champion | undefined> {
+export async function getChampionById(id: number): Promise<Champion> {
     try {
         const championKey = (championsData.keys as Record<string, string>)[id.toString()];
         if (!championKey) {
-            return undefined;
+            console.warn(`Champion key not found for ID ${id}, returning default champion`);
+            return getDefaultChampion();
         }
         
         const championData = (championsData.data as Record<string, Champion>)[championKey];
+        if (!championData) {
+            console.warn(`Champion data not found for key ${championKey}, returning default champion`);
+            return getDefaultChampion();
+        }
+        
         return championData;
     } catch (error) {
         console.error(`Failed to load champion ID ${id}:`, error);
-        return undefined;
+        return getDefaultChampion();
     }
+}
+
+/**
+ * Returns a default champion object for cases where champion data is not found.
+ * @returns Default Champion object
+ */
+function getDefaultChampion(): Champion {
+    return {
+        id: "0",
+        key: "Unknown",
+        name: "Unknown Champion",
+        title: "Unknown",
+        image: {
+            full: "unknown.png",
+            sprite: "unknown.png",
+            group: "champion",
+            x: 0,
+            y: 0,
+            w: 48,
+            h: 48
+        },
+        skins: [],
+        lore: "Champion data not available",
+        blurb: "Champion data not available",
+        allytips: [],
+        enemytips: [],
+        tags: ["Unknown"],
+        partype: "None",
+        info: {
+            attack: 0,
+            defense: 0,
+            magic: 0,
+            difficulty: 0
+        },
+        stats: {
+            hp: 0,
+            hpperlevel: 0,
+            mp: 0,
+            mpperlevel: 0,
+            movespeed: 0,
+            armor: 0,
+            armorperlevel: 0,
+            spellblock: 0,
+            spellblockperlevel: 0,
+            attackrange: 0,
+            hpregen: 0,
+            hpregenperlevel: 0,
+            mpregen: 0,
+            mpregenperlevel: 0,
+            crit: 0,
+            critperlevel: 0,
+            attackdamage: 0,
+            attackdamageperlevel: 0,
+            attackspeedperlevel: 0,
+            attackspeed: 0
+        },
+        spells: [
+            {
+                id: "UnknownQ",
+                name: "Unknown Q",
+                description: "Spell data not available",
+                tooltip: "Spell data not available",
+                leveltip: { label: [], effect: [] },
+                maxrank: 5,
+                cooldown: [0],
+                cooldownBurn: "0",
+                cost: [0],
+                costBurn: "0",
+                datavalues: {},
+                effect: [],
+                effectBurn: [],
+                vars: [],
+                costType: "None",
+                maxammo: "0",
+                range: [0],
+                rangeBurn: "0",
+                image: {
+                    full: "unknown.png",
+                    sprite: "unknown.png",
+                    group: "spell",
+                    x: 0,
+                    y: 0,
+                    w: 48,
+                    h: 48
+                },
+                resource: "None"
+            },
+            {
+                id: "UnknownW",
+                name: "Unknown W",
+                description: "Spell data not available",
+                tooltip: "Spell data not available",
+                leveltip: { label: [], effect: [] },
+                maxrank: 5,
+                cooldown: [0],
+                cooldownBurn: "0",
+                cost: [0],
+                costBurn: "0",
+                datavalues: {},
+                effect: [],
+                effectBurn: [],
+                vars: [],
+                costType: "None",
+                maxammo: "0",
+                range: [0],
+                rangeBurn: "0",
+                image: {
+                    full: "unknown.png",
+                    sprite: "unknown.png",
+                    group: "spell",
+                    x: 0,
+                    y: 0,
+                    w: 48,
+                    h: 48
+                },
+                resource: "None"
+            },
+            {
+                id: "UnknownE",
+                name: "Unknown E",
+                description: "Spell data not available",
+                tooltip: "Spell data not available",
+                leveltip: { label: [], effect: [] },
+                maxrank: 5,
+                cooldown: [0],
+                cooldownBurn: "0",
+                cost: [0],
+                costBurn: "0",
+                datavalues: {},
+                effect: [],
+                effectBurn: [],
+                vars: [],
+                costType: "None",
+                maxammo: "0",
+                range: [0],
+                rangeBurn: "0",
+                image: {
+                    full: "unknown.png",
+                    sprite: "unknown.png",
+                    group: "spell",
+                    x: 0,
+                    y: 0,
+                    w: 48,
+                    h: 48
+                },
+                resource: "None"
+            },
+            {
+                id: "UnknownR",
+                name: "Unknown R",
+                description: "Spell data not available",
+                tooltip: "Spell data not available",
+                leveltip: { label: [], effect: [] },
+                maxrank: 3,
+                cooldown: [0],
+                cooldownBurn: "0",
+                cost: [0],
+                costBurn: "0",
+                datavalues: {},
+                effect: [],
+                effectBurn: [],
+                vars: [],
+                costType: "None",
+                maxammo: "0",
+                range: [0],
+                rangeBurn: "0",
+                image: {
+                    full: "unknown.png",
+                    sprite: "unknown.png",
+                    group: "spell",
+                    x: 0,
+                    y: 0,
+                    w: 48,
+                    h: 48
+                },
+                resource: "None"
+            }
+        ],
+        passive: {
+            name: "Unknown Passive",
+            description: "Passive data not available",
+            image: {
+                full: "unknown.png",
+                sprite: "unknown.png",
+                group: "passive",
+                x: 0,
+                y: 0,
+                w: 48,
+                h: 48
+            }
+        },
+        recommended: []
+    };
 }
 
 /**
