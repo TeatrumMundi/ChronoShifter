@@ -1,4 +1,5 @@
-﻿import { ParticipantTimelineData } from "./proudctionTimeLapTypes";
+﻿import { Champion } from "./ChampionType";
+import { ParticipantTimelineData } from "./proudctionTimeLapTypes";
 
 export interface RiotAccount
 {
@@ -142,14 +143,6 @@ export type Augment = {
     rarity: number;
     tooltip: string;
 };
-
-export interface Champion {
-    id: number;
-    name: string;
-    alias: string;
-    squarePortraitPath: string;
-    roles: string[];
-}
 
 export interface Item {
     id: number;

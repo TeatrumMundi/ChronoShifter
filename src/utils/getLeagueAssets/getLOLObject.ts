@@ -1,9 +1,10 @@
-import { Augment, Champion, Item, Rune, SummonerSpell } from "@/interfaces/productionTypes";
+import { Augment, Item, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 import augmentsData from "./augments.json";
 import championsData from "./champions.json";
 import itemsData from "./items.json";
 import runesData from "./runes.json";
 import summonerSpellsData from "./summonerSpells.json";
+import { Champion } from "@/interfaces/ChampionType";
 
 /**
  * Load an augment from local augments.json by its ID.
@@ -20,13 +21,19 @@ export async function getAugmentById(id: number): Promise<Augment | undefined> {
 }
 
 /**
- * Loads and returns a Champion object from local champions.json by its ID.
- * @param id - The champion ID to search for
+ * Loads and returns a Champion object from local champions.json by its key (ID).
+ * @param id - The champion key (ID) to search for
  * @returns Promise resolving to the Champion object if found, undefined otherwise
  */
 export async function getChampionById(id: number): Promise<Champion | undefined> {
     try {
-        return championsData.find((champion: Champion) => champion.id === id);
+        const championKey = (championsData.keys as Record<string, string>)[id.toString()];
+        if (!championKey) {
+            return undefined;
+        }
+        
+        const championData = (championsData.data as Record<string, Champion>)[championKey];
+        return championData;
     } catch (error) {
         console.error(`Failed to load champion ID ${id}:`, error);
         return undefined;

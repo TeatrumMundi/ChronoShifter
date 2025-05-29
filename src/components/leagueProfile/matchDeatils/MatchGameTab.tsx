@@ -1,6 +1,6 @@
 import { Participant } from "@/interfaces/productionTypes";
 import { calculatePerformanceScore } from "@/utils/helpers";
-import { ChampionIcon } from "../ChampionIcon";
+import { ChampionIcon } from "../../common/Icons/ChampionIcon";
 import { SummonerSpellDisplay } from "../SummonerSpellDisplay";
 import { RuneDisplay } from "../RuneDisplay";
 import { ItemDisplay } from "../ItemDisplay";

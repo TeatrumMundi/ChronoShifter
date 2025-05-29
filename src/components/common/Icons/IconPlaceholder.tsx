@@ -1,10 +1,9 @@
-interface BoxPlaceHolderProps 
-{
+interface IconPlaceholderProps {
     size: number;
     className?: string;
 }
 
-export const BoxPlaceHolder = ({ size = 32, className = "" } : BoxPlaceHolderProps) => {
+export function BoxPlaceHolder({ size, className = "" }: IconPlaceholderProps) {
     return (
         <div
             className={`object-contain bg-gray-800/90 rounded-sm ${className}`}
@@ -18,4 +17,4 @@ export const BoxPlaceHolder = ({ size = 32, className = "" } : BoxPlaceHolderPro
             }}
         />
     );
-};
+}

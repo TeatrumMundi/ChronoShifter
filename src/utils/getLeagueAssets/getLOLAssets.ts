@@ -1,15 +1,17 @@
-﻿import { Augment, Champion, Rune, SummonerSpell } from "@/interfaces/productionTypes";
+﻿import { Champion } from "@/interfaces/ChampionType";
+import { Augment, Rune, SummonerSpell } from "@/interfaces/productionTypes";
 
 const GAME_VERSION = process.env.NEXT_PUBLIC_GAME_VERSION || "15.6.1";
 const CDN_BASE = "https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1";
+const DATA_DRAGON_BASE = `https://ddragon.leagueoflegends.com/cdn/${GAME_VERSION}/img`;
 
 // Item Icon
 export function getItemIcon(itemId: number): string {
-    return `https://ddragon.leagueoflegends.com/cdn/${GAME_VERSION}/img/item/${itemId}.png`;
+    return `${DATA_DRAGON_BASE}/item/${itemId}.png`;
 }
 
 export function getChampionIconUrl(champion: Champion): string {
-    return `${CDN_BASE}/champion-icons/${champion.id}.png`;
+    return `${DATA_DRAGON_BASE}/champion/${champion.image.full}`;
 }
 
 /**
@@ -26,6 +28,15 @@ export function getRuneTreeIconUrl(rune: Rune): string {
     return `https://ddragon.leagueoflegends.com/cdn/img/${rune.runeTree.icon}`;
 }
 
+/**
+ * Returns the full URL to the champion spell icon from Community Dragon.
+ * @param champion The champion object containing spell data.
+ * @param spellId The index of the spell (0-3).
+ * @returns A fully qualified image URL for the spell icon.
+ */
+export function getChampionSpellIconByChampionAndID(champion: Champion, spellId: number): string {
+    return `${DATA_DRAGON_BASE}/spell/${champion.spells[spellId].image.full}`;
+}
 
 /**
  * Returns the full URL to the augment icon from Community Dragon.

@@ -4,7 +4,7 @@ import { TooltipBubble } from "../Tooltip";
 import { BoxPlaceHolder } from "./IconPlaceholder";
 
 interface IconBoxProps {
-    src: string | undefined;
+    src?: string;
     alt: string;
     size: number;
     childrenSize: number;
@@ -13,7 +13,6 @@ interface IconBoxProps {
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
     children?: React.ReactNode;
-    // Tooltip integration
     tooltip?: React.ReactNode;
     tooltipClassName?: string;
     showTooltip?: boolean;
@@ -30,6 +29,7 @@ export function IconBox({
     onMouseLeave,
     children,
     tooltip,
+    tooltipClassName = "",
     showTooltip = true,
 }: IconBoxProps) {
     const [hovered, setHovered] = useState(false);
@@ -45,22 +45,17 @@ export function IconBox({
         onMouseLeave?.();
     };
 
-    const handleImageError = () => {
-        setImageError(true);
-    };
+    const shouldShowPlaceholder = imageError || !src;
 
     return (
         <div
-            className={`relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer`}
+            className="relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer"
             style={{ width: size, height: size, ...style }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
-            {imageError || !src ? (
-                <BoxPlaceHolder
-                    size={childrenSize}
-                    className={className}
-                />
+            {shouldShowPlaceholder ? (
+                <BoxPlaceHolder size={childrenSize} className={className} />
             ) : (
                 <Image
                     src={src}
@@ -76,12 +71,12 @@ export function IconBox({
                         maxWidth: childrenSize,
                         maxHeight: childrenSize,
                     }}
-                    onError={handleImageError}
+                    onError={() => setImageError(true)}
                 />
             )}
             {children}
             {showTooltip && hovered && tooltip && (
-                <TooltipBubble iconBoxSize={size}>
+                <TooltipBubble iconBoxSize={size} className={tooltipClassName}>
                     {tooltip}
                 </TooltipBubble>
             )}

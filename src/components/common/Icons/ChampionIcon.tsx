@@ -1,16 +1,13 @@
 "use client";
 
-import { Champion } from "@/interfaces/productionTypes";
 import { getChampionIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "@/components/common/Icons/IconBox";
-
-type TooltipPlacement = "top" | "bottom" | "left" | "right";
+import { IconBox } from "./IconBox";
+import { Champion } from "@/interfaces/ChampionType";
 
 interface ChampionIconProps {
     champion: Champion;
     size: number;
     showTooltip?: boolean;
-    tooltipPlacement?: TooltipPlacement;
     className?: string;
     tooltipClassName?: string;
     showRoles?: boolean;
@@ -26,11 +23,21 @@ export function ChampionIcon({
     showRoles = true,
     level,
 }: ChampionIconProps) {
-    const formattedRoles = champion.roles
+    const formattedRoles = champion.tags
         .map(role => role.charAt(0).toUpperCase() + role.slice(1).toLowerCase())
         .join(" • ");
 
+    const tooltipContent = showTooltip ? (
+        <>
+            <div className="font-bold text-blue-400 text-center">{champion.name}</div>
+            {showRoles && (
+                <div className="mt-1 text-xs text-gray-300 text-center">{formattedRoles}</div>
+            )}
+        </>
+    ) : undefined;
+
     return (
+        console.log("ChampionIcon rendered", getChampionIconUrl(champion)),
         <div className="relative inline-block">
             <IconBox
                 src={getChampionIconUrl(champion)}
@@ -38,16 +45,7 @@ export function ChampionIcon({
                 size={size}
                 childrenSize={size}
                 className={className}
-                tooltip={
-                    showTooltip ? (
-                        <>
-                            <div className="font-bold text-blue-400 text-center">{champion.name}</div>
-                            {showRoles && (
-                                <div className="mt-1 text-xs text-gray-300 text-center">{formattedRoles}</div>
-                            )}
-                        </>
-                    ) : undefined
-                }
+                tooltip={tooltipContent}
                 tooltipClassName={`w-48 p-2 ${tooltipClassName}`}
                 showTooltip={showTooltip}
             />

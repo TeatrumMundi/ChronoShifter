@@ -1,11 +1,13 @@
 import { Participant } from "@/interfaces/productionTypes";
 import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame } from "@/interfaces/proudctionTimeLapTypes";
 import Image from "next/image";
-import { getRuneTreeIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
+import { getRuneTreeIconUrl, getChampionSpellIconByChampionAndID } from "@/utils/getLeagueAssets/getLOLAssets";
 import { ItemIcon } from "@/components/common/Icons/ItemIcon";
 import { RuneIcon } from "@/components/common/Icons/RuneIcon";
+import { IconBox } from "@/components/common/Icons/IconBox";
 import runesData from "@/utils/getLeagueAssets/runes.json";
 import { useEffect, useState } from "react";
+import { ChampionSpellIcon } from "@/components/common/Icons/ChampionSpellIcon";
 
 interface MatchBuildTabProps {
     mainPlayer: Participant;
@@ -220,6 +222,72 @@ export function MatchBuildTab({ mainPlayer }: MatchBuildTabProps) {
                                 </div>
                             )}
                         </div>
+                    ) : (
+                        renderEmptyState("No timeline data available")
+                    )}
+                </div>
+            </div>
+
+            {/* Skill order Section*/}
+            <div className="mt-6">
+                {renderSectionHeader("Skill Order")}
+                <div className="p-4">
+                    {mainPlayer.timelineData && mainPlayer.timelineData.frames.length > 0 ? (
+                        (() => {
+                            const skillEvents = mainPlayer.timelineData.frames
+                                .flatMap(frame => 
+                                    frame.events.filter(event => event.type === 'SKILL_LEVEL_UP')
+                                )
+                                .sort((a, b) => a.timestamp - b.timestamp);
+
+                            if (skillEvents.length === 0) {
+                                return renderEmptyState("No skill level up events during this match");
+                            }
+
+                            const skills = [
+                                { id: 1, name: 'Q', spellIndex: 0 },
+                                { id: 2, name: 'W', spellIndex: 1 },
+                                { id: 3, name: 'E', spellIndex: 2 },
+                                { id: 4, name: 'R', spellIndex: 3 }
+                            ];
+
+                            const totalSlots = Math.max(18, skillEvents.length);
+
+                            const renderSkillRow = (skill: { id: number; name: string; spellIndex: number }) => (
+                                <div key={skill.id} className="flex items-center gap-2">
+                                    <ChampionSpellIcon
+                                        champion={mainPlayer.champion}
+                                        spellIndex={skill.spellIndex}
+                                        size={32}
+                                        showTooltip={true}
+                                        showSpellKey={true}
+                                        className="rounded-sm"
+                                    />
+                                    <div className="flex gap-1">
+                                        {Array.from({ length: totalSlots }, (_, index) => {
+                                            const event = skillEvents[index];
+                                            return (
+                                                <div key={index} className="w-6 h-6 flex items-center justify-center">
+                                                    {event && event.skillSlot === skill.id ? (
+                                                        <div className="w-6 h-6 bg-blue-600 text-white text-xs flex items-center justify-center rounded-sm font-bold">
+                                                            {index + 1}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-6 h-6 bg-white/10 rounded-sm"></div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                            
+                            return (
+                                <div className="space-y-2">
+                                    {skills.map(renderSkillRow)}
+                                </div>
+                            );
+                        })()
                     ) : (
                         renderEmptyState("No timeline data available")
                     )}

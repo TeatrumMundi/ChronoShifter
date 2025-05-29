@@ -4,7 +4,7 @@ import { Participant, RecentMatch } from "@/interfaces/productionTypes";
 import { formatRole, getOrdinalPlacement, secToHHMMSS, timeAgo } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
-import { ChampionIcon } from "./ChampionIcon";
+import { ChampionIcon } from "../common/Icons/ChampionIcon";
 import { ParticipantList } from "./ParticipantList";
 import { RuneDisplay } from "./RuneDisplay";
 import { AugmentDisplay } from "./AugmentDisplay";

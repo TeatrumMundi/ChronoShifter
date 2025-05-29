@@ -1,5 +1,5 @@
 import { Participant } from "@/interfaces/productionTypes";
-import { ChampionIcon } from "../ChampionIcon";
+import { ChampionIcon } from "../../common/Icons/ChampionIcon";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { ChevronDown } from "lucide-react";
