@@ -1,10 +1,9 @@
 import { Participant } from "@/interfaces/productionTypes";
 import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame } from "@/interfaces/proudctionTimeLapTypes";
 import Image from "next/image";
-import { getRuneTreeIconUrl, getChampionSpellIconByChampionAndID } from "@/utils/getLeagueAssets/getLOLAssets";
+import { getRuneTreeIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
 import { ItemIcon } from "@/components/common/Icons/ItemIcon";
 import { RuneIcon } from "@/components/common/Icons/RuneIcon";
-import { IconBox } from "@/components/common/Icons/IconBox";
 import runesData from "@/utils/getLeagueAssets/runes.json";
 import { useEffect, useState } from "react";
 import { ChampionSpellIcon } from "@/components/common/Icons/ChampionSpellIcon";
