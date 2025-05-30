@@ -34,7 +34,7 @@ export function PerkIcon({
             alt={perk.name}
             size={size}
             childrenSize={childrenSize}
-            className={`border transition-all ${isSelected ? "opacity-100 border-yellow-400" : "opacity-30 border-gray-600"} ${className}`}
+            className={`border transition-all ${isSelected ? "opacity-100 border-yellow-400" : "opacity-15 border-gray-600"} ${className}`}
             tooltip={tooltipContent}
         />
     );

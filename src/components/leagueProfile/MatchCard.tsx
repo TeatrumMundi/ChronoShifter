@@ -50,15 +50,17 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                 {/* Main Card + Vertical Bar together */}
                 <div className="relative flex flex-col w-full">
                     {/* Vertical win/loss bar */}
-                    <div className={`absolute left-0 top-0 h-full w-[30px] flex flex-col z-10`}>
-                        <div className={`w-full h-full rounded-l-sm 
-                            ${participant.win ? "bg-green-400" : "bg-red-400"}
+                    <button 
+                        className={`absolute left-0 top-0 h-full w-[30px] flex flex-col z-10 cursor-pointer group`}
+                        onClick={() => setIsDetailsOpen((prev) => !prev)}
+                    >
+                        <div className={`w-full h-full rounded-l-sm transition-opacity duration-200
+                            ${participant.win ? "bg-green-400 group-hover:bg-green-300" : "bg-red-400 group-hover:bg-red-300"}
                             ${isDetailsOpen ? "rounded-b-none" : ""}`} />
 
-                        <button
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-xs p-0.15 shadow flex items-center justify-center
-                            ${participant.win ? "bg-green-800 hover:bg-green-800/50" : "bg-red-800 hover:bg-red-800/50"}`}
-                            onClick={() => setIsDetailsOpen((prev) => !prev)}
+                        <div
+                            className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-xs p-0.15 shadow flex items-center justify-center pointer-events-none
+                            ${participant.win ? "bg-green-800" : "bg-red-800"}`}
                         >
                             <ChevronDown 
                                 size={20} 
@@ -66,8 +68,8 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                     isDetailsOpen ? "rotate-180" : "rotate-0"
                                 }`} 
                             />
-                        </button>
-                    </div>
+                        </div>
+                    </button>
 
                     {/* Main Card */}
                     <div

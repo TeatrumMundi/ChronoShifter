@@ -34,7 +34,7 @@ export function RuneIcon({
             alt={rune.name}
             size={size}
             childrenSize={childrenSize}
-            className={`border transition-all ${isSelected ? "opacity-100" : "opacity-30"} ${className}`}
+            className={`border transition-all ${isSelected ? "opacity-100" : "opacity-15"} ${className}`}
             tooltip={tooltipContent}
         />
     );
