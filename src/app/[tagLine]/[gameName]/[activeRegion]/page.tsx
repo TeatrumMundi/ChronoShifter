@@ -21,7 +21,7 @@ export default async function Home({params}:
             <Navbar/>
             {/* MAIN CONTENT */}
             <div className="container mx-auto px-4 relative z-10">
-                <div className="grid grid-cols-12 gap-4">
+                <div className="grid grid-cols-12">
                     <div className="col-span-12 mt-10">
                         <PlayerInfo riotAccount={riotAccount} />
                     </div>

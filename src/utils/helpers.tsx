@@ -9,6 +9,29 @@ export function formatRole(position?: string): string {
     return roleMap[position?.toUpperCase() ?? ""] || position || "";
 }
 
+export const gameModeOptions = [
+    { name: "All Matches", queueIds: [] },
+    { name: "Ranked Solo", queueIds: [420, 421, 422] },
+    { name: "Ranked Flex", queueIds: [440, 441, 442] },
+    { name: "ARAM", queueIds: [450, 451, 452] },
+    { name: "Arena", queueIds: [1700, 1701, 1704, 1710, 1720, 1731] },
+    { name: "Quickplay", queueIds: [490] },
+    { name: "Swiftplay", queueIds: [480] },
+    { name: "Normal Draft", queueIds: [400, 401, 402, 403] },
+    { name: "Normal Blind", queueIds: [430, 431, 432, 433] },
+    { name: "Clash", queueIds: [700, 701, 720, 740, 741] }
+];
+
+// Mapping UI positions to API positions
+export const positionToApiMap: Record<string, string[]> = {
+    "ALL": [],
+    "Top": ["TOP"],
+    "Jungle": ["JUNGLE"],
+    "Middle": ["MIDDLE"],
+    "Bottom": ["BOTTOM"],
+    "Support": ["UTILITY"]
+};
+
 export function getOrdinalPlacement(placement: number): string {
     const ordinals = ["th", "st", "nd", "rd"];
     const v = placement % 100;
