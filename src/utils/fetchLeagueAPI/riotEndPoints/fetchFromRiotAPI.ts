@@ -6,8 +6,12 @@
  *
  * @throws {Error} Throws an error if the Riot API key is missing or there is an issue with the request.
  */
-export async function fetchFromRiotAPI(endpoint: string): Promise<Response>
-{
+export async function fetchFromRiotAPI(endpoint: string): Promise<Response> {
+    // Input validation
+    if (!endpoint || typeof endpoint !== 'string' || endpoint.trim().length === 0) {
+        throw new Error('Endpoint is required and must be a non-empty string');
+    }
+
     // Retrieve the Riot API key from environment variables
     const riotApiKey = process.env.RIOT_API_KEY;
 
@@ -25,29 +29,14 @@ export async function fetchFromRiotAPI(endpoint: string): Promise<Response>
             },
         });
 
-        // If the response is not OK, return a custom error message with the status
-        if (!response.ok) {
-            throw new Error(`Failed to fetch data from Riot API: ${response.status} ${response.statusText}`);
+        // Return the response directly - let calling functions handle status checks and JSON parsing
+        return response;
+
+    } catch (error) {
+        // Re-throw with more context, preserving the original error
+        if (error instanceof Error) {
+            throw new Error(`Network error while fetching from Riot API endpoint "${endpoint}": ${error.message}`);
         }
-
-        // Parse the JSON data from the response
-        const data = await response.json();
-
-        // Return the response data in JSON format with a 200 OK status
-        return new Response(JSON.stringify(data), {
-            status: 200,
-            headers: { "Content-Type": "application/json" },
-        });
-
-    } catch (error)
-    {
-        // Return an error response if an exception occurs during the fetch request
-        return new Response(JSON.stringify({ error: `An error occurred while fetching data using this endpoint: ${endpoint}`,
-                details: (error as Error).message }),
-            {
-                status: 500,
-                headers: { "Content-Type": "application/json"
-                },
-            });
+        throw new Error(`Unexpected error while fetching from Riot API endpoint "${endpoint}": ${String(error)}`);
     }
 }
