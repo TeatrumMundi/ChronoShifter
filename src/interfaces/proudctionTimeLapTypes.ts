@@ -151,5 +151,6 @@ export interface TimelineFrame {
 
 export interface ParticipantTimelineData {
     participantId: number;
+    puuid: string;
     frames: TimelineFrame[];
 }

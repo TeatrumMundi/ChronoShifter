@@ -50,6 +50,7 @@ export interface RecentMatch
 {
     matchId : string;
     matchDetails : MatchDetails;
+    timelineData : ParticipantTimelineData[];
 }
 
 export interface MatchDetails

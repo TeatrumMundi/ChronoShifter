@@ -61,7 +61,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         {mainPlayer ? (
                             <MatchBuildTab
                                 mainPlayer={mainPlayer}
-                                matchID={match.matchId} 
+                                recentMatch={match}
                             />
                         ) : (
                             <div className="p-4 text-center text-red-400">Main player not found.</div>

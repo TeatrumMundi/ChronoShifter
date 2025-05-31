@@ -1,65 +1,41 @@
-import { Participant } from "@/interfaces/productionTypes";
+import { Participant, RecentMatch } from "@/interfaces/productionTypes";
 import { RunesSection } from "./RunesSection";
 import { ItemTimelineSection } from "./ItemTimelineSection";
 import { SkillOrderSection } from "./SkillOrderSection";
-import { useEffect, useState } from "react";
+import { getPlayerFromTimelines } from "@/utils/fetchLeagueAPI/riotEndPoints/getMatchTimelineByMatchID";
 
 interface MatchBuildTabProps {
     mainPlayer: Participant;
-    matchID: string;
+    recentMatch: RecentMatch;
 }
 
-export function MatchBuildTab({ mainPlayer, matchID }: MatchBuildTabProps) {
-    const [enrichedPlayer, setEnrichedPlayer] = useState<Participant>(mainPlayer);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchTimeline = async () => {
-            try {
-                setIsLoading(true);
-                setError(null);
-                
-                const response = await fetch(`/api/match/${matchID}/timeline?region=${mainPlayer.region}&puuid=${mainPlayer.puuid}`);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch timeline data');
-                }
-                
-                const timelineData = await response.json();
-                
-                setEnrichedPlayer({
-                    ...mainPlayer,
-                    timelineData: timelineData[0]
-                });
-            } catch (err) {
-                const errorMessage = err instanceof Error ? err.message : 'Failed to fetch timeline data';
-                setError(errorMessage);
-                
-                // Set enriched player without timeline data
-                setEnrichedPlayer(mainPlayer);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchTimeline();
-    }, [matchID, mainPlayer.puuid, mainPlayer.region, mainPlayer]);
-
-    if (isLoading) {
+export function MatchBuildTab({ mainPlayer, recentMatch }: MatchBuildTabProps) {
+    // Add safety check for recentMatch existence
+    if (!recentMatch) {
         return (
-            <div className="p-4 flex justify-center">
-                <div className="text-gray-500">Loading timeline data...</div>
+            <div className="p-4 text-center text-gray-500">
+                <p>Match data not available</p>
             </div>
         );
     }
 
-    if (error) {
+    // Add safety check for timelineData existence
+    const playerTimelineData = recentMatch.timelineData && recentMatch.timelineData.length > 0
+        ? getPlayerFromTimelines(recentMatch.timelineData, mainPlayer.puuid)
+        : null;
+
+    // Create enriched player object with timeline data
+    const enrichedPlayer = {
+        ...mainPlayer,
+        timelineData: playerTimelineData || undefined
+    };
+
+    // If no timeline data is available, show a fallback message or basic info
+    if (!recentMatch.timelineData || recentMatch.timelineData.length === 0) {
         return (
-            <div className="p-4">
-                <RunesSection mainPlayer={mainPlayer} />
-                <ItemTimelineSection mainPlayer={mainPlayer} />
-                <SkillOrderSection mainPlayer={mainPlayer} />
+            <div className="p-4 text-center text-gray-500">
+                <p>Timeline data not available for this match</p>
+                <RunesSection mainPlayer={enrichedPlayer} />
             </div>
         );
     }
