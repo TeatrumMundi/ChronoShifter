@@ -1,5 +1,5 @@
 import { RawTimelineData, RawTimelineEvent } from '@/interfaces/rawTypes';
-import { fetchFromRiotAPI } from '../fetchFromRiotAPI';
+import { fetchFromRiotAPI } from './fetchFromRiotAPI';
 import { ParticipantTimelineData } from '@/interfaces/proudctionTimeLapTypes';
 import { Item } from '@/interfaces/productionTypes';
 import { getItemById } from '../../getLeagueAssets/getLOLObject';

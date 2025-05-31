@@ -1,223 +1,128 @@
-﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
-import { fetchFromRiotAPI } from './fetchFromRiotAPI';
-import { RawParticipant } from '@/interfaces/rawTypes';
-import { getAugmentById, getItemById, getRuneById } from '../getLeagueAssets/getLOLObject';
-import { getMatchDetailsByMatchID } from './riotEndPoints/getMatchDetailsByMatchID';
+﻿import { LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails } from '@/interfaces/productionTypes';
+import getSummonerByPuuid from './riotEndPoints/getSummonerByPuuid';
+import getRankedLeagueEntries from './riotEndPoints/getRankedLeagueEntries';
+import getRecentMatchesIDsByPuuid from './riotEndPoints/getRecentMatchesIDsByPuuid';
+import getMatchDetailsByMatchID from './riotEndPoints/getMatchDetailsByMatchID';
 
 /**
- * Extracts all item objects for a participant by fetching from local items.json.
- */
-export async function extractItems(participant: RawParticipant): Promise<Item[]> {
-    const itemIds: number[] = [
-        participant.item0,
-        participant.item1,
-        participant.item2,
-        participant.item3,
-        participant.item4,
-        participant.item5,
-        participant.item6,
-    ];
-
-    const itemPromises = itemIds.map(async (id) => {
-        const item = await getItemById(id);
-        if (!item) {
-            // Return a default empty item object if not found
-            return {
-                id: 0,
-                name: "",
-                description: "",
-                active: false,
-                inStore: false,
-                from: [],
-                to: [],
-                categories: [],
-                maxStacks: 0,
-                requiredChampion: "",
-                requiredAlly: "",
-                requiredBuffCurrencyName: "",
-                requiredBuffCurrencyCost: 0,
-                specialRecipe: 0,
-                isEnchantment: false,
-                price: 0,
-                priceTotal: 0,
-                displayInItemSets: false,
-                iconPath: "",
-            } as Item;
-        }
-        return item;
-    });
-
-    return await Promise.all(itemPromises);
-}
-
-/**
- * Fetches the runes for a participant by extracting the rune IDs from the participant's perks.
- */
-export async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
-    const runeIds = participant.perks?.styles.flatMap(style =>
-        style.selections.map(selection => selection.perk)
-    ) ?? [];
-
-    const runePromises = runeIds.map(runeId => getRuneById(runeId));
-    const runeObjects = await Promise.all(runePromises);
-    return runeObjects.filter((rune): rune is Rune => rune !== null);
-}
-
-/**
- * Creates an ArenaStats object based on participant data.
- */
-export async function extractArenaStats(participantData: RawParticipant): Promise<ArenaStats> {
-    // Get augments as objects
-    const augmentIds = [
-        participantData.playerAugment1,
-        participantData.playerAugment2,
-        participantData.playerAugment3,
-        participantData.playerAugment4,
-        participantData.playerAugment5,
-        participantData.playerAugment6,
-    ].filter(aug => aug !== 0 && aug !== undefined) as number[];
-
-    const augments = (
-        await Promise.all(augmentIds.map(id => getAugmentById(id)))
-    ).filter((a): a is Augment => a !== undefined);
-
-    // Build and return the full ArenaStats object
-    return {
-        placement: participantData.placement ?? 0,
-        augments,
-        playerSubteamId: participantData.playerSubteamId ?? 0,
-    };
-}
-
-/**
- * Fetch Riot account details by Riot ID.
- */
-export async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`
-    );
-    return await response.json() as Promise<RiotAccountDetails>;
-}
-
-/**
- * Fetch the active region for a given PUUID.
- */
-export async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/riot/account/v1/region/by-game/${game}/by-puuid/${puuid}`
-    );
-    const data = await response.json();
-    return data.region;
-}
-
-/**
- * Fetch League account details by PUUID.
- */
-async function getSummonerByPuuid(puuid: string, region: string, activeRegion: string): Promise<LeagueAccountDetails> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${activeRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`
-    );
-    const data = await response.json();
-
-    return {
-        ...data,
-        region,
-        activeRegion
-    } as LeagueAccountDetails;
-}
-
-/**
- * Fetch ranked league entries for a given PUUID.
- */
-async function getRankedLeagueEntries(puuid: string, activeRegion: string): Promise<LeagueRank[]> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${activeRegion}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`
-    );
-
-    const apiEntries = await response.json();
-
-    return apiEntries.map((entry: LeagueRank) => ({
-        queueType: entry.queueType,
-        tier: entry.tier,
-        rank: entry.rank,
-        leaguePoints: entry.leaguePoints,
-        wins: entry.wins,
-        losses: entry.losses,
-        winRate: (entry.wins + entry.losses > 0) ? Math.round((entry.wins / (entry.wins + entry.losses)) * 100) : 0,
-        hotStreak: entry.hotStreak
-    }));
-}
-
-/**
- * Fetch recent match IDs for a given PUUID.
- */
-async function getRecentMatchesIDsByPuuid(puuid: string, region: string, start: number = 0, number: number = 20): Promise<string[]> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${number}`
-    )
-    return await response.json() as Promise<string[]>;
-}
-
-
-
-/**
- * Creates a LeagueAccount object for a given PUUID.
+ * Creates a complete LeagueAccount object with summoner details, ranked information, and recent matches.
+ * 
+ * @param puuid - Player Universally Unique Identifier
+ * @param region - The regional routing value (e.g., "europe", "americas", "asia")
+ * @param activeRegion - The platform routing value (e.g., "eun1", "euw1", "na1")
+ * @returns Promise that resolves to a complete LeagueAccount object
+ * @throws {Error} When PUUID is invalid or account not found
+ * @throws {Error} When required data cannot be fetched from Riot API
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   const account = await createLeagueAccount("puuid123", "europe", "euw1");
+ *   console.log(`${account.leagueAccountsDetails.name} - ${account.leagueSoloRank.tier}`);
+ * } catch (error) {
+ *   console.error("Failed to create league account:", error.message);
+ * }
+ * ```
  */
 export async function createLeagueAccount(puuid: string, region: string, activeRegion: string): Promise<LeagueAccount> {
-    // Get the League account details
-    const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, region, activeRegion);
-    if (!leagueAccountsDetails) {
-        throw new Error("League account details not found");
+    // Input validation
+    if (!puuid || typeof puuid !== 'string' || puuid.trim().length === 0) {
+        throw new Error('PUUID is required and must be a non-empty string');
+    }
+    
+    if (!region || typeof region !== 'string' || region.trim().length === 0) {
+        throw new Error('Region is required and must be a non-empty string');
+    }
+    
+    if (!activeRegion || typeof activeRegion !== 'string' || activeRegion.trim().length === 0) {
+        throw new Error('Active region is required and must be a non-empty string');
     }
 
-    const leagueRanks: LeagueRank[] = await getRankedLeagueEntries(puuid, activeRegion);
-
-    const leagueSoloRank = leagueRanks.find(r => r.queueType === "RANKED_SOLO_5x5") ?? {
-        queueType: "RANKED_SOLO_5x5",
-        tier: "UNRANKED",
-        rank: "",
-        leaguePoints: 0,
-        wins: 0,
-        losses: 0,
-        winRate: 0,
-        hotStreak: false
-    };
-
-    const leagueFlexRank = leagueRanks.find(r => r.queueType === "RANKED_FLEX_SR") ?? {
-        queueType: "RANKED_FLEX_SR",
-        tier: "UNRANKED",
-        rank: "",
-        leaguePoints: 0,
-        wins: 0,
-        losses: 0,
-        winRate: 0,
-        hotStreak: false
-    };
-
-    // Get the recent matches IDs
-    let recentMatchesIDs: string[] = [];
     try {
-        recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 10);
+        // Get the League account details (required)
+        const leagueAccountsDetails: LeagueAccountDetails = await getSummonerByPuuid(puuid, region, activeRegion);
+        
+        if (!leagueAccountsDetails) {
+            throw new Error(`League account details not found for PUUID: ${puuid}`);
+        }
+
+        // Get ranked league entries (optional but important)
+        let leagueRanks: LeagueRank[] = [];
+        try {
+            leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);
+        } catch (error) {
+            console.warn(`Failed to fetch ranked entries for PUUID ${puuid}:`, error);
+            leagueRanks = [];
+        }
+
+        // Extract or create default solo queue rank
+        const leagueSoloRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_SOLO_5x5") ?? {
+            queueType: "RANKED_SOLO_5x5",
+            tier: "UNRANKED",
+            rank: "",
+            leaguePoints: 0,
+            wins: 0,
+            losses: 0,
+            winRate: 0,
+            hotStreak: false
+        };
+
+        // Extract or create default flex queue rank
+        const leagueFlexRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_FLEX_SR") ?? {
+            queueType: "RANKED_FLEX_SR",
+            tier: "UNRANKED",
+            rank: "",
+            leaguePoints: 0,
+            wins: 0,
+            losses: 0,
+            winRate: 0,
+            hotStreak: false
+        };
+
+        // Get recent match IDs (optional)
+        let recentMatchesIDs: string[] = [];
+        try {
+            recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 10);
+        } catch (error) {
+            console.warn(`Failed to fetch recent matches IDs for PUUID ${puuid}:`, error);
+            recentMatchesIDs = [];
+        }
+
+        // Fetch match details for each recent match ID (optional)
+        const recentMatchesRaw = await Promise.all(
+            recentMatchesIDs.map(async (matchId, index) => {
+                try {
+                    const matchDetails = await getMatchDetailsByMatchID(matchId, region, activeRegion);
+                    
+                    if (!matchDetails) {
+                        console.warn(`No match details returned for match ${matchId}`);
+                        return null;
+                    }
+                    
+                    return { matchId, matchDetails };
+                } catch (error) {
+                    console.warn(`Failed to fetch match details for match ${matchId} (index ${index}):`, error);
+                    return null;
+                }
+            })
+        );
+
+        // Filter out any null values from the recent matches
+        const recentMatches = recentMatchesRaw.filter((m): m is { matchId: string; matchDetails: MatchDetails } => m !== null);
+
+        // Log summary for debugging
+        console.log(`Successfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${recentMatches.length}/${recentMatchesIDs.length} matches loaded`);
+
+        return { 
+            leagueAccountsDetails, 
+            leagueSoloRank, 
+            leagueFlexRank, 
+            recentMatches 
+        };
     } catch (error) {
-        console.error("Failed to fetch recent matches IDs:", error);
-        recentMatchesIDs = [];
+        if (error instanceof Error) {
+            throw new Error(`Failed to create league account for PUUID ${puuid}: ${error.message}`);
+        }
+        throw new Error(`Unexpected error while creating league account: ${String(error)}`);
     }
-
-    // Fetch match details for each recent match ID
-    const recentMatchesRaw = await Promise.all(
-        recentMatchesIDs.map(async (matchId) => {
-            try {
-                const matchDetails = await getMatchDetailsByMatchID(matchId, region, activeRegion);
-                return { matchId, matchDetails };
-            } catch (error) {
-                console.error(`Failed to fetch match details for match ${matchId}:`, error);
-                return null;
-            }
-        })
-    );
-
-    // Filter out any null values from the recent matches
-    const recentMatches = recentMatchesRaw.filter((m): m is { matchId: string; matchDetails: MatchDetails } => m !== null);
-
-    return { leagueAccountsDetails, leagueSoloRank, leagueFlexRank, recentMatches };
 }

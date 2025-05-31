@@ -1,25 +1,7 @@
 import { LeagueAccount, RiotAccount, RiotAccountDetails } from "@/interfaces/productionTypes";
-import { createLeagueAccount, getAccountByRiotID, getActiveRegionByPuuid } from "./createLeagueAccount";
-
-/**
- * Error thrown when invalid parameters are provided to createRiotAccount function.
- */
-export class InvalidParametersError extends Error {
-    constructor(message: string = "Invalid parameters provided") {
-        super(message);
-        this.name = "InvalidParametersError";
-    }
-}
-
-/**
- * Error thrown when a Riot account is not found.
- */
-export class RiotAccountNotFoundError extends Error {
-    constructor(tagLine: string, gameName: string) {
-        super(`Riot account not found for ${gameName}#${tagLine}`);
-        this.name = "RiotAccountNotFoundError";
-    }
-}
+import { createLeagueAccount } from "./createLeagueAccount";
+import getAccountByRiotID from "./riotEndPoints/getAccountByRiotID";
+import getActiveRegionByPuuid from "./riotEndPoints/getActiveRegionByPuuid";
 
 /**
  * Creates a complete RiotAccount object for a given Riot ID.
@@ -31,17 +13,33 @@ export class RiotAccountNotFoundError extends Error {
  * @param tagLine - The tag line part of the Riot ID (e.g., "1234" from "PlayerName#1234")
  * @param gameName - The game name part of the Riot ID (e.g., "PlayerName" from "PlayerName#1234")
  * @param region - The region to search in (e.g., "europe", "asia", "americas")
- * 
- * @returns A Promise that resolves to a RiotAccount object containing both riot account details and league account information
- * 
- * @throws {InvalidParametersError} When any of the required parameters are missing, empty, or invalid
- * @throws {RiotAccountNotFoundError} When no account is found with the provided Riot ID in the specified region
+ * @returns Promise that resolves to a RiotAccount object containing both riot account details and league account information
+ * @throws {Error} When any of the required parameters are missing, empty, or invalid
+ * @throws {Error} When no account is found with the provided Riot ID in the specified region
  * @throws {Error} When there's an issue with API calls or account creation
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   const riotAccount = await createRiotAccount("1234", "PlayerName", "europe");
+ *   console.log(`Created account for ${riotAccount.riotAccountDetails.gameName}#${riotAccount.riotAccountDetails.tagLine}`);
+ * } catch (error) {
+ *   console.error("Failed to create riot account:", error.message);
+ * }
+ * ```
  */
 export async function createRiotAccount(tagLine: string, gameName: string, region: string): Promise<RiotAccount> {
     // Input validation
-    if (!tagLine?.trim() || !gameName?.trim() || !region?.trim()) {
-        throw new InvalidParametersError("All parameters (tagLine, gameName, region) must be non-empty strings");
+    if (!tagLine || typeof tagLine !== 'string' || tagLine.trim().length === 0) {
+        throw new Error('Tag line is required and must be a non-empty string');
+    }
+    
+    if (!gameName || typeof gameName !== 'string' || gameName.trim().length === 0) {
+        throw new Error('Game name is required and must be a non-empty string');
+    }
+    
+    if (!region || typeof region !== 'string' || region.trim().length === 0) {
+        throw new Error('Region is required and must be a non-empty string');
     }
 
     try {
@@ -49,26 +47,39 @@ export async function createRiotAccount(tagLine: string, gameName: string, regio
         const riotAccountDetails: RiotAccountDetails = await getAccountByRiotID(tagLine, gameName, region);
         
         if (!riotAccountDetails) {
-            throw new RiotAccountNotFoundError(tagLine, gameName);
+            throw new Error(`Riot account not found for ${gameName}#${tagLine} in region ${region}`);
+        }
+
+        // Validate essential account data
+        if (!riotAccountDetails.puuid || typeof riotAccountDetails.puuid !== 'string') {
+            throw new Error('Invalid PUUID received from Riot account details');
         }
 
         // Get the active region for the account
         const activeRegion: string = await getActiveRegionByPuuid(riotAccountDetails.puuid, region);
+        
+        if (!activeRegion || typeof activeRegion !== 'string') {
+            throw new Error(`Failed to determine active region for PUUID: ${riotAccountDetails.puuid}`);
+        }
 
         // Create League account information
         const leagueAccount: LeagueAccount = await createLeagueAccount(riotAccountDetails.puuid, region, activeRegion);
+        
+        if (!leagueAccount) {
+            throw new Error('Failed to create League account details');
+        }
+
+        // Log successful account creation
+        console.log(`Successfully created RiotAccount for ${gameName}#${tagLine} in ${activeRegion}`);
 
         return { 
             riotAccountDetails, 
             leagueAccount 
         };
     } catch (error) {
-        // Re-throw known errors
-        if (error instanceof InvalidParametersError || error instanceof RiotAccountNotFoundError) {
-            throw error;
+        if (error instanceof Error) {
+            throw new Error(`Failed to create Riot account for ${gameName}#${tagLine}: ${error.message}`);
         }
-        
-        // Wrap unknown errors
-        throw new Error(`Failed to create Riot account: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        throw new Error(`Unexpected error while creating Riot account: ${String(error)}`);
     }
 }

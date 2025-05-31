@@ -1,4 +1,6 @@
-import { Participant, RecentMatch } from "@/interfaces/productionTypes";
+import { ArenaStats, Augment, Item, Participant, RecentMatch, Rune } from "@/interfaces/productionTypes";
+import { RawParticipant } from "@/interfaces/rawTypes";
+import { getAugmentById, getItemById, getRuneById } from "./getLeagueAssets/getLOLObject";
 
 export function formatRole(position?: string): string {
     const roleMap: Record<string, string> = {
@@ -204,3 +206,88 @@ export const cleanItemDescription = (text: string): string => {
         .replace(/<\/?[^>]+(>|$)/g, "")
         .trim();
 };
+
+/**
+ * Extracts all item objects for a participant by fetching from local items.json.
+ */
+export async function extractItems(participant: RawParticipant): Promise<Item[]> {
+    const itemIds: number[] = [
+        participant.item0,
+        participant.item1,
+        participant.item2,
+        participant.item3,
+        participant.item4,
+        participant.item5,
+        participant.item6,
+    ];
+
+    const itemPromises = itemIds.map(async (id) => {
+        const item = await getItemById(id);
+        if (!item) {
+            // Return a default empty item object if not found
+            return {
+                id: 0,
+                name: "",
+                description: "",
+                active: false,
+                inStore: false,
+                from: [],
+                to: [],
+                categories: [],
+                maxStacks: 0,
+                requiredChampion: "",
+                requiredAlly: "",
+                requiredBuffCurrencyName: "",
+                requiredBuffCurrencyCost: 0,
+                specialRecipe: 0,
+                isEnchantment: false,
+                price: 0,
+                priceTotal: 0,
+                displayInItemSets: false,
+                iconPath: "",
+            } as Item;
+        }
+        return item;
+    });
+
+    return await Promise.all(itemPromises);
+}
+
+/**
+ * Creates an ArenaStats object based on participant data.
+ */
+export async function extractArenaStats(participantData: RawParticipant): Promise<ArenaStats> {
+    // Get augments as objects
+    const augmentIds = [
+        participantData.playerAugment1,
+        participantData.playerAugment2,
+        participantData.playerAugment3,
+        participantData.playerAugment4,
+        participantData.playerAugment5,
+        participantData.playerAugment6,
+    ].filter(aug => aug !== 0 && aug !== undefined) as number[];
+
+    const augments = (
+        await Promise.all(augmentIds.map(id => getAugmentById(id)))
+    ).filter((a): a is Augment => a !== undefined);
+
+    // Build and return the full ArenaStats object
+    return {
+        placement: participantData.placement ?? 0,
+        augments,
+        playerSubteamId: participantData.playerSubteamId ?? 0,
+    };
+}
+
+/**
+ * Fetches the runes for a participant by extracting the rune IDs from the participant's perks.
+ */
+export async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
+    const runeIds = participant.perks?.styles.flatMap(style =>
+        style.selections.map(selection => selection.perk)
+    ) ?? [];
+
+    const runePromises = runeIds.map(runeId => getRuneById(runeId));
+    const runeObjects = await Promise.all(runePromises);
+    return runeObjects.filter((rune): rune is Rune => rune !== null);
+}
