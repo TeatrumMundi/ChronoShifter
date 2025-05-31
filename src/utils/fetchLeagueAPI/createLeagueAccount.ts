@@ -1,14 +1,13 @@
-﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, Participant,  RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
+﻿import { ArenaStats, Augment, Item, LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails, RiotAccountDetails, Rune } from '@/interfaces/productionTypes';
 import { fetchFromRiotAPI } from './fetchFromRiotAPI';
-import { RawMatchData, RawParticipant, RawTimelineData, RawTimelineEvent } from '@/interfaces/rawTypes';
-import { getKDA, getMinionsPerMinute } from '../helpers';
-import { getAugmentById, getChampionById, getItemById, getRuneById, getStatPerkById, getSummonerSpellByID } from '../getLeagueAssets/getLOLObject';
-import { ParticipantTimelineData } from '@/interfaces/proudctionTimeLapTypes';
+import { RawParticipant } from '@/interfaces/rawTypes';
+import { getAugmentById, getItemById, getRuneById } from '../getLeagueAssets/getLOLObject';
+import { getMatchDetailsByMatchID } from './riotEndPoints/getMatchDetailsByMatchID';
 
 /**
  * Extracts all item objects for a participant by fetching from local items.json.
  */
-async function extractItems(participant: RawParticipant): Promise<Item[]> {
+export async function extractItems(participant: RawParticipant): Promise<Item[]> {
     const itemIds: number[] = [
         participant.item0,
         participant.item1,
@@ -54,7 +53,7 @@ async function extractItems(participant: RawParticipant): Promise<Item[]> {
 /**
  * Fetches the runes for a participant by extracting the rune IDs from the participant's perks.
  */
-async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
+export async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[]> {
     const runeIds = participant.perks?.styles.flatMap(style =>
         style.selections.map(selection => selection.perk)
     ) ?? [];
@@ -67,7 +66,7 @@ async function fetchParticipantRunes(participant: RawParticipant): Promise<Rune[
 /**
  * Creates an ArenaStats object based on participant data.
  */
-async function extractArenaStats(participantData: RawParticipant): Promise<ArenaStats> {
+export async function extractArenaStats(participantData: RawParticipant): Promise<ArenaStats> {
     // Get augments as objects
     const augmentIds = [
         participantData.playerAugment1,
@@ -159,92 +158,7 @@ async function getRecentMatchesIDsByPuuid(puuid: string, region: string, start: 
     return await response.json() as Promise<string[]>;
 }
 
-/**
- * Fetch match details by match ID.
- */
-async function getMatchDetailsByMatchID(matchID: string, region: string): Promise<MatchDetails> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchID}`
-    );
-    const data: RawMatchData = await response.json();
 
-    // Pobierz timeline data dla wszystkich uczestników
-    let participantsTimelineData: ParticipantTimelineData[] = [];
-    try {
-        participantsTimelineData = await getMatchTimelineByMatchID(matchID, region);
-    } catch (error) {
-        console.error(`Failed to fetch timeline data for match ${matchID}:`, error);
-    }
-
-    const matchDetails: MatchDetails = {
-        gameDuration: data.info.gameDuration,
-        gameCreation: data.info.gameCreation,
-        gameEndTimestamp: data.info.gameEndTimestamp,
-        gameMode: data.info.gameMode,
-        gameType: data.info.gameType,
-        queueId: data.info.queueId,
-        participants: await Promise.all(
-            data.info.participants.map(async (participantData: RawParticipant, index: number): Promise<Participant> => {
-                // Znajdź odpowiednie timeline data dla tego uczestnika
-                const timelineData = participantsTimelineData.find(
-                    ptd => ptd.participantId === (index + 1) // participantId w timeline zaczyna się od 1
-                );
-
-                return {
-                    puuid: participantData.puuid,
-                    riotIdGameName: participantData.riotIdGameName,
-                    riotIdTagline: participantData.riotIdTagline,
-                    summonerName: participantData.summonerName,
-                    champLevel: participantData.champLevel,
-                    teamId: participantData.teamId,
-                    teamPosition: participantData.teamPosition,
-
-                    // Stats
-                    kills: participantData.kills,
-                    deaths: participantData.deaths,
-                    assists: participantData.assists,
-                    kda: getKDA(participantData.kills, participantData.deaths, participantData.assists),
-
-                    // Minions Info
-                    totalMinionsKilled: participantData.totalMinionsKilled,
-                    neutralMinionsKilled: participantData.neutralMinionsKilled,
-                    allMinionsKilled: participantData.totalMinionsKilled + participantData.neutralMinionsKilled,
-                    minionsPerMinute: getMinionsPerMinute(data.info.gameDuration, (participantData.totalMinionsKilled + participantData.neutralMinionsKilled)),
-
-                    // Performance Stats
-                    visionScore: participantData.visionScore,
-                    visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore),
-                    wardsPlaced: participantData.wardsPlaced,
-                    goldEarned: participantData.goldEarned,
-
-                    totalHealsOnTeammates: participantData.totalHealsOnTeammates,
-                    totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates,
-                    totalDamageTaken: participantData.totalDamageTaken,
-                    totalDamageDealtToChampions: participantData.totalDamageDealtToChampions,
-                    individualPosition: participantData.individualPosition,
-                    win: participantData.win,
-
-                    summonerSpell1: await getSummonerSpellByID(participantData.summoner1Id),
-                    summonerSpell2: await getSummonerSpellByID(participantData.summoner2Id),
-                    items: await extractItems(participantData),
-                    champion: await getChampionById(participantData.championId),
-                    runes: await fetchParticipantRunes(participantData),
-                    statPerks: {
-                        defense: await getStatPerkById(participantData.perks.statPerks.defense),
-                        flex: await getStatPerkById(participantData.perks.statPerks.flex),
-                        offense: await getStatPerkById(participantData.perks.statPerks.offense)
-                    },
-                    arenaStats: await extractArenaStats(participantData),
-                    
-                    // Dodaj timeline data
-                    timelineData: timelineData
-                };
-            })
-        ),
-    };
-
-    return matchDetails;
-}
 
 /**
  * Creates a LeagueAccount object for a given PUUID.
@@ -283,7 +197,7 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
     // Get the recent matches IDs
     let recentMatchesIDs: string[] = [];
     try {
-        recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
+        recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 10);
     } catch (error) {
         console.error("Failed to fetch recent matches IDs:", error);
         recentMatchesIDs = [];
@@ -293,7 +207,7 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
     const recentMatchesRaw = await Promise.all(
         recentMatchesIDs.map(async (matchId) => {
             try {
-                const matchDetails = await getMatchDetailsByMatchID(matchId, region);
+                const matchDetails = await getMatchDetailsByMatchID(matchId, region, activeRegion);
                 return { matchId, matchDetails };
             } catch (error) {
                 console.error(`Failed to fetch match details for match ${matchId}:`, error);
@@ -307,102 +221,3 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
 
     return { leagueAccountsDetails, leagueSoloRank, leagueFlexRank, recentMatches };
 }
-
-async function getMatchTimelineByMatchID(matchID: string, region: string): Promise<ParticipantTimelineData[]> {
-    const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchID}/timeline`
-    );
-    
-    const timelineData: RawTimelineData = await response.json();
-    
-    const participantsTimelineData: ParticipantTimelineData[] = [];
-    
-    for (let participantId = 1; participantId <= 10; participantId++) {
-        const participantTimeline: ParticipantTimelineData = {
-            participantId: participantId,
-            frames: []
-        };
-        
-        for (const frame of timelineData.info.frames) {
-            const playerEvents = frame.events?.filter((event: RawTimelineEvent) => 
-                event.participantId === participantId ||
-                event.killerId === participantId ||
-                event.victimId === participantId ||
-                event.creatorId === participantId ||
-                (event.assistingParticipantIds && event.assistingParticipantIds.includes(participantId))
-            ) || [];
-            
-            const mappedEvents = await Promise.all(playerEvents.map(async (event: RawTimelineEvent) => {
-                const mappedEvent: RawTimelineEvent & { 
-                    itemPurchased?: Item; 
-                    itemSold?: Item; 
-                    itemDestroyed?: Item; 
-                } = {
-                    timestamp: event.timestamp || 0,
-                    type: event.type || 'PAUSE_END',
-                    ...event
-                };
-                
-                // Przypisz participantId dla eventów, które go nie mają
-                if (
-                    !mappedEvent.participantId &&
-                    ['WARD_PLACED', 'ITEM_PURCHASED', 'ITEM_DESTROYED', 'ITEM_SOLD', 'ITEM_UNDO',
-                     'SKILL_LEVEL_UP', 'LEVEL_UP', 'CHAMPION_SPECIAL_KILL', 'TURRET_PLATE_DESTROYED',
-                     'BUILDING_KILL', 'ELITE_MONSTER_KILL'].includes(mappedEvent.type ?? '')
-                ) {
-                    mappedEvent.participantId = participantId;
-                }
-                
-                if (mappedEvent.type === 'CHAMPION_KILL' && !mappedEvent.victimId) {
-                    mappedEvent.victimId = participantId;
-                }
-                
-                if (mappedEvent.type === 'WARD_KILL' && !mappedEvent.killerId) {
-                    mappedEvent.killerId = participantId;
-                }
-
-                // Konwertuj itemId na obiekt Item dla eventów itemów
-                if (mappedEvent.type === 'ITEM_PURCHASED' && mappedEvent.itemId) {
-                    const item = await getItemById(mappedEvent.itemId);
-                    if (item) {
-                        mappedEvent.itemPurchased = item;
-                        delete mappedEvent.itemId;
-                    }
-                }
-                
-                if (mappedEvent.type === 'ITEM_SOLD' && mappedEvent.itemId) {
-                    const item = await getItemById(mappedEvent.itemId);
-                    if (item) {
-                        mappedEvent.itemSold = item;
-                        delete mappedEvent.itemId;
-                    }
-                }
-                
-                if (mappedEvent.type === 'ITEM_DESTROYED' && mappedEvent.itemId) {
-                    const item = await getItemById(mappedEvent.itemId);
-                    if (item) {
-                        mappedEvent.itemDestroyed = item;
-                        delete mappedEvent.itemId;
-                    }
-                }
-
-                return mappedEvent as unknown as import('@/interfaces/proudctionTimeLapTypes').SpecificGameEvent;
-            }));
-
-            const validEvents = mappedEvents.filter((event): event is import('@/interfaces/proudctionTimeLapTypes').SpecificGameEvent => !!event.type);
-
-            if (validEvents.length > 0) {
-                participantTimeline.frames.push({
-                    timestamp: frame.timestamp,
-                    events: validEvents
-                });
-            }
-        }
-        
-        participantsTimelineData.push(participantTimeline);
-    }
-    
-    return participantsTimelineData;
-}
-
-

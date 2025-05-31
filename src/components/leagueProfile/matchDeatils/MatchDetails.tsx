@@ -59,7 +59,10 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                 return (
                     <Suspense fallback={<LoadingSpinner />}>
                         {mainPlayer ? (
-                            <MatchBuildTab mainPlayer={mainPlayer} />
+                            <MatchBuildTab
+                                mainPlayer={mainPlayer}
+                                matchID={match.matchId} 
+                            />
                         ) : (
                             <div className="p-4 text-center text-red-400">Main player not found.</div>
                         )}
@@ -73,7 +76,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region, match.matchDetails.gameDuration, mainPlayer]);
+    }, [activeTab, team1, team2, mainPlayerPUUID, region, match.matchDetails.gameDuration, match.matchId, mainPlayer]);
 
     // Debounce tab changes if users click rapidly
     const debouncedSetActiveTab = useMemo(

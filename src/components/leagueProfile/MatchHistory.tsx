@@ -57,8 +57,6 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
         return gameModeMatch && positionMatch && searchMatch;
     });
 
-    const recentMatches = filteredMatches.slice(0, 5);
-
     return (
         <div 
             className="space-y-2"
@@ -73,13 +71,13 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
                 onSearchChange={setSearchQuery}
             />
 
-            {recentMatches.length === 0 && (
+            {filteredMatches.length === 0 && (
                 <div className="p-6 bg-gray-800/80 rounded-sm text-gray-300 text-center tracking-[.25em]">
                     {searchQuery.trim() !== "" ? "No matches found for your search." : "No match data found."}
                 </div>
             )}
 
-            {recentMatches
+            {filteredMatches
                 .map((match) => {
                     const participant = getParticipantByPuuid(match, riotAccount.riotAccountDetails.puuid);
                     if (!participant) return null;

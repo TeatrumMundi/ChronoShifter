@@ -22,9 +22,9 @@ export function MatchHistoryHeader({
     onSearchChange
 }: MatchHistoryHeaderProps) {
     return (
-        <div className="text-gray-300 bg-gray-900/60 rounded-sm text-lg font-semibold overflow-hidden">
+        <div className="text-gray-300 bg-gray-900/60 rounded-sm text-lg font-semibold">
             <div className="flex flex-col lg:flex-row lg:justify-between lg:items-stretch gap-3">
-                <span className="bg-blue-600 flex items-center justify-center px-4 py-2 -ml-4 lg:-ml-0 lg:pl-4">
+                <span className="bg-blue-600 flex items-center justify-center px-4 py-2 lg:pl-4 rounded-t-sm lg:rounded-t-none lg:rounded-l-sm">
                     Match History
                 </span>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 py-2 lg:py-0">

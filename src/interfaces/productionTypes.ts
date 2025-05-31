@@ -69,6 +69,8 @@ export interface Participant
     riotIdGameName : string;
     riotIdTagline : string;
     summonerName : string;
+    region : string;
+    activeRegion : string;
     teamId : number;
     teamPosition : string;
     champLevel : number;

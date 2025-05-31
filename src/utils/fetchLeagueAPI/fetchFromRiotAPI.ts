@@ -13,10 +13,7 @@ export async function fetchFromRiotAPI(endpoint: string): Promise<Response>
 
     // Check if the Riot API key is missing
     if (!riotApiKey) {
-        return new Response(JSON.stringify({ error: "Riot API key is missing" }), {
-            status: 500,
-            headers: { "Content-Type": "application/json" },
-        });
+        throw new Error("Riot API key is missing");
     }
 
     try {
@@ -30,10 +27,7 @@ export async function fetchFromRiotAPI(endpoint: string): Promise<Response>
 
         // If the response is not OK, return a custom error message with the status
         if (!response.ok) {
-            return new Response(JSON.stringify({ error: "Failed to fetch data from Riot API", status: response.status }), {
-                status: response.status,
-                headers: { "Content-Type": "application/json" },
-            });
+            throw new Error(`Failed to fetch data from Riot API: ${response.status} ${response.statusText}`);
         }
 
         // Parse the JSON data from the response
