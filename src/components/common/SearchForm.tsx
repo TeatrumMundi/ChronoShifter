@@ -52,7 +52,7 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
                     type="text"
                     name="nickTag"
                     placeholder="NICKNAME#TAG"
-                    className="min-w-0 px-2 xs:px-3 py-2 text-xs xs:text-sm sm:text-lg md:text-xl 
+                    className="min-w-0 px-2 xs:px-3 py-2 pr-10 sm:pr-12 text-xs xs:text-sm sm:text-lg md:text-xl 
                     bg-white/20 border-t border-b border-r border-white/30 
                     rounded-r-sm
                     focus:outline-none text-white placeholder-white/30 tracking-widest transition-all duration-200"

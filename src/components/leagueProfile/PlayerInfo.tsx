@@ -1,9 +1,10 @@
 "use client";
 
 import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
+import SummonerIcon from "../common/Icons/SummonerIcon";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { getSummonerIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
+
 
 interface PlayerInfoProps {
     riotAccount: RiotAccount;
@@ -87,49 +88,17 @@ function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
                 </div>
                 <span className="text-sm mt-1">{ranked.leaguePoints} LP</span>
             </div>
-            <RankIcon url={iconUrl} title={title} />
+            <Image
+                src={iconUrl}
+                alt={`${title} Icon`}
+                width={110}
+                height={110}
+                quality={50}
+                loading="eager"
+                sizes="110px"
+                priority
+                className="hidden sm:block"
+            />
         </div>
-    );
-}
-
-function SummonerIcon({ prfileIconID, level }: { prfileIconID: number; level: string }) {
-    return (
-        <div className="relative flex-shrink-0">
-            <div className="relative h-24 w-24">
-                <Image
-                    src={getSummonerIconUrl(prfileIconID)}
-                    alt="Summoner Icon"
-                    fill
-                    className="rounded-sm border border-gray-500 object-cover"
-                    sizes="96px"
-                    quality={50}
-                    loading="eager"
-                    priority
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/summonerIcons/default.jpg';
-                    }}
-                />
-            </div>
-            <div className="absolute bottom-0 w-full bg-black/70 rounded-b-sm px-2 py-0.25 text-xs text-white text-center tracking-widest">
-                {level}
-            </div>
-        </div>
-    );
-}
-
-function RankIcon({ url, title }: { url: string; title: string }) {
-    return (
-        <Image
-            src={url}
-            alt={`${title} Icon`}
-            width={110}
-            height={110}
-            quality={50}
-            loading="eager"
-            sizes="110px"
-            priority
-            className="hidden sm:block"
-        />
     );
 }
