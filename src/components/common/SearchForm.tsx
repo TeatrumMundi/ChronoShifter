@@ -1,7 +1,7 @@
 "use client";
 
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 type SearchFormProps = {
@@ -9,11 +9,41 @@ type SearchFormProps = {
     className?: string;
 };
 
+type RecentPlayer = {
+    name: string;
+    tag: string;
+    region: string;
+};
 
 export function SearchForm({ position = "centered", className }: SearchFormProps) {
     const router = useRouter();
     const [region, setRegion] = useState("EUROPE");
     const [error, setError] = useState("");
+    const [isFocused, setIsFocused] = useState(false);
+    const [recentPlayers, setRecentPlayers] = useState<RecentPlayer[]>([]);
+
+    // Load recent players from localStorage on component mount
+    useEffect(() => {
+        const saved = localStorage.getItem("recentPlayers");
+        if (saved) {
+            try {
+                setRecentPlayers(JSON.parse(saved));
+            } catch (e) {
+                console.error("Failed to parse recent players:", e);
+            }
+        }
+    }, []);
+
+    // Save recent players to localStorage
+    const saveRecentPlayer = (name: string, tag: string, region: string) => {
+        const newPlayer = { name, tag, region };
+        const updated = [newPlayer, ...recentPlayers.filter(p => 
+            !(p.name === name && p.tag === tag && p.region === region)
+        )].slice(0, 3);
+        
+        setRecentPlayers(updated);
+        localStorage.setItem("recentPlayers", JSON.stringify(updated));
+    };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -26,7 +56,13 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
             return;
         }
         setError("");
+        saveRecentPlayer(name, tag, region);
         router.push(`/${tag.toLocaleLowerCase()}/${name.toLocaleLowerCase()}/${region.toLocaleLowerCase()}`);
+    };
+
+    const handleRecentPlayerClick = (player: RecentPlayer) => {
+        setIsFocused(false);
+        router.push(`/${player.tag.toLocaleLowerCase()}/${player.name.toLocaleLowerCase()}/${player.region.toLocaleLowerCase()}`);
     };
     
     return (
@@ -52,21 +88,48 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
                     type="text"
                     name="nickTag"
                     placeholder="NICKNAME#TAG"
-                    className="min-w-0 px-2 xs:px-3 py-2 pr-10 sm:pr-12 text-xs xs:text-sm sm:text-lg md:text-xl 
+                    className={`min-w-0 px-2 xs:px-3 py-2 pr-10 sm:pr-12 text-xs xs:text-sm sm:text-lg md:text-xl 
                     bg-white/20 border-t border-b border-r border-white/30 
                     rounded-r-sm
-                    focus:outline-none text-white placeholder-white/30 tracking-widest transition-all duration-200"
+                    focus:outline-none text-white placeholder-white/30 tracking-widest transition-all duration-200
+                    ${isFocused && recentPlayers.length > 0 && !error ? "rounded-b-none" : ""}`}
                     autoComplete="off"
                     spellCheck="false"
                     maxLength={22}
                     required
                     onInput={() => setError("")}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setTimeout(() => setIsFocused(false), 150)}
                 />
                     {error && (
                         <div
                             style={{ fontFamily: "var(--font-lato)" }} 
                             className="absolute left-0 top-full mt-1 w-full bg-red-700/20 text-white text-base rounded shadow px-3 py-1 animate-fade-in z-10 tracking-widest">
                             {error}
+                        </div>
+                    )}
+                    {isFocused && recentPlayers.length > 0 && !error && (
+                        <div
+                            style={{ fontFamily: "var(--font-verminVibes)" }}
+                            className="absolute left-0 top-full w-full bg-white/20 backdrop-blur-sm border border-white/30 border-t-0 rounded-b-sm shadow-md z-20"
+                        >
+                            <div className="px-3 py-2 text-xs text-white/70 border-b border-white/20 tracking-widest">
+                                RECENT SEARCHES
+                            </div>
+                            {recentPlayers.map((player, index) => (
+                                <div
+                                    key={`${player.name}-${player.tag}-${player.region}-${index}`}
+                                    onClick={() => handleRecentPlayerClick(player)}
+                                    className="px-3 py-2 text-white hover:bg-white/10 cursor-pointer transition-colors duration-150 tracking-widest text-xs xs:text-sm border-b border-white/10 last:border-b-0 flex justify-between items-center"
+                                >
+                                    <span className="truncate">
+                                        {player.name}#{player.tag}
+                                    </span>
+                                    <span className="text-white/60 text-xs ml-2 flex-shrink-0">
+                                        {player.region}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>
