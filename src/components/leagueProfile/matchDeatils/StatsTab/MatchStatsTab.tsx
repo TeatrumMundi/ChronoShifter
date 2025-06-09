@@ -7,7 +7,7 @@ interface MatchStatsTabProps {
     region: string;
 }
 
-export function MatchStatsTab({ team1, team2, mainPlayerPUUID, region }: MatchStatsTabProps) {
+export function MatchStatsTab({}: MatchStatsTabProps) {
     return (
         <div className="p-4">
             <div className="text-center text-gray-400">
