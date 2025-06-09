@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SearchForm } from "./SearchForm";
-import { ScrollText } from "lucide-react";
 
 export default function Navbar() {
     return (
@@ -28,13 +27,13 @@ export default function Navbar() {
                     </div>
 
                     {/* PATCH BUTTON */}
-                    <Link
+{/*                     <Link
                         href="/patch"
                         className="text-xl tracking-widest text-gray-200 hover:bg-white/20 px-3 transition-colors duration-300 h-full flex items-center"
                     >
                         <ScrollText className="mr-3"/>
                         PATCH
-                    </Link>
+                    </Link> */}
                 </div>
 
                 {/* SEARCH FORM */}

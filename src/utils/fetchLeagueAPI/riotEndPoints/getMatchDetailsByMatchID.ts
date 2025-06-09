@@ -1,7 +1,7 @@
 import { MatchDetails, Participant } from "@/interfaces/productionTypes";
 import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
 import { RawMatchData, RawParticipant } from "@/interfaces/rawTypes";
-import { extractArenaStats, extractItems, fetchParticipantRunes, getKDA, getMinionsPerMinute } from "@/utils/helpers";
+import { calculatePerformanceScore, extractArenaStats, extractItems, fetchParticipantRunes, getKDA, getMinionsPerMinute } from "@/utils/helpers";
 import { getChampionById, getStatPerkById, getSummonerSpellByID } from "@/utils/getLeagueAssets/getLOLObject";
 
 /**
@@ -139,6 +139,8 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                             visionPerMinute: getMinionsPerMinute(data.info.gameDuration, participantData.visionScore || 0),
                             wardsPlaced: participantData.wardsPlaced || 0,
                             goldEarned: participantData.goldEarned || 0,
+                            performanceScore: calculatePerformanceScore(participantData, data.info.gameDuration),
+                            performancePlacement: 0,
 
                             totalHealsOnTeammates: participantData.totalHealsOnTeammates || 0,
                             totalDamageShieldedOnTeammates: participantData.totalDamageShieldedOnTeammates || 0,
@@ -168,6 +170,12 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                 })
             ),
         };
+
+        // Calculate performance placement after all participants are processed
+        matchDetails.participants.sort((a, b) => b.performanceScore - a.performanceScore);
+        matchDetails.participants.forEach((participant, index) => {
+            participant.performancePlacement = index + 1;
+        });
 
         return matchDetails;
     } catch (error) {

@@ -93,6 +93,8 @@ export interface Participant
     visionPerMinute : number;
     wardsPlaced : number;
     goldEarned : number;
+    performanceScore : number;
+    performancePlacement : number;
     totalHealsOnTeammates : number;
     totalDamageShieldedOnTeammates : number;
     totalDamageTaken : number;

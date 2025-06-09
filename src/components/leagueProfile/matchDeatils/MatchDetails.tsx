@@ -1,11 +1,12 @@
 import { useState, useMemo, memo, lazy, Suspense } from "react";
 import { RecentMatch } from "@/interfaces/productionTypes";
 import { debounce } from "lodash";
-import { MatchBuildTab } from "./BuildTab/MatchBuildTab";
 
-// Lazy load heavy components
+// Lazy load all heavy components
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
 const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
+const MatchBuildTab = lazy(() => import("./BuildTab/MatchBuildTab").then(m => ({ default: m.MatchBuildTab })));
+const MatchStatsTab = lazy(() => import("./StatsTab/MatchStatsTab").then(m => ({ default: m.MatchStatsTab })));
 
 interface MatchDetailsProps {
     match: RecentMatch;
@@ -16,11 +17,23 @@ interface MatchDetailsProps {
 export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsProps) {
     const [activeTab, setActiveTab] = useState<"game" | "performance" | "build" | "stats">("game");
 
-    // Memoize team splitting - avoid recalculation on every render
-    const { team1, team2 } = useMemo(() => ({
-        team1: match.matchDetails.participants.slice(0, 5),
-        team2: match.matchDetails.participants.slice(5, 10)
-    }), [match.matchDetails.participants]);
+    // Memoize team splitting based on teamId
+    const { team1, team2 } = useMemo(() => {
+        const teams = match.matchDetails.participants.reduce((acc, participant) => {
+            if (!acc[participant.teamId]) {
+                acc[participant.teamId] = [];
+            }
+            acc[participant.teamId].push(participant);
+            return acc;
+        }, {} as Record<number, typeof match.matchDetails.participants>);
+
+        const teamIds = Object.keys(teams).map(Number).sort();
+        
+        return {
+            team1: teams[teamIds[0]] || [],
+            team2: teams[teamIds[1]] || []
+        };
+    }, [match]);
 
     const mainPlayer = useMemo(() =>
         match.matchDetails.participants.find(p => p.puuid === mainPlayerPUUID),
@@ -29,7 +42,40 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
 
     // Memoize tab content to prevent unnecessary re-renders
     const tabContent = useMemo(() => {
-        const LoadingSpinner = () => <div className="p-4 text-center">Loading...</div>;
+        const LoadingSpinner = () => (
+            <div className="flex items-center justify-center p-8 min-h-[200px]">
+                <div className="relative">
+                    {/* Outer rotating ring */}
+                    <div className="w-16 h-16 border-2 border-transparent border-t-blue-500 border-r-blue-400 rounded-full animate-spin"></div>
+                    
+                    {/* Middle pulsing ring */}
+                    <div className="absolute top-2 left-2 w-12 h-12 border-2 border-transparent border-b-cyan-400 border-l-cyan-300 rounded-full animate-spin animate-reverse"></div>
+                    
+                    {/* Inner glowing core */}
+                    <div className="absolute top-4 left-4 w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full animate-pulse shadow-lg shadow-blue-500/50"></div>
+                    
+                    {/* Center dot */}
+                    <div className="absolute top-6 left-6 w-4 h-4 bg-white rounded-full animate-ping"></div>
+                    
+                    {/* Floating particles */}
+                    <div className="absolute -top-1 -left-1 w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-75"></div>
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-150"></div>
+                    <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-300"></div>
+                    <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-300 rounded-full animate-bounce delay-500"></div>
+                </div>
+                
+                {/* Loading text with typewriter effect */}
+                <div className="ml-6">
+                    <div className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                        Loading
+                        <span className="animate-pulse">...</span>
+                    </div>
+                    <div className="text-sm text-gray-400 mt-1 animate-pulse">
+                        Preparing data
+                    </div>
+                </div>
+            </div>
+        );
         
         switch (activeTab) {
             case "game":
@@ -71,12 +117,18 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             case "stats":
                 return (
                     <Suspense fallback={<LoadingSpinner />}>
+                        <MatchStatsTab
+                            team1={team1}
+                            team2={team2}
+                            mainPlayerPUUID={mainPlayerPUUID}
+                            region={region}
+                        />
                     </Suspense>
                 );
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region, match.matchDetails.gameDuration, match.matchId, mainPlayer]);
+    }, [activeTab, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
 
     // Debounce tab changes if users click rapidly
     const debouncedSetActiveTab = useMemo(

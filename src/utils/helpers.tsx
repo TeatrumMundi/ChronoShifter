@@ -126,7 +126,7 @@ export const ServerMAP: Record<string, string> = {
     VN2: "vn"
 };
 
-export function calculatePerformanceScore(participant: Participant, timeInSeconds: number): number {
+export function calculatePerformanceScore(participant: RawParticipant, timeInSeconds: number): number {
     const isUtility = participant.individualPosition.toUpperCase() === "UTILITY";
     const timeInMinutes = timeInSeconds / 60;
     
@@ -141,6 +141,7 @@ export function calculatePerformanceScore(participant: Participant, timeInSecond
         damagePerMinute: 800,
         healsPerMinute: 150,
         shieldsPerMinute: 120,
+        csPerMinute: 8,
     };
 
     // Calculate per-minute stats
@@ -154,20 +155,21 @@ export function calculatePerformanceScore(participant: Participant, timeInSecond
         damagePerMin: participant.totalDamageDealtToChampions / timeInMinutes,
         healsPerMin: participant.totalHealsOnTeammates / timeInMinutes,
         shieldsPerMin: participant.totalDamageShieldedOnTeammates / timeInMinutes,
+        csPerMin: participant.totalMinionsKilled / timeInMinutes,
     };
 
     // Normalize stats against benchmarks (cap at 100% for each metric)
     const normalizedStats = {
         kills: Math.min(1, stats.killsPerMin / benchmarks.killsPerMinute),
         assists: Math.min(1, stats.assistsPerMin / benchmarks.assistsPerMinute),
-        deaths: Math.min(1, 1 - (stats.deathsPerMin / benchmarks.deathsPerMinute)), // Inverted (fewer deaths = better)
+        deaths: Math.min(1, 1 - (stats.deathsPerMin / benchmarks.deathsPerMinute)),
         gold: Math.min(1, stats.goldPerMin / benchmarks.goldPerMinute),
         visionScore: Math.min(1, stats.visionScorePerMin / benchmarks.visionScorePerMinute),
         wards: Math.min(1, stats.wardsPerMin / benchmarks.wardsPerMinute),
         damage: Math.min(1, stats.damagePerMin / benchmarks.damagePerMinute),
         heals: Math.min(1, stats.healsPerMin / benchmarks.healsPerMinute),
         shields: Math.min(1, stats.shieldsPerMin / benchmarks.shieldsPerMinute),
-        cs: Math.min(1, participant.minionsPerMinute / 8), // 8 CS/min is good benchmark
+        cs: Math.min(1, stats.csPerMin / benchmarks.csPerMinute),
     };
 
     let score: number;
