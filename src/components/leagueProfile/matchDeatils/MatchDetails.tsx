@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
 const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 const MatchBuildTab = lazy(() => import("./BuildTab/MatchBuildTab").then(m => ({ default: m.MatchBuildTab })));
-const MatchStatsTab = lazy(() => import("./StatsTab/MatchStatsTab").then(m => ({ default: m.MatchStatsTab })));
+const MatchTimelineTab = lazy(() => import("./TimeLineTab/MatchTimeLineTab").then(m => ({ default: m.MatchTimeLineTab })));
 
 interface MatchDetailsProps {
     match: RecentMatch;
@@ -15,7 +15,7 @@ interface MatchDetailsProps {
 }
 
 export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsProps) {
-    const [activeTab, setActiveTab] = useState<"game" | "performance" | "build" | "stats">("game");
+    const [activeTab, setActiveTab] = useState<"game" | "performance" | "build" | "timeLine">("game");
 
     // Memoize team splitting based on teamId
     const { team1, team2 } = useMemo(() => {
@@ -114,14 +114,14 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         )}
                     </Suspense>
                 );
-            case "stats":
+            case "timeLine":
                 return (
                     <Suspense fallback={<LoadingSpinner />}>
-                        <MatchStatsTab
+                        <MatchTimelineTab
                             team1={team1}
                             team2={team2}
                             mainPlayerPUUID={mainPlayerPUUID}
-                            region={region}
+                            recentMatch={match}
                         />
                     </Suspense>
                 );
@@ -132,7 +132,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
 
     // Debounce tab changes if users click rapidly
     const debouncedSetActiveTab = useMemo(
-        () => debounce((tab: "game" | "performance" | "build" | "stats") => {
+        () => debounce((tab: "game" | "performance" | "build" | "timeLine") => {
             setActiveTab(tab);
         }, 50),
         []
@@ -161,10 +161,10 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                     Build
                 </TabButton>
                 <TabButton 
-                    isActive={activeTab === "stats"} 
-                    onClick={() => debouncedSetActiveTab("stats")}
+                    isActive={activeTab === "timeLine"} 
+                    onClick={() => debouncedSetActiveTab("timeLine")}
                 >
-                    Stats
+                    Time Line
                 </TabButton>
             </div>
             <div className="text-white">

@@ -113,6 +113,7 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                     try {
                         return {
                             puuid: participantData.puuid,
+                            participantId: participantData.participantId,
                             riotIdGameName: participantData.riotIdGameName || '',
                             riotIdTagline: participantData.riotIdTagline || '',
                             summonerName: participantData.summonerName || '',

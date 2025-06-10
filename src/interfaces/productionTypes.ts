@@ -67,6 +67,7 @@ export interface MatchDetails
 export interface Participant
 {
     puuid : string;
+    participantId : number;
     riotIdGameName : string;
     riotIdTagline : string;
     summonerName : string;
