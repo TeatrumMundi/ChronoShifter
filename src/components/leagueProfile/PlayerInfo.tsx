@@ -1,21 +1,16 @@
 "use client";
 
-import { LeagueRank, RiotAccount } from "@/interfaces/productionTypes";
+import { RiotAccount } from "@/interfaces/productionTypes";
 import SummonerIcon from "../common/Icons/SummonerIcon";
 import { motion } from "framer-motion";
-import Image from "next/image";
-
 
 interface PlayerInfoProps {
     riotAccount: RiotAccount;
 }
 
 export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
-    const { leagueAccountsDetails, leagueSoloRank, leagueFlexRank } = riotAccount.leagueAccount;
+    const { leagueAccountsDetails } = riotAccount.leagueAccount;
     const { gameName, tagLine } = riotAccount.riotAccountDetails;
-
-    const getRankedIconUrl = (tier: string) =>
-        `/rankedIcons/${tier.toLowerCase()}.webp`;
 
     return (
         <motion.div
@@ -25,80 +20,48 @@ export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
         >
-            <div className="relative z-10 p-6 mb-5 flex flex-col lg:flex-row items-center bg-gray-900/60 w-full gap-6 rounded-sm">
-                <SummonerIcon prfileIconID={leagueAccountsDetails.profileIconId} level={leagueAccountsDetails.summonerLevel.toString()} />
+            {/* Slim Glass Card */}
+            <div className="relative p-4 mb-5 rounded-xl 
+                backdrop-blur-xl border border-white/20
+                shadow-xl shadow-black/5
+                bg-gradient-to-br from-white/8 via-white/5 to-white/3">
+                
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/3 to-purple-400/3" />
 
-                <div className="flex-1 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                    <div className="text-center lg:text-left">
-                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-widest leading-tight">
-                            {gameName}
-                        </h2>
-                        <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 justify-center lg:justify-start">
-                            <h3 className="text-lg md:text-xl text-white/90 tracking-widest">
-                                #{tagLine}
-                            </h3>
+                <div className="relative z-5 flex items-center gap-4">
+                    {/* Summoner Icon Section */}
+                    <div className="relative">
+                        <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20" />
+                        <div className="relative p-1.5">
+                            <SummonerIcon 
+                                prfileIconID={leagueAccountsDetails.profileIconId} 
+                                level={leagueAccountsDetails.summonerLevel.toString()}
+                                quality={50}
+                                loading="eager"
+                                priority={true}
+                                size={64}
+                            />
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-6 items-center tracking-widest">
-                        <RankSection
-                            title="Solo Queue"
-                            ranked={leagueSoloRank}
-                            iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
-                        />
-                        <RankSection
-                            title="Flex Queue"
-                            ranked={leagueFlexRank}
-                            iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
-                        />
+                    {/* Player Name Section */}
+                    <div className="flex-1">
+                        <div className="flex flex-col gap-2">
+                            <div className="px-3 py-1.5 rounded-lg bg-white/15 backdrop-blur-sm border border-white/25 w-fit">
+                                <h2 className="text-xl md:text-2xl font-bold text-white tracking-widest">
+                                    {gameName}
+                                </h2>
+                            </div>
+                            <div className="px-2 py-1 rounded-md bg-white/10 backdrop-blur-sm border border-white/20 w-fit">
+                                <h3 className="text-sm md:text-base text-white/90 tracking-widest">
+                                    #{tagLine}
+                                </h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </motion.div>
-    );
-}
-
-interface RankSectionProps {
-    title: string;
-    ranked: LeagueRank;
-    iconUrl: string;
-}
-
-function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
-    const getWinRateColor = (winRate: number) =>
-        winRate >= 50 ? "text-green-400" : "text-red-500";
-
-    return (
-        <div className="flex items-center gap-4 text-white">
-            <div className="border-l-2 border-white/20 h-30 hidden md:block" />
-            <div className="flex flex-col items-center text-center">
-                <span className="text-lg font-semibold tracking-widest">{title}</span>
-                <span className="text-2xl mt-1 tracking-widest">
-                    {ranked.tier} {ranked.rank}
-                </span>
-                <div className="flex gap-1 text-lg tracking-widest mt-1">
-                    <span className="text-green-400">{ranked.wins}W</span>
-                    <span>:</span>
-                    <span className="text-red-500">{ranked.losses}L</span>
-                    <span>
-                        (
-                        <span className={getWinRateColor(ranked.winRate)}>{ranked.winRate}%</span>
-                        )
-                    </span>
-                </div>
-                <span className="text-sm mt-1">{ranked.leaguePoints} LP</span>
-            </div>
-            <Image
-                src={iconUrl}
-                alt={`${title} Icon`}
-                width={110}
-                height={110}
-                quality={50}
-                loading="eager"
-                sizes="110px"
-                priority
-                className="hidden sm:block"
-            />
-        </div>
     );
 }

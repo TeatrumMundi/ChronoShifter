@@ -1,8 +1,8 @@
-import { useState, useMemo, memo, lazy, Suspense, useCallback } from "react";
+import { useState, useMemo, memo, lazy, Suspense, useCallback, startTransition } from "react";
 import { RecentMatch } from "@/interfaces/productionTypes";
-import { debounce } from "lodash";
+import { motion } from "framer-motion";
 
-// Lazy load all heavy components
+// Lazy load all heavy components with preload
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
 const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 const MatchBuildTab = lazy(() => import("./BuildTab/MatchBuildTab").then(m => ({ default: m.MatchBuildTab })));
@@ -32,7 +32,6 @@ const TABS_CONFIG = {
     }
 } as const;
 
-// Extract tab IDs for type safety
 type TabId = keyof typeof TABS_CONFIG;
 const DEFAULT_TAB: TabId = 'game';
 
@@ -45,8 +44,8 @@ interface MatchDetailsProps {
 export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>(DEFAULT_TAB);
 
-    // Memoize team splitting based on teamId
-    const { team1, team2 } = useMemo(() => {
+    // Memoize team splitting - only recalculate when match changes
+    const { team1, team2, mainPlayer, isWin } = useMemo(() => {
         const teams = match.matchDetails.participants.reduce((acc, participant) => {
             if (!acc[participant.teamId]) {
                 acc[participant.teamId] = [];
@@ -56,46 +55,36 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
         }, {} as Record<number, typeof match.matchDetails.participants>);
 
         const teamIds = Object.keys(teams).map(Number).sort();
+        const mainPlayer = match.matchDetails.participants.find(p => p.puuid === mainPlayerPUUID);
         
         return {
             team1: teams[teamIds[0]] || [],
-            team2: teams[teamIds[1]] || []
+            team2: teams[teamIds[1]] || [],
+            mainPlayer,
+            isWin: mainPlayer?.win || false
         };
-    }, [match]);
+    }, [match, mainPlayerPUUID]);
 
-    const mainPlayer = useMemo(() =>
-        match.matchDetails.participants.find(p => p.puuid === mainPlayerPUUID),
-        [match.matchDetails.participants, mainPlayerPUUID]
-    );
-
-    // Loading component
-    const LoadingSpinner = () => (
-        <div className="flex items-center justify-center p-8 min-h-[200px]">
+    // Lightweight loading component
+    const LoadingSpinner = memo(() => (
+        <div className="flex items-center justify-center p-4 min-h-[120px]">
             <div className="relative">
-                <div className="w-16 h-16 border-2 border-transparent border-t-blue-500 border-r-blue-400 rounded-full animate-spin"></div>
-                <div className="absolute top-2 left-2 w-12 h-12 border-2 border-transparent border-b-cyan-400 border-l-cyan-300 rounded-full animate-spin animate-reverse"></div>
-                <div className="absolute top-4 left-4 w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full animate-pulse shadow-lg shadow-blue-500/50"></div>
-                <div className="absolute top-6 left-6 w-4 h-4 bg-white rounded-full animate-ping"></div>
-                <div className="absolute -top-1 -left-1 w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-75"></div>
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full animate-bounce delay-150"></div>
-                <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-purple-400 rounded-full animate-bounce delay-300"></div>
-                <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-300 rounded-full animate-bounce delay-500"></div>
-            </div>
-            <div className="ml-6">
-                <div className="text-lg font-semibold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                    Loading
-                    <span className="animate-pulse">...</span>
-                </div>
-                <div className="text-sm text-gray-400 mt-1 animate-pulse">
-                    Preparing data
-                </div>
+                <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
             </div>
         </div>
-    );
+    ));
+    LoadingSpinner.displayName = "LoadingSpinner";
 
-    // Render tab content based on active tab, memoized to avoid unnecessary re-renders
-    const renderTabContent = useCallback((tabId: TabId) => {
-        switch (tabId) {
+    // Optimized tab content renderer with React.startTransition
+    const handleTabChange = useCallback((tab: TabId) => {
+        startTransition(() => {
+            setActiveTab(tab);
+        });
+    }, []);
+
+    // Render only active tab content to reduce initial load
+    const renderActiveTabContent = useMemo(() => {
+        switch (activeTab) {
             case 'game':
                 return (
                     <MatchGameTab
@@ -122,7 +111,9 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         recentMatch={match}
                     />
                 ) : (
-                    <div className="p-4 text-center text-red-400">Main player not found.</div>
+                    <div className="p-4 text-center text-red-400">
+                        Main player not found.
+                    </div>
                 );
             case 'timeline':
                 return (
@@ -136,55 +127,127 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
-
-    // Memoize tab content to prevent unnecessary re-renders
-    const tabContent = useMemo(() => (
-        <Suspense fallback={<LoadingSpinner />}>
-            {renderTabContent(activeTab)}
-        </Suspense>
-    ), [renderTabContent, activeTab]);
-
-    // Debounce tab changes if users click rapidly
-    const debouncedSetActiveTab = useMemo(
-        () => debounce((tab: TabId) => {
-            setActiveTab(tab);
-        }, 50),
-        []
-    );
+    }, [activeTab, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
 
     return (
-        <div className="w-full bg-gray-900/95 rounded-b-sm">
-            {/* Tab buttons - dynamically generated from config */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 m-4">
-                {Object.values(TABS_CONFIG).map((tab) => (
-                    <TabButton 
-                        key={tab.id}
-                        isActive={activeTab === tab.id} 
-                        onClick={() => debouncedSetActiveTab(tab.id)}
-                    >
-                        {tab.label}
-                    </TabButton>
-                ))}
-            </div>
-            <div className="text-white">
-                {tabContent}
-            </div>
-        </div>
+        <motion.div 
+            className={`w-full overflow-hidden relative
+                backdrop-blur-xl border-x border-b
+                shadow-2xl shadow-black/10 rounded-b-xl
+                ${isWin 
+                    ? "bg-emerald-500/15 border-emerald-400/30" 
+                    : "bg-rose-500/15 border-rose-400/30"
+                }`}
+            style={{
+                background: `linear-gradient(135deg, 
+                    ${isWin ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)'} 0%, 
+                    ${isWin ? 'rgba(5, 150, 105, 0.08)' : 'rgba(220, 38, 127, 0.08)'} 100%),
+                    rgba(255, 255, 255, 0.03)`
+            }}
+            initial={{ 
+                height: 0, 
+                opacity: 0,
+                transformOrigin: "top"
+            }}
+            animate={{ 
+                height: "auto", 
+                opacity: 1
+            }}
+            exit={{ 
+                height: 0, 
+                opacity: 0,
+                transformOrigin: "top"
+            }}
+            transition={{ 
+                duration: 0.3, // Reduced duration
+                ease: "easeOut", // Simpler easing
+                height: { duration: 0.3 },
+                opacity: { duration: 0.2 }
+            }}
+        >
+            {/* Simplified background glow */}
+            <div className={`absolute inset-0 rounded-b-xl
+                ${isWin 
+                    ? 'bg-emerald-400/2' 
+                    : 'bg-rose-400/2'
+                }`} />
+
+            {/* Tab Navigation - reduced animations */}
+            <motion.div 
+                className="relative p-4 border-b border-white/10"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+            >
+                <div className="relative z-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {Object.values(TABS_CONFIG).map((tab) => (
+                        <TabButton 
+                            key={tab.id}
+                            isActive={activeTab === tab.id} 
+                            isWin={isWin}
+                            onClick={() => handleTabChange(tab.id)}
+                        >
+                            {tab.label}
+                        </TabButton>
+                    ))}
+                </div>
+            </motion.div>
+
+            {/* Tab Content - simplified animations */}
+            <motion.div 
+                className="relative p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, delay: 0.1 }}
+            >
+                <div className="relative z-5 text-white">
+                    <Suspense fallback={<LoadingSpinner />}>
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                        >
+                            {renderActiveTabContent}
+                        </motion.div>
+                    </Suspense>
+                </div>
+            </motion.div>
+        </motion.div>
     );
 });
 
-const TabButton = memo(function TabButton({ isActive, onClick, children }: { isActive: boolean; onClick: () => void; children: React.ReactNode; }) {
+// Simplified TabButton component
+const TabButton = memo(function TabButton({ 
+    isActive, 
+    isWin, 
+    onClick, 
+    children 
+}: { 
+    isActive: boolean; 
+    isWin: boolean;
+    onClick: () => void; 
+    children: React.ReactNode; 
+}) {
     return (
         <button
-            className={`w-full px-4 py-2 rounded-xs font-semibold transition ${
-                isActive
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-white hover:bg-gray-600 cursor-pointer"
-            }`}
+            className={`relative w-full px-4 py-2 rounded-lg font-semibold transition-colors duration-150
+                backdrop-blur-sm border
+                ${isActive
+                    ? `${isWin 
+                        ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-100' 
+                        : 'bg-rose-500/20 border-rose-400/40 text-rose-100'
+                      }`
+                    : 'bg-white/8 border-white/20 text-white/80 hover:bg-white/12 hover:border-white/30'
+                }`}
             onClick={onClick}
         >
-            {children}
+            <span className="relative z-5 text-sm tracking-wide">
+                {children}
+            </span>
         </button>
     );
 });

@@ -22,12 +22,26 @@ export function MatchHistoryHeader({
     onSearchChange
 }: MatchHistoryHeaderProps) {
     return (
-        <div className="text-gray-300 bg-gray-900/60 rounded-sm text-lg font-semibold">
-            <div className="flex flex-col lg:flex-row lg:justify-between lg:items-stretch gap-3">
-                <span className="bg-blue-600 flex items-center justify-center px-4 py-2 lg:pl-4 rounded-t-sm lg:rounded-t-none lg:rounded-l-sm">
-                    Match History
-                </span>
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 px-4 py-2 lg:py-0">
+        <div className="relative rounded-xl backdrop-blur-xl border border-white/30 shadow-2xl shadow-black/10"
+            style={{
+                background: `linear-gradient(135deg, 
+                    rgba(59, 130, 246, 0.15) 0%, 
+                    rgba(37, 99, 235, 0.12) 100%),
+                    rgba(255, 255, 255, 0.05)`
+            }}>
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/5 to-indigo-400/3 pointer-events-none" />
+            
+            <div className="relative flex flex-col lg:flex-row lg:justify-between lg:items-stretch">
+                <div className="px-4 py-3 rounded-t-xl lg:rounded-t-none lg:rounded-l-xl
+                    bg-blue-600/20 backdrop-blur-sm border-b lg:border-b-0 lg:border-r border-white/20
+                    flex items-center justify-center lg:justify-start">
+                    <span className="text-lg font-semibold text-white/95">
+                        Match History
+                    </span>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-4 py-2">
                     <PositionFilter 
                         selectedPosition={selectedPosition}
                         onPositionChange={onPositionChange}
@@ -37,7 +51,7 @@ export function MatchHistoryHeader({
                         selectedGameMode={selectedGameMode}
                         onGameModeChange={onGameModeChange}
                     />
-
+                    
                     <SearchInput 
                         searchQuery={searchQuery}
                         onSearchChange={onSearchChange}
