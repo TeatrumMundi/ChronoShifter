@@ -1,6 +1,5 @@
 import { useState, useMemo, memo, lazy, Suspense, useCallback, startTransition } from "react";
 import { RecentMatch } from "@/interfaces/productionTypes";
-import { debounce } from "lodash";
 import { motion } from "framer-motion";
 
 // Lazy load all heavy components with preload
@@ -82,12 +81,6 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             setActiveTab(tab);
         });
     }, []);
-
-    // Debounced tab change
-    const debouncedSetActiveTab = useMemo(
-        () => debounce(handleTabChange, 100),
-        [handleTabChange]
-    );
 
     // Render only active tab content to reduce initial load
     const renderActiveTabContent = useMemo(() => {
@@ -193,7 +186,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                             key={tab.id}
                             isActive={activeTab === tab.id} 
                             isWin={isWin}
-                            onClick={() => debouncedSetActiveTab(tab.id)}
+                            onClick={() => handleTabChange(tab.id)}
                         >
                             {tab.label}
                         </TabButton>
