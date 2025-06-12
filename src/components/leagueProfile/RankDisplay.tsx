@@ -15,22 +15,26 @@ export default function RankDisplay({ leagueSoloRank, leagueFlexRank }: RankDisp
 
     return (
         <motion.div
-            className="space-y-4"
+            className="flex flex-col sm:flex-row lg:flex-col gap-4"
             style={{ fontFamily: "var(--font-verminVibes)" }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
         >
-            <RankSection
-                title="Solo Queue"
-                ranked={leagueSoloRank}
-                iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
-            />
-            <RankSection
-                title="Flex Queue"
-                ranked={leagueFlexRank}
-                iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
-            />
+            <div className="flex-1 lg:flex-none">
+                <RankSection
+                    title="Solo Queue"
+                    ranked={leagueSoloRank}
+                    iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
+                />
+            </div>
+            <div className="flex-1 lg:flex-none">
+                <RankSection
+                    title="Flex Queue"
+                    ranked={leagueFlexRank}
+                    iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
+                />
+            </div>
         </motion.div>
     );
 }
@@ -64,7 +68,12 @@ function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
                 
                 <div className="relative z-5 flex flex-col items-center text-white">
                     {/* Rank Info with Icon */}
-                    <div className="flex items-center gap-3 px-3 py-2 mb-3 rounded-lg bg-white/15 backdrop-blur-sm border border-white/25">
+                    <div className="flex items-center xl:flex-col 2xl:flex-row gap-3 xl:gap-2 2xl:gap-3 px-3 py-2 mb-3 rounded-lg bg-white/15 backdrop-blur-sm border border-white/25">
+                        {/* Rank Text */}
+                        <span className="text-lg font-semibold tracking-widest whitespace-nowrap">
+                            {ranked.tier} {ranked.rank}
+                        </span>
+                        
                         {/* Rank Icon */}
                         <div className="relative">
                             <Image
@@ -76,14 +85,9 @@ function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
                                 loading="eager"
                                 sizes="50px"
                                 priority
-                                className="rounded-md"
+                                className="rounded-md w-[50px] h-[50px]"
                             />
                         </div>
-                        
-                        {/* Rank Text */}
-                        <span className="text-lg font-semibold tracking-widest whitespace-nowrap">
-                            {ranked.tier} {ranked.rank}
-                        </span>
                     </div>
                     
                     {/* W/L Record */}

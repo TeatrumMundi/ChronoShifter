@@ -13,6 +13,7 @@ import { useState } from "react";
 import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
 import { MatchDetails } from "./matchDeatils/MatchDetails";
 import queuesData from "@/utils/getLeagueAssets/queues.json";
+import { AnimatePresence } from "framer-motion";
 
 interface MatchCardProps {
     participant: Participant;
@@ -214,15 +215,18 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                 </div>
 
                 {/* Match details - glass expandable section */}
-                {isDetailsOpen && (
-                    <div className={`rounded-b-xl backdrop-blur-xl border-x border-b shadow-2xl shadow-black/10 overflow-hidden
-                        ${isWin 
-                            ? "bg-emerald-500/8 border-emerald-400/25" 
-                            : "bg-rose-500/8 border-rose-400/25"
-                        }`}>
-                        <MatchDetails match={match} mainPlayerPUUID={participant.puuid} region={region}/>
-                    </div>
-                )}
+                <div>
+                    <AnimatePresence mode="wait">
+                        {isDetailsOpen && (
+                            <MatchDetails
+                                key="match-details" // Important: add a key
+                                match={match}
+                                mainPlayerPUUID={participant.puuid}
+                                region={region}
+                            />
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </>
     );

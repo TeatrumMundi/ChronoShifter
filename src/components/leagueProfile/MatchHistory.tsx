@@ -74,8 +74,18 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
             </div>
 
             {filteredMatches.length === 0 && (
-                <div className="p-6 bg-gray-800/80 rounded-sm text-gray-300 text-center tracking-[.25em]">
-                    {searchQuery.trim() !== "" ? "No matches found for your search." : "No match data found."}
+                <div className="relative p-6 rounded-xl backdrop-blur-xl border border-white/20
+                    bg-gradient-to-br from-white/8 via-white/5 to-white/3
+                    shadow-xl shadow-black/5 text-center">
+                    
+                    {/* Subtle glow effect */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/3 to-purple-400/3 pointer-events-none" />
+                    
+                    <div className="relative z-10">
+                        <p className="text-white/90 tracking-widest text-sm font-medium">
+                            {searchQuery.trim() !== "" ? "No matches found for your search." : "No match data found."}
+                        </p>
+                    </div>
                 </div>
             )}
 
