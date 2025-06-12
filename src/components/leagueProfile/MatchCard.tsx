@@ -37,141 +37,192 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
         : participant.win ? "WIN" : "LOSS";
 
     const winTextColor = isArena
-        ? placement && placement <= 4 ? "neon-green" : "neon-red"
-        : participant.win ? "text-green-300" : "text-red-300";
+        ? placement && placement <= 4 ? "text-emerald-300" : "text-rose-300"
+        : participant.win ? "text-emerald-300" : "text-rose-300";
 
-    const bgColor = isArena
-        ? placement && placement <= 4 ? "bg-green-900/90" : "bg-red-900/90"
-        : participant.win ? "bg-green-900/90" : "bg-red-900/90";
+    // Determine if this is a "win" (including arena top 4)
+    const isWin = isArena ? (placement && placement <= 4) : participant.win;
 
     return (
         <>
             <div className="flex flex-col h-full w-full">
-                {/* Main Card + Vertical Bar together */}
+                {/* Main Card Container */}
                 <div className="relative flex flex-col w-full">
-                    {/* Vertical win/loss bar */}
-                    <button 
-                        className={`absolute left-0 top-0 h-full w-[30px] flex flex-col z-10 cursor-pointer group`}
-                        onClick={() => setIsDetailsOpen((prev) => !prev)}
+                    
+                    {/* Main Glass Card */}
+                    <div
+                        className={`relative p-4 py-2 font-sans flex-1 rounded-xl 
+                            backdrop-blur-xl border
+                            shadow-2xl shadow-black/10
+                            ${isDetailsOpen ? "rounded-b-none" : ""}
+                            ${isWin 
+                                ? "bg-emerald-500/15 border-emerald-400/30" 
+                                : "bg-rose-500/15 border-rose-400/30"
+                            }`}
+                        style={{
+                            background: `linear-gradient(135deg, 
+                                ${isWin ? 'rgba(16, 185, 129, 0.12)' : 'rgba(244, 63, 94, 0.12)'} 0%, 
+                                ${isWin ? 'rgba(5, 150, 105, 0.08)' : 'rgba(220, 38, 127, 0.08)'} 100%),
+                                rgba(255, 255, 255, 0.03)`
+                        }}
                     >
-                        <div className={`w-full h-full rounded-l-sm transition-opacity duration-200
-                            ${participant.win ? "bg-green-400 group-hover:bg-green-300" : "bg-red-400 group-hover:bg-red-300"}
+                        {/* Subtle glow effect */}
+                        <div className={`absolute inset-0 rounded-xl
+                            ${isWin 
+                                ? 'bg-gradient-to-r from-emerald-400/3 to-green-400/3' 
+                                : 'bg-gradient-to-r from-rose-400/3 to-red-400/3'
+                            }
                             ${isDetailsOpen ? "rounded-b-none" : ""}`} />
 
-                        <div
-                            className={`absolute left-1/2 -translate-x-1/2 bottom-1 z-20 rounded-xs p-0.15 shadow flex items-center justify-center pointer-events-none
-                            ${participant.win ? "bg-green-800" : "bg-red-800"}`}
-                        >
-                            <ChevronDown 
-                                size={20} 
-                                className={`text-white transition-transform duration-300 ease-in-out ${
-                                    isDetailsOpen ? "rotate-180" : "rotate-0"
-                                }`} 
-                            />
-                        </div>
-                    </button>
+                        <div className="relative z-5 flex flex-col sm:flex-row gap-4 w-full pr-8">
+                            {/* Game Info Section */}
+                            <div className="flex flex-col items-center justify-center text-center
+                                border-b sm:border-b-0 sm:border-r border-white/20
+                                pb-3 sm:pb-0 sm:pr-4
+                                w-full sm:w-auto sm:flex-none sm:basis-[120px] sm:min-w-[100px] sm:max-w-[140px]">
+                                
+                                {/* Game Mode - liquid bubble */}
+                                <div className="px-3 py-1 mb-1 rounded-lg bg-white/20 backdrop-blur-sm border border-white/30">
+                                    <div className="text-sm font-bold text-white/90">
+                                        {gameMode}
+                                    </div>
+                                </div>
 
-                    {/* Main Card */}
-                    <div
-                        className={`p-3 pl-[34px] shadow-lg font-sans ${bgColor} flex-1 overflow-visible rounded-sm 
-                            ${isDetailsOpen ? "rounded-b-none" : ""}`}
-                    >
-                        <div className="flex flex-col sm:flex-row gap-4 w-full">
-                            <div
-                                className="flex flex-col items-center justify-center text-center tracking-wider
-                                border-b sm:border-b-0 sm:border-r border-gray-500/50
-                                pb-2 sm:pb-0 sm:pr-2
-                                w-full sm:w-auto sm:flex-none sm:basis-[120px] sm:min-w-[100px] sm:max-w-[140px]
-                                "
-                            >
-                                {/* Game Mode */}
-                                <div className="whitespace-normal text-sm sm:text-lg font-semibold text-gray-100">
-                                    {gameMode}
+                                {/* Win/Loss text */}
+                                <div className={`text-xs font-semibold ${winTextColor}`}>
+                                    {winText}
+                                    <span className="text-xs text-white/70 ml-1">
+                                        {formatRole(participant.teamPosition)}
+                                    </span>
                                 </div>
 
                                 {/* Role */}
-                                <div className="whitespace-normal text-xs sm:text-sm font-semibold text-gray-100">
-                                    {formatRole(participant.teamPosition)}
+                                <div className="text-xs font-medium text-white/80">
+                                    
                                 </div>
 
                                 {/* Time Ago */}
-                                <div className="whitespace-normal text-[9px] sm:text-xs text-gray-100">
+                                <div className="text-xs text-white/60">
                                     {timeAgo(match.matchDetails.gameEndTimestamp)}
                                 </div>
 
-                                {/* Duration & Win/Lose */}
-                                <div className="whitespace-normal text-xs sm:text-sm font-medium">
-                                    <span className={winTextColor}>{winText}</span> {secToHHMMSS(match.matchDetails.gameDuration)}
+                                {/* Duration */}
+                                <div className="text-xs font-medium text-white/80">
+                                    {secToHHMMSS(match.matchDetails.gameDuration)}
                                 </div>
                             </div>
 
-                            {/* Main Content + Participant List + Stats*/}
+                            {/* Main Content */}
                             <div className="flex flex-col lg:flex-row flex-1 min-w-0 gap-4">
-                                {/* Left: Champion + Items + Runes + Augments */}
-                                <div className="flex flex-col gap-4 flex-1 sm:flex-row items-center justify-center">
-                                    {/* Champion + Items + Runes + Augments */}
-                                    <div className="flex flex-row lg:flex-col  xl:flex-row gap-1 w-full sm:min-w-[200px] justify-center">
+                                {/* Champion & Items Section */}
+                                <div className="flex flex-col gap-3 flex-1 sm:flex-row items-center justify-center">
+                                    <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2 w-full sm:min-w-[180px] justify-center">
 
-                                        {/* Champion Icon + Runes + SummonerSpells */}
-                                        <div className="flex items-center justify-center gap-1">
-                                            <ChampionIcon champion={participant.champion} size={72} level={participant.champLevel}/>
+                                        {/* Champion + Spells + Runes */}
+                                        <div className="flex items-center justify-center gap-2">
+                                            {/* Champion */}
+                                            <div className="relative">
+                                                <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20" />
+                                                <div className="relative p-1 flex items-center justify-center">
+                                                    <div className="w-[56px] h-[56px] flex items-center justify-center">
+                                                        <ChampionIcon 
+                                                            champion={participant.champion} 
+                                                            size={56} 
+                                                            level={participant.champLevel}
+                                                            className="w-full h-full object-cover rounded-md"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                             {/* Summoner Spells */}
                                             {(participant.summonerSpell1.id !== 0 || participant.summonerSpell2.id !== 0) && (
-                                                <div className="flex-shrink-0 w-[32px] min-w-[32px]">
+                                                <div className="relative rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
                                                     <SummonerSpellDisplay
                                                         summonerSpell1={participant.summonerSpell1}
                                                         summonerSpell2={participant.summonerSpell2}
-                                                        summonerspellIconsSize={28}
-                                                        boxSize={32}
+                                                        summonerspellIconsSize={24}
+                                                        boxSize={28}
                                                     />
                                                 </div>
                                             )}
 
                                             {/* Runes */}
                                             {participant.runes?.length > 0 && (
-                                                <div className="flex-shrink-0 w-[32px] min-w-[32px]">
-                                                    <RuneDisplay boxSize={32} keyStoneIconSize={30} secendaryRuneIconSize={20} runes={participant.runes} />
-                                                </div>
-                                            )}
-
-                                        </div>
-
-                                        {/* Items and Augments */}
-                                        <div className="flex flex-row sm:flex-col 2xl:flex-row justify-center items-center">
-                                            <ItemDisplay itemSize={32} items={participant.items} />
-                                            {gameMode === "Arena" && participant.arenaStats && participant.arenaStats.augments.length > 0 && (
-                                                <div className="w-full 2xl:w-auto">
-                                                    <AugmentDisplay itemSize={32} augments={participant.arenaStats.augments} />
+                                                <div className="relative rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
+                                                    <RuneDisplay boxSize={28} keyStoneIconSize={26} secendaryRuneIconSize={18} runes={participant.runes} />
                                                 </div>
                                             )}
                                         </div>
 
+                                        {/* Items only - show below on mobile, inline on larger screens */}
+                                        <div className="flex justify-center items-center">
+                                            <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
+                                                <ItemDisplay itemSize={28} items={participant.items} />
+                                            </div>
+                                        </div>
+
+                                        {/* Augments - hide on mobile, show on larger screens if Arena */}
+                                        {gameMode === "Arena" && participant.arenaStats && participant.arenaStats.augments.length > 0 && (
+                                            <div className="hidden sm:flex justify-center items-center">
+                                                <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
+                                                    <AugmentDisplay itemSize={28} augments={participant.arenaStats.augments} />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-
-                                    
                                 </div>
-                                {/* Stats */}
-                                    <div className="flex flex-col justify-center w-full min-w-0">
+
+                                {/* Stats Section */}
+                                <div className="flex flex-col justify-center w-full min-w-[220px] lg:max-w-[140px] xl:max-w-[280px]">
+                                    <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
                                         <MatchStats participant={participant} gameMode={gameMode} />
                                     </div>
+                                </div>
 
-                                {/* Right: Participants */}
-                                <div className="flex-1 w-full min-w-0 max-w-full sm:min-w-[280px] border-t lg:border-t-0 lg:border-l border-gray-500/50 pt-4 lg:pt-0 lg:pl-4">
-                                    <ParticipantList
-                                        participants={match.matchDetails.participants}
-                                        gameMode={gameMode}
-                                        region={region}
-                                    />
+                                {/* Participants Section */}
+                                <div className="flex flex-col justify-center w-full min-w-0 max-w-full sm:min-w-[160px] lg:min-w-[140px] lg:max-w-[260px] xl:min-w-[200px] xl:max-w-[260px] border-t lg:border-t-0 lg:border-l border-white/20 pt-2 lg:pt-0 lg:pl-2 pr-6">
+                                    <div className="flex items-center w-full">
+                                        <ParticipantList
+                                            participants={match.matchDetails.participants}
+                                            gameMode={gameMode}
+                                            region={region}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Expand/Collapse Button Bar - Right Side */}
+                        <button 
+                            className="absolute top-1/2 -translate-y-1/2 right-2 z-20
+                                w-5 h-12 rounded-lg
+                                bg-white/15 backdrop-blur-sm border border-white/20
+                                hover:bg-white/25 hover:
+                                transition-all duration-200 ease-out
+                                shadow-md shadow-black/5
+                                flex items-center justify-center group"
+                            onClick={() => setIsDetailsOpen((prev) => !prev)}
+                        >
+                            <ChevronDown 
+                                size={14} 
+                                className={`text-white/70 group-hover:text-white transition-all duration-200 ease-out ${
+                                    isDetailsOpen ? "rotate-180" : "rotate-0"
+                                }`} 
+                            />
+                        </button>
                     </div>
                 </div>
 
-                {/* Match details - expandable box */}
+                {/* Match details - glass expandable section */}
                 {isDetailsOpen && (
-                    <MatchDetails match={match} mainPlayerPUUID={participant.puuid} region={region}/>
+                    <div className={`rounded-b-xl backdrop-blur-xl border-x border-b shadow-2xl shadow-black/10 overflow-hidden
+                        ${isWin 
+                            ? "bg-emerald-500/8 border-emerald-400/25" 
+                            : "bg-rose-500/8 border-rose-400/25"
+                        }`}>
+                        <MatchDetails match={match} mainPlayerPUUID={participant.puuid} region={region}/>
+                    </div>
                 )}
             </div>
         </>

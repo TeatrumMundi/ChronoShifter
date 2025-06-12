@@ -4,14 +4,14 @@ import React, { useMemo } from "react";
 import { ChampionIcon } from "../common/Icons/ChampionIcon";
 
 const TEAM_COLORS: string[] = [
-    'bg-yellow-800/60',
-    'bg-cyan-800/60',
-    'bg-blue-800/60',
-    'bg-purple-800/60',
-    'bg-orange-800/60',
-    'bg-pink-800/60',
-    'bg-teal-800/60',
-    'bg-indigo-800/60'
+    'bg-yellow-500/25 border-yellow-400/30',
+    'bg-cyan-500/25 border-cyan-400/30',
+    'bg-blue-500/25 border-blue-400/30',
+    'bg-purple-500/25 border-purple-400/30',
+    'bg-orange-500/25 border-orange-400/30',
+    'bg-pink-500/25 border-pink-400/30',
+    'bg-teal-500/25 border-teal-400/30',
+    'bg-indigo-500/25 border-indigo-400/30'
 ];
 
 /**
@@ -40,7 +40,7 @@ export function ParticipantList({participants, gameMode, region,}: {
 }
 
 /**
- * Classic 5v5 mainPage:
+ * Classic 5v5 layout:
  * - Left column: one team
  * - Right column: opposing team
  */
@@ -61,8 +61,8 @@ function StandardParticipantList({participants, region,}: { participants: Partic
     }, [participants]);
 
     return (
-        <div className="h-full w-full text-xs text-gray-400">
-            <div className="grid grid-rows-5 gap-0.5 h-full">
+        <div className="h-full w-full text-xs">
+            <div className="flex flex-col gap-0.5 lg:gap-1 h-full">
                 {Array.from({ length: 5 }).map((_, i) => {
                     const leftPlayer = teams.leftTeam[i];
                     const rightPlayer = teams.rightTeam[i];
@@ -70,44 +70,56 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                     return (
                         <div
                             key={i}
-                            className="flex flex-row items-stretch w-full gap-2 h-full"
+                            className="flex flex-row items-stretch w-full gap-0.5 lg:gap-1 flex-1 h-[28px]"
                         >
-                            {/* Left Player */}
-                            <div className="flex items-center justify-between bg-blue-900/80 pl-1 rounded flex-1 hover:bg-blue-900/40 transition-colors h-full">
-                            {leftPlayer && (
+                            {/* Left Player - Blue Team */}
+                            <div className="flex items-center px-1 rounded-md h-full min-w-0 w-1/2 flex-shrink-0
+                                bg-blue-500/20 backdrop-blur-sm border border-blue-400/30
+                                hover:bg-blue-500/30 hover:border-blue-400/40
+                                transition-all duration-200 ease-out overflow-hidden">
+                                {leftPlayer && (
                                     <>
+                                        <ChampionIcon
+                                            champion={leftPlayer.champion}
+                                            size={12}
+                                            className="rounded-xl flex-shrink-0"
+                                        />
                                         <Link
                                             href={`/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${region}`}
-                                            className="text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                                            className="text-white/90 hover:text-blue-200 transition-colors 
+                                                whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 ml-1
+                                                font-medium text-xs"
                                             title={`${leftPlayer.riotIdGameName}#${leftPlayer.riotIdTagline}`}
                                             aria-label={`View profile for ${leftPlayer.riotIdGameName}`}
                                         >
                                             {leftPlayer.riotIdGameName}
                                         </Link>
-                                        <ChampionIcon
-                                            champion={leftPlayer.champion}
-                                            size={20}
-                                        />
                                     </>
                                 )}
                             </div>
 
-                            {/* Right Player */}
-                            <div className="flex items-center justify-between gap-1 bg-violet-900/80 pr-1 rounded flex-1 hover:bg-violet-900/40 transition-colors h-full">
-                            {rightPlayer && (
+                            {/* Right Player - Red Team */}
+                            <div className="flex items-center px-1 rounded-md h-full min-w-0 w-1/2 flex-shrink-0
+                                bg-red-500/20 backdrop-blur-sm border border-red-400/30
+                                hover:bg-red-500/30 hover:border-red-400/40
+                                transition-all duration-200 ease-out overflow-hidden">
+                                {rightPlayer && (
                                     <>
-                                        <ChampionIcon
-                                            champion={rightPlayer.champion}
-                                            size={20}
-                                        />
                                         <Link
                                             href={`/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${region}`}
-                                            className="text-white hover:text-blue-400 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
+                                            className="text-white/90 hover:text-red-200 transition-colors 
+                                                whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 mr-1 text-right
+                                                font-medium text-xs"
                                             title={`${rightPlayer.riotIdGameName}#${rightPlayer.riotIdTagline}`}
                                             aria-label={`View profile for ${rightPlayer.riotIdGameName}`}
                                         >
                                             {rightPlayer.riotIdGameName}
                                         </Link>
+                                        <ChampionIcon
+                                            champion={rightPlayer.champion}
+                                            size={12}
+                                            className="rounded-xl flex-shrink-0"
+                                        />
                                     </>
                                 )}
                             </div>
@@ -143,19 +155,29 @@ function ArenaParticipantList({ participants, region }: {
     );
 
     return (
-        <div className="h-full text-sm text-gray-400 tracking-normal">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 h-full">
+        <div className="h-full text-xs">
+            <div className="flex flex-col gap-0.5 lg:gap-1 h-full">
                 {sortedTeamIds.map((teamId, index) => (
                     <div
                         key={teamId}
-                        className={`flex p-1 rounded ${TEAM_COLORS[index % TEAM_COLORS.length]} transition-all duration-200 hover:opacity-80 overflow-hidden`}
+                        className={`flex items-center p-1 lg:p-1.5 rounded-md backdrop-blur-sm border flex-1 min-h-0
+                            ${TEAM_COLORS[index % TEAM_COLORS.length]}
+                            hover:bg-white/10 hover:border-white/20
+                            transition-all duration-200 ease-out overflow-hidden
+                            shadow-sm`}
                     >
                         {teams[teamId].map((player, playerIndex) => (
-                            <div key={playerIndex} className="flex items-center gap-1 mr-2 flex-shrink-0">
-                                <ChampionIcon champion={player.champion} size={16} />
+                            <div key={playerIndex} className="flex items-center gap-1 mr-1 flex-shrink-0 last:mr-0 min-w-0">
+                                <div className="relative flex-shrink-0">
+                                    <div className="absolute inset-0 rounded-sm bg-white/10 backdrop-blur-sm border border-white/15" />
+                                    <div className="relative p-0.5">
+                                        <ChampionIcon champion={player.champion} size={12} />
+                                    </div>
+                                </div>
                                 <Link
                                     href={`/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
-                                    className="text-sm w-[80px] truncate text-white hover:text-blue-400 transition-colors"
+                                    className="text-xs truncate text-white/90 hover:text-white 
+                                        transition-colors font-medium min-w-0 flex-1"
                                     title={player.riotIdGameName}
                                 >
                                     {player.riotIdGameName}
