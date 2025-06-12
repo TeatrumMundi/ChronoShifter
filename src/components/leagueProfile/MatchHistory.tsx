@@ -59,17 +59,19 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
 
     return (
         <div 
-            className="space-y-2"
+            className="space-y-2 relative"
             style={{ fontFamily: "var(--font-lato)" }}
         >
-            <MatchHistoryHeader
-                selectedGameMode={selectedGameMode}
-                selectedPosition={selectedPosition}
-                searchQuery={searchQuery}
-                onGameModeChange={setSelectedGameMode}
-                onPositionChange={setSelectedPosition}
-                onSearchChange={setSearchQuery}
-            />
+            <div className="relative z-10">
+                <MatchHistoryHeader
+                    selectedGameMode={selectedGameMode}
+                    selectedPosition={selectedPosition}
+                    searchQuery={searchQuery}
+                    onGameModeChange={setSelectedGameMode}
+                    onPositionChange={setSelectedPosition}
+                    onSearchChange={setSearchQuery}
+                />
+            </div>
 
             {filteredMatches.length === 0 && (
                 <div className="p-6 bg-gray-800/80 rounded-sm text-gray-300 text-center tracking-[.25em]">
@@ -77,20 +79,22 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
                 </div>
             )}
 
-            {filteredMatches
-                .map((match) => {
-                    const participant = getParticipantByPuuid(match, riotAccount.riotAccountDetails.puuid);
-                    if (!participant) return null;
-                    return (
-                        <MatchCard
-                            key={match.matchId}
-                            match={match}
-                            participant={participant}
-                            region={riotAccount.leagueAccount.leagueAccountsDetails.region}
-                        />
-                    );
-                })
-                .filter(Boolean)} 
+            <div className="space-y-2 relative z-0">
+                {filteredMatches
+                    .map((match) => {
+                        const participant = getParticipantByPuuid(match, riotAccount.riotAccountDetails.puuid);
+                        if (!participant) return null;
+                        return (
+                            <MatchCard
+                                key={match.matchId}
+                                match={match}
+                                participant={participant}
+                                region={riotAccount.leagueAccount.leagueAccountsDetails.region}
+                            />
+                        );
+                    })
+                    .filter(Boolean)}
+            </div>
         </div>
     );
 }

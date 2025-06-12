@@ -18,15 +18,25 @@ export function PositionFilter({ selectedPosition, onPositionChange }: PositionF
     ];
 
     return (
-        <div className="flex bg-gray-800/80 rounded-sm overflow-hidden h-8 w-full sm:w-auto justify-center">
+        <div className="flex rounded-lg backdrop-blur-sm border border-white/20 overflow-hidden h-8 w-full sm:w-auto justify-center"
+            style={{
+                background: `linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.08) 0%, 
+                    rgba(255, 255, 255, 0.05) 100%),
+                    rgba(255, 255, 255, 0.03)`
+            }}>
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-white/5 to-white/3 pointer-events-none" />
+            
             {positions.map((position) => (
                 <button
                     key={position.name}
                     onClick={() => onPositionChange(position.name)}
-                    className={`
-                        flex items-center justify-center w-8 h-8 transition-all duration-200
-                        ${selectedPosition === position.name ? 'bg-blue-600' : 'hover:bg-gray-700'}
-                    `}
+                    className={`relative z-10 flex items-center justify-center w-8 h-8 transition-all duration-200
+                        ${selectedPosition === position.name 
+                            ? 'bg-blue-600/40 backdrop-blur-sm border-x border-blue-400/30' 
+                            : 'hover:bg-white/10'
+                        }`}
                     title={position.name}
                 >
                     <Image 

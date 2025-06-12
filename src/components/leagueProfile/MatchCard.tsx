@@ -129,7 +129,6 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                                             champion={participant.champion} 
                                                             size={56} 
                                                             level={participant.champLevel}
-                                                            className="w-full h-full object-cover rounded-md"
                                                         />
                                                     </div>
                                                 </div>

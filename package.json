@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.12",
     "@headlessui/react": "^2.2.3",
     "@next/env": "^15.3.2",
     "@prisma/client": "^6.8.2",
