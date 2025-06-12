@@ -1,6 +1,7 @@
 import { RiotAccount } from "@/interfaces/productionTypes";
 import PlayerInfo from "@/components/leagueProfile/PlayerInfo";
 import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
+import RankDisplay from "@/components/leagueProfile/RankDisplay";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/createRiotAccount";
@@ -21,11 +22,22 @@ export default async function Home({params}:
             <Navbar/>
             {/* MAIN CONTENT */}
             <div className="container mx-auto px-4 relative z-10">
-                <div className="grid grid-cols-12">
+                <div className="grid grid-cols-12 gap-4">
+                    {/* Player Info - Full Width */}
                     <div className="col-span-12 mt-10">
                         <PlayerInfo riotAccount={riotAccount} />
                     </div>
-                    <div className="col-span-12">
+                    
+                    {/* Rank Display - Left Side */}
+                    <div className="col-span-12 lg:col-span-3 xl:col-span-2">
+                        <RankDisplay 
+                            leagueSoloRank={riotAccount.leagueAccount.leagueSoloRank}
+                            leagueFlexRank={riotAccount.leagueAccount.leagueFlexRank}
+                        />
+                    </div>
+                    
+                    {/* Match History - Right Side */}
+                    <div className="col-span-12 lg:col-span-9 xl:col-span-10">
                         <MatchHistory riotAccount={riotAccount} />
                     </div>
                 </div>
