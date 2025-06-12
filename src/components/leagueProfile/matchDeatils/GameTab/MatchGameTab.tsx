@@ -22,15 +22,6 @@ interface ParticipantRowProps {
     time: number;
 }
 
-interface ParticipantTileProps {
-    participant: Participant;
-    isMain: boolean;
-    isWin: boolean;
-    region: string;
-    isLast?: boolean;
-    time: number;
-}
-
 // Memoized styling functions
 const getPlacementStyle = (placement: number): string => {
     switch (placement) {
@@ -85,33 +76,19 @@ const getDesktopScoreStyle = (placement: number): string => {
     return `${baseStyle} ${getScoreStyleBase(placement)}`;
 };
 
-const getMobileScoreStyle = (placement: number): string => {
-    const baseStyle = "px-2 py-1 rounded-md font-medium text-xs w-12 text-center backdrop-blur-sm border shadow-sm";
-    return `${baseStyle} ${getScoreStyleBase(placement)}`;
-};
-
 const getDesktopPlacementBoxStyle = (placement: number): string => {
     const baseStyle = "text-xs px-2 py-1 rounded-lg w-12 text-center backdrop-blur-sm border";
-    return `${baseStyle} ${getPlacementStyle(placement)}`;
-};
-
-const getMobilePlacementBoxStyle = (placement: number): string => {
-    const baseStyle = "px-2 py-1 rounded-md text-xs w-10 text-center backdrop-blur-sm border";
     return `${baseStyle} ${getPlacementStyle(placement)}`;
 };
 
 // Memoized participant info component
 const ParticipantInfo = memo(function ParticipantInfo({ 
     participant, 
-    region, 
-    size = "large" 
+    region 
 }: { 
     participant: Participant; 
     region: string; 
-    size?: "large" | "small" 
 }) {
-    const isLarge = size === "large";
-    
     const handleLinkClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
     }, []);
@@ -120,30 +97,22 @@ const ParticipantInfo = memo(function ParticipantInfo({
         <div className="flex items-center gap-3">
             <ChampionIcon
                 champion={participant.champion}
-                size={isLarge ? 40 : 36}
+                size={40}
                 showTooltip={true}
                 level={participant.champLevel}
             />
             <SummonerSpellDisplay
                 summonerSpell1={participant.summonerSpell1}
                 summonerSpell2={participant.summonerSpell2}
-                summonerspellIconsSize={isLarge ? 18 : 16}
-                boxSize={isLarge ? 13 : 12}
+                summonerspellIconsSize={18}
+                boxSize={13}
             />
             <RuneDisplay
                 runes={participant.runes}
                 boxSize={14}
-                keyStoneIconSize={isLarge ? 18 : 16}
-                secendaryRuneIconSize={isLarge ? 12 : 10}
+                keyStoneIconSize={18}
+                secendaryRuneIconSize={12}
             />
-            {!isLarge && (
-                <ItemDisplay
-                    items={participant.items}
-                    itemSize={16}
-                    smMinWidth={75}
-                    trinketMaxWidth={16}
-                />
-            )}
             <Link
                 href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
                 className="text-white/90 hover:text-blue-300 transition-colors duration-200 whitespace-nowrap overflow-hidden text-ellipsis font-medium"
@@ -159,18 +128,16 @@ const ParticipantInfo = memo(function ParticipantInfo({
 
 // Memoized score and placement display
 const ScoreDisplay = memo(function ScoreDisplay({ 
-    participant, 
-    isMobile = false 
+    participant 
 }: { 
     participant: Participant; 
-    isMobile?: boolean 
 }) {
     return (
-        <div className={`flex items-center ${isMobile ? "gap-2" : "justify-center gap-3"}`}>
-            <span className={isMobile ? getMobileScoreStyle(participant.performancePlacement) : getDesktopScoreStyle(participant.performancePlacement)}>
+        <div className="flex items-center justify-center gap-3">
+            <span className={getDesktopScoreStyle(participant.performancePlacement)}>
                 {Math.round(participant.performanceScore)}
             </span>
-            <span className={isMobile ? getMobilePlacementBoxStyle(participant.performancePlacement) : getDesktopPlacementBoxStyle(participant.performancePlacement)}>
+            <span className={getDesktopPlacementBoxStyle(participant.performancePlacement)}>
                 {getOrdinalPlacement(participant.performancePlacement)}
             </span>
         </div>
@@ -194,7 +161,7 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
     return (
         <tr className={rowClasses}>
             <td className="px-4 py-1">
-                <ParticipantInfo participant={participant} region={region} size="large" />
+                <ParticipantInfo participant={participant} region={region} />
             </td>
             <td className="px-4 py-1 text-center">
                 <ScoreDisplay participant={participant} />
@@ -225,59 +192,6 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
                 </div>
             </td>
         </tr>
-    );
-});
-
-const ParticipantTile = memo(function ParticipantTile({ 
-    participant, 
-    isMain, 
-    isWin, 
-    region, 
-    isLast = false 
-}: ParticipantTileProps) {
-    const tileClasses = useMemo(() => {
-        const baseClasses = "rounded-xl p-4 mx-2 border backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-[1.02]";
-        const winClasses = isWin 
-            ? "border-emerald-400/40 bg-gradient-to-br from-emerald-500/15 via-emerald-400/8 to-emerald-500/10" 
-            : "border-rose-400/40 bg-gradient-to-br from-rose-500/15 via-rose-400/8 to-rose-500/10";
-        const mainClasses = isMain 
-            ? (isWin ? "ring-2 ring-emerald-400/60 shadow-emerald-500/20" : "ring-2 ring-rose-400/60 shadow-rose-500/20") 
-            : "";
-        const marginClasses = isLast ? "mb-2" : "";
-        
-        return `${baseClasses} ${winClasses} ${mainClasses} ${marginClasses}`;
-    }, [isWin, isMain, isLast]);
-
-    return (
-        <div className={tileClasses}>
-            {/* Subtle inner glow */}
-            <div className={`absolute inset-0 rounded-xl ${isWin ? 'bg-gradient-to-r from-emerald-400/2 to-green-400/2' : 'bg-gradient-to-r from-rose-400/2 to-red-400/2'}`} />
-            
-            <div className="relative z-5">
-                <ParticipantInfo participant={participant} region={region} size="small" />
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm mt-3">
-                    <span className="flex items-center gap-2">
-                        <span className="text-white/70 font-medium">Rank:</span> 
-                        <ScoreDisplay participant={participant} isMobile={true} />
-                    </span>
-                    <span className="text-white/90">
-                        <span className="text-white/70 font-medium">KDA:</span> {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})
-                    </span>
-                    <span className="text-white/90">
-                        <span className="text-white/70 font-medium">DMG:</span> {participant.totalDamageDealtToChampions.toLocaleString()}
-                    </span>
-                    <span className="text-white/90">
-                        <span className="text-white/70 font-medium">Gold:</span> {participant.goldEarned.toLocaleString()}
-                    </span>
-                    <span className="text-white/90">
-                        <span className="text-white/70 font-medium">CS:</span> {participant.totalMinionsKilled + participant.neutralMinionsKilled}
-                    </span>
-                    <span className="text-white/90">
-                        <span className="text-white/70 font-medium">Wards:</span> {participant.wardsPlaced}
-                    </span>
-                </div>
-            </div>
-        </div>
     );
 });
 
@@ -325,71 +239,40 @@ export const MatchGameTab = memo(function MatchGameTab({
     ), []);
 
     return (
-        <>
-            {/* Desktop Table View */}
-            <div className="hidden lg:block">
-                <div className="relative rounded-xl backdrop-blur-xl border border-white/20 overflow-hidden
-                    bg-gradient-to-br from-white/5 via-white/3 to-white/5
-                    shadow-xl shadow-black/10">
-                    
-                    {/* Subtle inner glow */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/2 to-transparent" />
-                    
-                    <div className="relative z-5">
-                        <table className="min-w-full text-sm">
-                            {tableHeaders}
-                            <tbody className="divide-y divide-white/10">
-                                <TeamHeader isWin={memoizedTeam1[0]?.win} />
-                                {memoizedTeam1.map((participant) => (
-                                    <ParticipantRow
-                                        key={participant.puuid}
-                                        participant={participant}
-                                        isMain={participant.puuid === mainPlayerPUUID}
-                                        region={region}
-                                        time={time}
-                                    />
-                                ))}
-                                <TeamHeader isWin={memoizedTeam2[0]?.win} />
-                                {memoizedTeam2.map((participant) => (
-                                    <ParticipantRow
-                                        key={participant.puuid}
-                                        participant={participant}
-                                        isMain={participant.puuid === mainPlayerPUUID}
-                                        region={region}
-                                        time={time}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div className="relative rounded-xl backdrop-blur-xl border border-white/20 overflow-hidden
+            bg-gradient-to-br from-white/5 via-white/3 to-white/5
+            shadow-xl shadow-black/10">
+            
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/2 to-transparent" />
+            
+            <div className="relative z-5 overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5">
+                <table className="min-w-full text-sm">
+                    {tableHeaders}
+                    <tbody className="divide-y divide-white/10">
+                        <TeamHeader isWin={memoizedTeam1[0]?.win} />
+                        {memoizedTeam1.map((participant) => (
+                            <ParticipantRow
+                                key={participant.puuid}
+                                participant={participant}
+                                isMain={participant.puuid === mainPlayerPUUID}
+                                region={region}
+                                time={time}
+                            />
+                        ))}
+                        <TeamHeader isWin={memoizedTeam2[0]?.win} />
+                        {memoizedTeam2.map((participant) => (
+                            <ParticipantRow
+                                key={participant.puuid}
+                                participant={participant}
+                                isMain={participant.puuid === mainPlayerPUUID}
+                                region={region}
+                                time={time}
+                            />
+                        ))}
+                    </tbody>
+                </table>
             </div>
-
-            {/* Mobile Tile View */}
-            <div className="mt-2 flex flex-col gap-3 lg:hidden">
-                {memoizedTeam1.map((participant, idx) => (
-                    <ParticipantTile
-                        key={participant.puuid}
-                        participant={participant}
-                        isMain={participant.puuid === mainPlayerPUUID}
-                        isWin={memoizedTeam1[0]?.win}
-                        region={region}
-                        isLast={idx === memoizedTeam1.length - 1 && memoizedTeam2.length === 0}
-                        time={time}
-                    />
-                ))}
-                {memoizedTeam2.map((participant, idx) => (
-                    <ParticipantTile
-                        key={participant.puuid}
-                        participant={participant}
-                        isMain={participant.puuid === mainPlayerPUUID}
-                        isWin={memoizedTeam2[0]?.win}
-                        region={region}
-                        isLast={idx === memoizedTeam2.length - 1}
-                        time={time}
-                    />
-                ))}
-            </div>
-        </>
+        </div>
     );
 });

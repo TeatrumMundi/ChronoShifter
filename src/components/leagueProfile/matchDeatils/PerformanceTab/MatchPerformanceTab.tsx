@@ -1,7 +1,7 @@
 import { Participant } from "@/interfaces/productionTypes";
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { ChevronDown } from "lucide-react";
+import { useState, useMemo, memo, useCallback } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
 
 interface MatchPerformanceTabProps {
@@ -15,72 +15,172 @@ interface ParticipantRowProps {
     participant: Participant;
     isMain: boolean;
     region: string;
+    sortKey: SortKey;
 }
 
 type SortKey = "kills" | "kda" | "damage" | "gold" | "wards" | "cs";
 type SortOrder = "asc" | "desc";
 
-function ParticipantRow({ participant, isMain, region, sortKey}: ParticipantRowProps & { sortKey: SortKey }) {
+// Memoized participant info component
+const ParticipantInfo = memo(function ParticipantInfo({ 
+    participant, 
+    region 
+}: { 
+    participant: Participant; 
+    region: string 
+}) {
+    const handleLinkClick = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+    }, []);
+    
     return (
-        <tr
-            className={` ${isMain 
-                ? (participant.win ? "bg-green-900/70" : "bg-red-900/70") 
-                : (participant.win ? "bg-green-950/70" : "bg-red-950/70")}
-                `}   
-        >
-            <td className="px-2 py-1 whitespace-nowrap">
-                <div className="flex items-center gap-2">
-                    <ChampionIcon
-                        champion={participant.champion}
-                        size={40}
-                        showTooltip={true}
-                        level={participant.champLevel}
-                        className="flex-shrink-0"
-                    />
-                    <Link
-                        href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
-                        className="text-white hover:text-blue-400 transition-colors text-sm"
-                        title={`${participant.riotIdGameName}#${participant.riotIdTagline}`}
-                        aria-label={`View profile for ${participant.riotIdGameName}`}
-                    >
-                        {participant.riotIdGameName}
-                    </Link>
-                </div>
+        <div className="flex items-center gap-3">
+            <ChampionIcon
+                champion={participant.champion}
+                size={36}
+                showTooltip={true}
+                level={participant.champLevel}
+                className="flex-shrink-0"
+            />
+            <Link
+                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
+                className="text-white/90 hover:text-blue-300 transition-colors duration-200 font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+                title={`${participant.riotIdGameName}#${participant.riotIdTagline}`}
+                aria-label={`View profile for ${participant.riotIdGameName}`}
+                onClick={handleLinkClick}
+            >
+                {participant.riotIdGameName}
+            </Link>
+        </div>
+    );
+});
+
+// Memoized participant row component
+const ParticipantRow = memo(function ParticipantRow({ 
+    participant, 
+    isMain, 
+    region, 
+    sortKey 
+}: ParticipantRowProps) {
+    const rowClasses = useMemo(() => {
+        const baseClasses = "transition-all duration-200 border border-white/10 backdrop-blur-sm";
+        const backgroundClasses = isMain 
+            ? (participant.win 
+                ? "bg-gradient-to-r from-emerald-500/20 via-emerald-400/15 to-emerald-500/20 border-emerald-400/40 shadow-emerald-500/10" 
+                : "bg-gradient-to-r from-rose-500/20 via-rose-400/15 to-rose-500/20 border-rose-400/40 shadow-rose-500/10")
+            : (participant.win 
+                ? "bg-gradient-to-r from-emerald-500/10 via-emerald-400/8 to-emerald-500/10 border-emerald-400/25" 
+                : "bg-gradient-to-r from-rose-500/10 via-rose-400/8 to-rose-500/10 border-rose-400/25");
+        
+        return `${baseClasses} ${backgroundClasses}`;
+    }, [isMain, participant.win]);
+
+    const getCellHighlight = useCallback((cellKey: SortKey) => {
+        return sortKey === cellKey ? "bg-blue-400/15 border border-blue-400/30" : "";
+    }, [sortKey]);
+
+    return (
+        <tr className={rowClasses}>
+            <td className="px-4 py-1">
+                <ParticipantInfo participant={participant} region={region} />
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "kills" ? "bg-blue-500/20" : ""}`}>
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("kills")}`}>
                 {participant.kills}
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "kda" ? "bg-blue-500/20" : ""}`}>
-                {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("kda")}`}>
+                <div className="flex flex-col items-center">
+                    <span className="text-xs text-white/70">{participant.kills}/{participant.deaths}/{participant.assists}</span>
+                    <span className="font-semibold">{participant.kda}</span>
+                </div>
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "damage" ? "bg-blue-500/20" : ""}`}>
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("damage")}`}>
                 {participant.totalDamageDealtToChampions.toLocaleString()}
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "gold" ? "bg-blue-500/20" : ""}`}>
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("gold")}`}>
                 {participant.goldEarned.toLocaleString()}
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "wards" ? "bg-blue-500/20" : ""}`}>
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("wards")}`}>
                 {participant.wardsPlaced}
             </td>
-            <td className={`px-2 py-1 text-center text-sm whitespace-nowrap ${sortKey === "cs" ? "bg-blue-500/20" : ""}`}>
+            <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("cs")}`}>
                 {participant.totalMinionsKilled + participant.neutralMinionsKilled}
             </td>
         </tr>
     );
-}
+});
 
-export function MatchPerformanceTab({ team1, team2, mainPlayerPUUID, region }: MatchPerformanceTabProps) {
+// Memoized sortable header component
+const SortableHeader = memo(function SortableHeader({ 
+    sortKeyValue, 
+    currentSortKey, 
+    currentSortOrder, 
+    onSort, 
+    children 
+}: { 
+    sortKeyValue: SortKey; 
+    currentSortKey: SortKey;
+    currentSortOrder: SortOrder;
+    onSort: (key: SortKey) => void;
+    children: React.ReactNode;
+}) {
+    const isActive = currentSortKey === sortKeyValue;
+    
+    const handleClick = useCallback(() => {
+        onSort(sortKeyValue);
+    }, [onSort, sortKeyValue]);
+
+    const headerClasses = useMemo(() => {
+        const baseClasses = "px-4 py-3 text-center cursor-pointer transition-all duration-200 font-semibold text-white/80 hover:text-white select-none";
+        const activeClasses = isActive 
+            ? "bg-blue-400/20 text-blue-200 border border-blue-400/40 backdrop-blur" 
+            : "hover:bg-white/10 rounded-lg";
+        
+        return `${baseClasses} ${activeClasses}`;
+    }, [isActive]);
+
+    return (
+        <th 
+            className={headerClasses} 
+            onClick={handleClick}
+            style={isActive ? { 
+                boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.1), 0 2px 4px -1px rgba(59, 130, 246, 0.06)' 
+            } : {}}
+        >
+            <div className="flex items-center justify-center gap-2">
+                <span className="text-sm font-semibold">{children}</span>
+                <div className="relative">
+                    {isActive ? (
+                        currentSortOrder === "desc" ? (
+                            <ChevronDown size={16} className="text-blue-300" />
+                        ) : (
+                            <ChevronUp size={16} className="text-blue-300" />
+                        )
+                    ) : (
+                        <ChevronDown size={16} className="opacity-40" />
+                    )}
+                </div>
+            </div>
+        </th>
+    );
+});
+
+export const MatchPerformanceTab = memo(function MatchPerformanceTab({ 
+    team1, 
+    team2, 
+    mainPlayerPUUID, 
+    region 
+}: MatchPerformanceTabProps) {
     const [sortKey, setSortKey] = useState<SortKey>("damage");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
-    const handleSort = (key: SortKey) => {
+    const handleSort = useCallback((key: SortKey) => {
         if (sortKey === key) {
             setSortOrder(sortOrder === "asc" ? "desc" : "asc");
         } else {
             setSortKey(key);
             setSortOrder("desc");
         }
-    };
+    }, [sortKey, sortOrder]);
 
     const sortedParticipants = useMemo(() => {
         const allParticipants = [...team1, ...team2];
@@ -125,53 +225,82 @@ export function MatchPerformanceTab({ team1, team2, mainPlayerPUUID, region }: M
         });
     }, [team1, team2, sortKey, sortOrder]);
 
-    const SortableHeader = ({ sortKeyValue, children }: { sortKeyValue: SortKey; children: React.ReactNode }) => (
-        <th 
-            className={`px-2 py-1 text-center cursor-pointer hover:bg-gray-700/50 transition-colors text-sm whitespace-nowrap ${
-                sortKey === sortKeyValue ? "bg-blue-500/20" : ""
-            }`}
-            onClick={() => handleSort(sortKeyValue)}
-        >
-            <div className="flex items-center justify-center gap-1">
-                {children}
-                <ChevronDown 
-                    size={16}
-                    className={`transition-transform duration-200 flex-shrink-0 ${
-                        sortKey === sortKeyValue 
-                            ? sortOrder === "desc" ? "rotate-0" : "rotate-180" 
-                            : "opacity-50"
-                    }`}
-                />
-            </div>
-        </th>
-    );
-
     return (
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-            <table className="min-w-full text-sm">
-                <thead>
-                    <tr>
-                        <th className="px-2 py-1 text-left text-sm whitespace-nowrap">Player</th>
-                        <SortableHeader sortKeyValue="kills">Kills</SortableHeader>
-                        <SortableHeader sortKeyValue="kda">KDA</SortableHeader>
-                        <SortableHeader sortKeyValue="damage">Damage</SortableHeader>
-                        <SortableHeader sortKeyValue="gold">Gold</SortableHeader>
-                        <SortableHeader sortKeyValue="wards">Wards</SortableHeader>
-                        <SortableHeader sortKeyValue="cs">CS</SortableHeader>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedParticipants.map((participant) => (
-                        <ParticipantRow
-                            key={participant.puuid}
-                            participant={participant}
-                            isMain={participant.puuid === mainPlayerPUUID}
-                            region={region}
-                            sortKey={sortKey}
-                        />
-                    ))}
-                </tbody>
-            </table>
+        <div className="relative rounded-xl backdrop-blur-xl border border-white/20 overflow-hidden
+            bg-gradient-to-br from-white/5 via-white/3 to-white/5
+            shadow-xl shadow-black/10">
+            
+            {/* Subtle inner glow */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/2 to-transparent" />
+            
+            <div className="relative z-5 overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5">
+                <table className="min-w-full text-sm">
+                    <thead>
+                        <tr className="border-b border-white/20">
+                            <th className="px-4 py-3 text-left text-white/80 font-semibold">Player</th>
+                            <SortableHeader 
+                                sortKeyValue="kills" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                Kills
+                            </SortableHeader>
+                            <SortableHeader 
+                                sortKeyValue="kda" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                KDA
+                            </SortableHeader>
+                            <SortableHeader 
+                                sortKeyValue="damage" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                Damage
+                            </SortableHeader>
+                            <SortableHeader 
+                                sortKeyValue="gold" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                Gold
+                            </SortableHeader>
+                            <SortableHeader 
+                                sortKeyValue="wards" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                Wards
+                            </SortableHeader>
+                            <SortableHeader 
+                                sortKeyValue="cs" 
+                                currentSortKey={sortKey} 
+                                currentSortOrder={sortOrder} 
+                                onSort={handleSort}
+                            >
+                                CS
+                            </SortableHeader>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                        {sortedParticipants.map((participant) => (
+                            <ParticipantRow
+                                key={participant.puuid}
+                                participant={participant}
+                                isMain={participant.puuid === mainPlayerPUUID}
+                                region={region}
+                                sortKey={sortKey}
+                            />
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
-}
+});
