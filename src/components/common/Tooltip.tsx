@@ -96,13 +96,28 @@ export const Tooltip: React.FC<TooltipProps> = ({
               zIndex: 9999,
             }}
             {...getFloatingProps()}
-            className={`p-3 bg-gray-900 text-white rounded-lg shadow-xl text-sm tracking-normal whitespace-pre-line max-w-xs border border-gray-700 ${className}`}
+            className={`
+              relative p-3 rounded-xl shadow-2xl text-sm max-w-xs
+              backdrop-blur-xl
+              bg-gradient-to-br from-white/15 via-white/8 to-white/3
+              text-white/95 tracking-wide whitespace-pre-line
+              before:absolute before:inset-0 before:rounded-xl 
+              before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none
+              ${className}
+            `}
           >
-            {content}
+            {/* Inner subtle glow */}
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/8 via-purple-400/5 to-pink-400/8 pointer-events-none" />
+            
+            {/* Content */}
+            <div className="relative z-10">
+              {content}
+            </div>
+            
             <FloatingArrow
               ref={arrowRef}
               context={context}
-              className="fill-gray-900"
+              className="fill-white/15 drop-shadow-sm"
               width={12}
               height={6}
             />
