@@ -49,42 +49,22 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
 
         // Get ranked league entries (optional but important)
         let leagueRanks: LeagueRank[] = [];
-        try {
-            leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);
-        } catch (error) {
+        try { leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);} 
+        catch (error) {
             console.warn(`Failed to fetch ranked entries for PUUID ${puuid}:`, error);
             leagueRanks = [];
         }
 
         // Extract or create default solo queue rank
-        const leagueSoloRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_SOLO_5x5") ?? {
-            queueType: "RANKED_SOLO_5x5",
-            tier: "UNRANKED",
-            rank: "",
-            leaguePoints: 0,
-            wins: 0,
-            losses: 0,
-            winRate: 0,
-            hotStreak: false
-        };
+        const leagueSoloRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_SOLO_5x5");
 
         // Extract or create default flex queue rank
-        const leagueFlexRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_FLEX_SR") ?? {
-            queueType: "RANKED_FLEX_SR",
-            tier: "UNRANKED",
-            rank: "",
-            leaguePoints: 0,
-            wins: 0,
-            losses: 0,
-            winRate: 0,
-            hotStreak: false
-        };
+        const leagueFlexRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_FLEX_SR");
 
         // Get recent match IDs (optional)
         let recentMatchesIDs: string[] = [];
-        try {
-            recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
-        } catch (error) {
+        try { recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5); } 
+        catch (error) {
             console.warn(`Failed to fetch recent matches IDs for PUUID ${puuid}:`, error);
             recentMatchesIDs = [];
         }
@@ -143,4 +123,20 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         }
         throw new Error(`Unexpected error while creating league account: ${String(error)}`);
     }
+}
+
+/**
+ * Finds a LeagueRank by queueType or returns a default unranked LeagueRank.
+ */
+function getOrDefaultLeagueRank(leagueRanks: LeagueRank[], queueType: string): LeagueRank {
+    return leagueRanks.find(r => r.queueType === queueType) ?? {
+        queueType,
+        tier: "UNRANKED",
+        rank: "",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0,
+        winRate: 0,
+        hotStreak: false
+    };
 }
