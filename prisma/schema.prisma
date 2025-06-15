@@ -10,18 +10,17 @@ generator client {
 }
 
 model RiotAccount {
-  id                   String   @id @default(uuid())
-  riotAccountDetailsId String   @unique
+  id                   Int      @id @default(autoincrement())
+  riotAccountDetailsPuuid String @unique
   leagueAccountId      String?  @unique
-  riotAccountDetails   RiotAccountDetails @relation(fields: [riotAccountDetailsId], references: [id])
+  riotAccountDetails   RiotAccountDetails @relation(fields: [riotAccountDetailsPuuid], references: [puuid])
   leagueAccount        LeagueAccount?     @relation(fields: [leagueAccountId], references: [id])
 }
 
 model RiotAccountDetails {
-  id        String   @id @default(uuid())
-  puuid     String   @unique
-  gameName  String
-  tagLine   String
+  puuid       String   @id
+  gameName   String
+  tagLine     String
   riotAccount RiotAccount?
 }
 

@@ -4,6 +4,7 @@ import getRankedLeagueEntries from './riotEndPoints/getRankedLeagueEntries';
 import getRecentMatchesIDsByPuuid from './riotEndPoints/getRecentMatchesIDsByPuuid';
 import getMatchDetailsByMatchID from './riotEndPoints/getMatchDetailsByMatchID';
 import getMatchTimelineByMatchID from './riotEndPoints/getMatchTimelineByMatchID';
+import { saveLeagueAccountDetails } from '@/utils/database/saveLeagueAccountDetails';
 
 /**
  * Creates a complete LeagueAccount object with summoner details, ranked information, and recent matches.
@@ -60,6 +61,15 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
 
         // Extract or create default flex queue rank
         const leagueFlexRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_FLEX_SR");
+
+        // Save LeagueAccountDetails to database and create/link accounts
+        await saveLeagueAccountDetails(
+            leagueAccountsDetails, 
+            leagueSoloRank, 
+            leagueFlexRank
+        );
+
+
 
         // Get recent match IDs (optional)
         let recentMatchesIDs: string[] = [];

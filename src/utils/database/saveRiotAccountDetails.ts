@@ -27,7 +27,7 @@ export async function saveRiotAccountDetails(riotAccountDetails: RiotAccountDeta
         if (!existingRiotAccountDetails.riotAccount) {
             await prisma.riotAccount.create({
                 data: {
-                    riotAccountDetailsId: existingRiotAccountDetails.id
+                    riotAccountDetailsPuuid: existingRiotAccountDetails.puuid
                 }
             });
         }
