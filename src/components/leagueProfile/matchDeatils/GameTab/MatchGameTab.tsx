@@ -26,24 +26,24 @@ interface ParticipantRowProps {
 const getPlacementStyle = (placement: number): string => {
     switch (placement) {
         case 1:
-            return "bg-gradient-to-r from-yellow-500/90 to-yellow-400/90 text-black font-bold shadow-lg shadow-yellow-500/20";
+            return "bg-yellow-500/15 text-yellow-300 border-yellow-500/30";
         case 2:
-            return "bg-gradient-to-r from-gray-400/90 to-gray-300/90 text-black font-bold shadow-lg shadow-gray-400/20";
+            return "bg-gray-400/15 text-gray-200 border-gray-400/30";
         case 3:
-            return "bg-gradient-to-r from-amber-600/90 to-amber-500/90 text-white font-bold shadow-lg shadow-amber-600/20";
+            return "bg-amber-600/15 text-amber-300 border-amber-600/30";
         case 4:
         case 5:
-            return "bg-gradient-to-r from-green-600/80 to-green-500/80 text-white shadow-lg shadow-green-600/20";
+            return "bg-green-600/15 text-green-300 border-green-600/30";
         case 6:
         case 7:
-            return "bg-gradient-to-r from-blue-600/80 to-blue-500/80 text-white shadow-lg shadow-blue-600/20";
+            return "bg-blue-600/15 text-blue-300 border-blue-600/30";
         case 8:
         case 9:
-            return "bg-gradient-to-r from-orange-600/80 to-orange-500/80 text-white shadow-lg shadow-orange-600/20";
+            return "bg-orange-600/15 text-orange-300 border-orange-600/30";
         case 10:
-            return "bg-gradient-to-r from-red-600/90 to-red-500/90 text-white font-bold shadow-lg shadow-red-600/20";
+            return "bg-red-600/15 text-red-300 border-red-600/30";
         default:
-            return "bg-gradient-to-r from-gray-600/80 to-gray-500/80 text-white shadow-lg shadow-gray-600/20";
+            return "bg-gray-600/15 text-gray-300 border-gray-600/30";
     }
 };
 
@@ -71,13 +71,13 @@ const getScoreStyleBase = (placement: number): string => {
     }
 };
 
-const getDesktopScoreStyle = (placement: number): string => {
+const getScoreStyle = (placement: number): string => {
     const baseStyle = "px-3 py-1.5 rounded-lg font-semibold text-xs border w-14 text-center backdrop-blur-sm shadow-sm";
     return `${baseStyle} ${getScoreStyleBase(placement)}`;
 };
 
-const getDesktopPlacementBoxStyle = (placement: number): string => {
-    const baseStyle = "text-xs px-2 py-1 rounded-lg w-12 text-center backdrop-blur-sm border";
+const getPlacementBoxStyle = (placement: number): string => {
+    const baseStyle = "text-xs px-2 py-1 rounded-lg w-12 text-center backdrop-blur-sm border font-semibold";
     return `${baseStyle} ${getPlacementStyle(placement)}`;
 };
 
@@ -134,10 +134,10 @@ const ScoreDisplay = memo(function ScoreDisplay({
 }) {
     return (
         <div className="flex items-center justify-center gap-3">
-            <span className={getDesktopScoreStyle(participant.performancePlacement)}>
+            <span className={getScoreStyle(participant.performancePlacement)}>
                 {Math.round(participant.performanceScore)}
             </span>
-            <span className={getDesktopPlacementBoxStyle(participant.performancePlacement)}>
+            <span className={getPlacementBoxStyle(participant.performancePlacement)}>
                 {getOrdinalPlacement(participant.performancePlacement)}
             </span>
         </div>
@@ -149,14 +149,16 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
         const baseClasses = "transition-all duration-200 border border-white/10";
         const backgroundClasses = isMain 
             ? (participant.win 
-                ? "bg-gradient-to-r from-emerald-500/15 via-emerald-400/10 to-emerald-500/15 border-emerald-400/30" 
-                : "bg-gradient-to-r from-rose-500/15 via-rose-400/10 to-rose-500/15 border-rose-400/30")
+                ? "bg-gradient-to-r from-emerald-500/25 via-emerald-400/20 to-emerald-500/25 border-emerald-400/50 shadow-lg shadow-emerald-500/10" 
+                : "bg-gradient-to-r from-rose-500/25 via-rose-400/20 to-rose-500/25 border-rose-400/50 shadow-lg shadow-rose-500/10")
             : (participant.win 
                 ? "bg-gradient-to-r from-emerald-500/8 via-emerald-400/5 to-emerald-500/8 border-emerald-400/20" 
                 : "bg-gradient-to-r from-rose-500/8 via-rose-400/5 to-rose-500/8 border-rose-400/20");
         
         return `${baseClasses} ${backgroundClasses}`;
     }, [isMain, participant.win]);
+
+    const cellTextClasses = isMain ? "text-white font-semibold" : "text-white/90 font-medium";
 
     return (
         <tr className={rowClasses}>
@@ -166,19 +168,19 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
             <td className="px-4 py-1 text-center">
                 <ScoreDisplay participant={participant} />
             </td>
-            <td className="px-4 py-1 text-center text-white/90 font-medium">
+            <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})
             </td>
-            <td className="px-4 py-1 text-center text-white/90 font-medium">
+            <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.totalDamageDealtToChampions.toLocaleString()}
             </td>
-            <td className="px-4 py-1 text-center text-white/90 font-medium">
+            <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.goldEarned.toLocaleString()}
             </td>
-            <td className="px-4 py-1 text-center text-white/90 font-medium">
+            <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.totalMinionsKilled + participant.neutralMinionsKilled}
             </td>
-            <td className="px-4 py-1 text-center text-white/90 font-medium">
+            <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.wardsPlaced}
             </td>
             <td className="px-4 py-1">

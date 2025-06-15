@@ -133,7 +133,7 @@ const SortableHeader = memo(function SortableHeader({
         const baseClasses = "px-4 py-3 text-center cursor-pointer transition-all duration-200 font-semibold text-white/80 hover:text-white select-none";
         const activeClasses = isActive 
             ? "bg-blue-400/20 text-blue-200 border border-blue-400/40 backdrop-blur" 
-            : "hover:bg-white/10 rounded-lg";
+            : "hover:bg-white/10";
         
         return `${baseClasses} ${activeClasses}`;
     }, [isActive]);

@@ -40,7 +40,7 @@ export function IconBox({
 
     const iconContent = (
         <div
-            className="relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer"
+            className="relative rounded-sm flex items-center justify-center bg-[#181A20] cursor-pointer select-none"
             style={{ width: size, height: size, ...style }}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}

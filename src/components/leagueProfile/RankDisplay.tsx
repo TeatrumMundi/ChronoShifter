@@ -85,7 +85,7 @@ function RankSection({ title, ranked, iconUrl }: RankSectionProps) {
                                 loading="eager"
                                 sizes="50px"
                                 priority
-                                className="rounded-md w-[50px] h-[50px]"
+                                className="rounded-md w-[50px] h-[50px] select-none"
                             />
                         </div>
                     </div>

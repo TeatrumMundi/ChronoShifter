@@ -49,7 +49,7 @@ export function ChampionIcon({
                 showTooltip={showTooltip}
             />
             {typeof level === "number" && (
-                <div className="absolute bottom-0 left-0 rounded-tr-sm rounded-bl-sm bg-black/50 text-white text-xs px-1">
+                <div className="absolute bottom-0 left-0 rounded-tr-sm rounded-bl-sm bg-black/50 text-white text-xs px-1 select-none">
                     {level}
                 </div>
             )}

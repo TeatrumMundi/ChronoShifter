@@ -1,96 +1,68 @@
 import { Item } from "./productionTypes";
 
+// ===================================
+// SHARED INTERFACES
+// ===================================
+
+/**
+ * Represents a position on the game map with x and y coordinates
+ */
 export interface Position {
     x: number;
     y: number;
 }
 
+/**
+ * Base interface for all game events
+ */
+export interface GameEvent {
+    timestamp: number;
+    type: EventType;
+    participantId?: number;
+}
+
+/**
+ * Represents a timeline frame containing events that occurred at a specific timestamp
+ */
+export interface TimelineFrame {
+    timestamp: number;
+    events: SpecificGameEvent[];
+}
+
+/**
+ * Timeline data for a specific participant containing all their frames
+ */
+export interface ParticipantTimelineData {
+    participantId: number;
+    puuid: string;
+    frames: TimelineFrame[];
+}
+
+// ===================================
+// EVENT TYPES
+// ===================================
+
+/**
+ * All possible event types that can occur during a match
+ */
 export type EventType = 
-    | "PAUSE_END"
-    | "WARD_PLACED"
-    | "ITEM_PURCHASED"
-    | "ITEM_DESTROYED"
-    | "ITEM_SOLD"
-    | "ITEM_UNDO"
-    | "SKILL_LEVEL_UP"
-    | "LEVEL_UP"
+    | "BUILDING_KILL"
     | "CHAMPION_KILL"
     | "CHAMPION_SPECIAL_KILL"
-    | "TURRET_PLATE_DESTROYED"
-    | "BUILDING_KILL"
     | "ELITE_MONSTER_KILL"
-    | "WARD_KILL"
-    | "OBJECTIVE_BOUNTY_PRESTART";
+    | "ITEM_DESTROYED"
+    | "ITEM_PURCHASED"
+    | "ITEM_SOLD"
+    | "ITEM_UNDO"
+    | "SKILL_LEVEL_UP";
 
-// Specific event interfaces
-export interface PauseEndEvent extends GameEvent {
-    type: "PAUSE_END";
-}
+// ===================================
+// BUILDING & OBJECTIVE EVENTS
+// ===================================
 
-export interface WardPlacedEvent extends GameEvent {
-    type: "WARD_PLACED";
-    wardType?: "YELLOW_TRINKET" | "CONTROL_WARD" | "SIGHT_WARD" | "BLUE_TRINKET" | "UNDEFINED";
-    participantId: number;
-}
-
-export interface ItemPurchasedEvent extends GameEvent {
-    type: "ITEM_PURCHASED";
-    participantId: number;
-    itemPurchased: Item;
-}
-
-export interface ItemDestroyedEvent extends GameEvent {
-    type: "ITEM_DESTROYED";
-    participantId: number;
-    itemDestroyed: Item;
-}
-
-export interface ItemSoldEvent extends GameEvent {
-    type: "ITEM_SOLD";
-    participantId: number;
-    itemSold: Item;
-}
-
-export interface ItemUndoEvent extends GameEvent {
-    type: "ITEM_UNDO";
-    participantId: number;
-}
-
-export interface SkillLevelUpEvent extends GameEvent {
-    type: "SKILL_LEVEL_UP";
-    participantId: number;
-    skillSlot?: number;
-}
-
-export interface LevelUpEvent extends GameEvent {
-    type: "LEVEL_UP";
-    participantId: number;
-    level?: number;
-}
-
-export interface ChampionKillEvent extends GameEvent {
-    type: "CHAMPION_KILL";
-    killerId?: number;
-    victimId: number;
-    assistingParticipantIds?: number[];
-    position?: Position;
-}
-
-export interface ChampionSpecialKillEvent extends GameEvent {
-    type: "CHAMPION_SPECIAL_KILL";
-    killerId?: number;
-    participantId: number;
-    killType?: string;
-}
-
-export interface TurretPlateDestroyedEvent extends GameEvent {
-    type: "TURRET_PLATE_DESTROYED";
-    participantId: number;
-    teamId?: number;
-    laneType?: string;
-    towerType?: string;
-}
-
+/**
+ * Event triggered when a building (turret, inhibitor, nexus) is destroyed
+ */
 export interface BuildingKillEvent extends GameEvent {
     type: "BUILDING_KILL";
     killerId?: number;
@@ -101,6 +73,9 @@ export interface BuildingKillEvent extends GameEvent {
     towerType?: string;
 }
 
+/**
+ * Event triggered when an elite monster (Baron, Dragon, etc.) is killed
+ */
 export interface EliteMonsterKillEvent extends GameEvent {
     type: "ELITE_MONSTER_KILL";
     killerId?: number;
@@ -109,48 +84,93 @@ export interface EliteMonsterKillEvent extends GameEvent {
     monsterSubType?: string;
 }
 
-export interface WardKillEvent extends GameEvent {
-    type: "WARD_KILL";
-    killerId: number;
-    wardType?: string;
+// ===================================
+// CHAMPION EVENTS
+// ===================================
+
+/**
+ * Event triggered when a champion is killed
+ */
+export interface ChampionKillEvent extends GameEvent {
+    type: "CHAMPION_KILL";
+    killerId?: number;
+    victimId: number;
+    assistingParticipantIds?: number[];
+    position?: Position;
 }
 
-export interface ObjectiveBountyPrestartEvent extends GameEvent {
-    type: "OBJECTIVE_BOUNTY_PRESTART";
-    actualStartTime?: number;
-    teamId?: number;
+/**
+ * Event triggered for special champion kills (first blood, pentakill, etc.)
+ */
+export interface ChampionSpecialKillEvent extends GameEvent {
+    type: "CHAMPION_SPECIAL_KILL";
+    killerId?: number;
+    participantId: number;
+    killType?: string;
 }
 
+/**
+ * Event triggered when a champion levels up a skill
+ */
+export interface SkillLevelUpEvent extends GameEvent {
+    type: "SKILL_LEVEL_UP";
+    participantId: number;
+    skillSlot?: number;
+}
+
+// ===================================
+// ITEM EVENTS
+// ===================================
+
+/**
+ * Event triggered when an item is destroyed (consumed, transformed, etc.)
+ */
+export interface ItemDestroyedEvent extends GameEvent {
+    type: "ITEM_DESTROYED";
+    participantId: number;
+    itemDestroyed: Item;
+}
+
+/**
+ * Event triggered when an item is purchased from the shop
+ */
+export interface ItemPurchasedEvent extends GameEvent {
+    type: "ITEM_PURCHASED";
+    participantId: number;
+    itemPurchased: Item;
+}
+
+/**
+ * Event triggered when an item is sold back to the shop
+ */
+export interface ItemSoldEvent extends GameEvent {
+    type: "ITEM_SOLD";
+    participantId: number;
+    itemSold: Item;
+}
+
+/**
+ * Event triggered when a recent purchase is undone
+ */
+export interface ItemUndoEvent extends GameEvent {
+    type: "ITEM_UNDO";
+    participantId: number;
+}
+
+// ===================================
+// UNION TYPES
+// ===================================
+
+/**
+ * Union type of all specific game event interfaces
+ */
 export type SpecificGameEvent = 
-    | PauseEndEvent
-    | WardPlacedEvent
-    | ItemPurchasedEvent
-    | ItemDestroyedEvent
-    | ItemSoldEvent
-    | ItemUndoEvent
-    | SkillLevelUpEvent
-    | LevelUpEvent
+    | BuildingKillEvent
     | ChampionKillEvent
     | ChampionSpecialKillEvent
-    | TurretPlateDestroyedEvent
-    | BuildingKillEvent
     | EliteMonsterKillEvent
-    | WardKillEvent
-    | ObjectiveBountyPrestartEvent;
-
-export interface GameEvent {
-    timestamp: number;
-    type: EventType;
-    participantId?: number;
-}
-
-export interface TimelineFrame {
-    timestamp: number;
-    events: SpecificGameEvent[];
-}
-
-export interface ParticipantTimelineData {
-    participantId: number;
-    puuid: string;
-    frames: TimelineFrame[];
-}
+    | ItemDestroyedEvent
+    | ItemPurchasedEvent
+    | ItemSoldEvent
+    | ItemUndoEvent
+    | SkillLevelUpEvent;
