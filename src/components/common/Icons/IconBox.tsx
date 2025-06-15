@@ -63,6 +63,7 @@ export function IconBox({
                         maxHeight: childrenSize,
                     }}
                     onError={() => setImageError(true)}
+                    unoptimized
                 />
             )}
             {children}
