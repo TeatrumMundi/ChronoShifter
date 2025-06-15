@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { Participant, RecentMatch } from "@/interfaces/productionTypes";
+import { Participant, Match } from "@/interfaces/productionTypes";
 import { formatRole, getOrdinalPlacement, secToHHMMSS, timeAgo } from "@/utils/helpers";
 import { MatchStats } from "./MatchStats";
 import { ItemDisplay } from "./ItemDisplay";
@@ -17,7 +17,7 @@ import { AnimatePresence } from "framer-motion";
 
 interface MatchCardProps {
     participant: Participant;
-    match: RecentMatch;
+    match: Match;
     region: string;
 }
 
@@ -29,7 +29,7 @@ const getGameModeFromQueueId = (queueId: number): string => {
 export function MatchCard({ participant, match, region: region }: MatchCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
-    const gameMode: string = getGameModeFromQueueId(match.matchDetails.queueId);
+    const gameMode: string = getGameModeFromQueueId(match.queueId);
     const isArena: boolean = gameMode === "Arena";
     const placement = participant.arenaStats?.placement;
 
@@ -104,12 +104,12 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
 
                                 {/* Time Ago */}
                                 <div className="text-xs text-white/60">
-                                    {timeAgo(match.matchDetails.gameEndTimestamp)}
+                                    {timeAgo(match.gameEndTimestamp)}
                                 </div>
 
                                 {/* Duration */}
                                 <div className="text-xs font-medium text-white/80">
-                                    {secToHHMMSS(match.matchDetails.gameDuration)}
+                                    {secToHHMMSS(match.gameDuration)}
                                 </div>
                             </div>
 
@@ -184,7 +184,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 <div className="flex flex-col justify-center w-full min-w-0 max-w-full sm:min-w-[160px] lg:min-w-[140px] lg:max-w-[260px] xl:min-w-[200px] xl:max-w-[260px] border-t lg:border-t-0 lg:border-l border-white/20 pt-2 lg:pt-0 lg:pl-2 pr-6">
                                     <div className="flex items-center w-full">
                                         <ParticipantList
-                                            participants={match.matchDetails.participants}
+                                            participants={match.participants}
                                             gameMode={gameMode}
                                             region={region}
                                         />

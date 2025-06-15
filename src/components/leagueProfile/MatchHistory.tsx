@@ -16,14 +16,14 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
     const [searchQuery, setSearchQuery] = useState("");
 
     // Filter matches based on selected game mode, position and search query
-    const filteredMatches = riotAccount.leagueAccount.recentMatches.filter((match) => {
+    const filteredMatches = riotAccount.leagueAccount.matchHistory.filter((match) => {
 
         // Filter by game mode
         const selectedMode = gameModeOptions.find(mode => mode.name === selectedGameMode);
         let gameModeMatch = true;
         
         if (selectedMode && selectedMode.queueIds.length > 0) {
-            gameModeMatch = selectedMode.queueIds.includes(match.matchDetails.queueId);
+            gameModeMatch = selectedMode.queueIds.includes(match.queueId);
         }
 
         // Filter by position
@@ -40,7 +40,7 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
         let searchMatch = true;
         if (searchQuery.trim() !== "") {
             const query = searchQuery.toLowerCase().trim();
-            searchMatch = match.matchDetails.participants.some(participant => {
+            searchMatch = match.participants.some(participant => {
                 // Check player names
                 const playerNameMatch = 
                     participant.riotIdGameName?.toLowerCase().includes(query) ||

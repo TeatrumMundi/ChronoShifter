@@ -1,4 +1,4 @@
-﻿import { LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails } from '@/interfaces/productionTypes';
+﻿import { LeagueAccount, LeagueAccountDetails, LeagueRank, Match } from '@/interfaces/productionTypes';
 import getSummonerByPuuid from './riotEndPoints/getSummonerByPuuid';
 import getRankedLeagueEntries from './riotEndPoints/getRankedLeagueEntries';
 import getRecentMatchesIDsByPuuid from './riotEndPoints/getRecentMatchesIDsByPuuid';
@@ -69,8 +69,6 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
             leagueFlexRank
         );
 
-
-
         // Get recent match IDs (optional)
         let recentMatchesIDs: string[] = [];
         try { recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5); } 
@@ -79,8 +77,8 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
             recentMatchesIDs = [];
         }
 
-        // Fetch match details and timeline data for each recent match ID
-        const recentMatchesRaw = await Promise.all(
+        // Fetch complete match data for each recent match ID
+        const recentMatches = await Promise.all(
             recentMatchesIDs.map(async (matchId, index) => {
                 try {
                     // Fetch match details and timeline data in parallel
@@ -99,11 +97,13 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
                         return null;
                     }
                     
-                    return { 
-                        matchId, 
-                        matchDetails,
-                        timelineData
+                    // Create complete Match object with integrated timeline data
+                    const completeMatch: Match = {
+                        ...matchDetails,
+                        timelineData: timelineData
                     };
+                    
+                    return completeMatch;
                 } catch (error) {
                     console.warn(`Failed to fetch match data for match ${matchId} (index ${index}):`, error);
                     return null;
@@ -112,20 +112,16 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         );
 
         // Filter out any null values from the recent matches
-        const recentMatches = recentMatchesRaw.filter((m): m is { 
-            matchId: string; 
-            matchDetails: MatchDetails; 
-            timelineData: import('@/interfaces/proudctionTimeLapTypes').ParticipantTimelineData[];
-        } => m !== null);
+        const validMatches = recentMatches.filter((match): match is Match => match !== null);
 
         // Log summary for debugging
-        console.log(`Successfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${recentMatches.length}/${recentMatchesIDs.length} matches loaded with timeline data`);
+        console.log(`\nSuccessfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${validMatches.length}/${recentMatchesIDs.length} matches loaded with timeline data`);
 
         return { 
             leagueAccountsDetails, 
             leagueSoloRank, 
             leagueFlexRank, 
-            recentMatches 
+            matchHistory: validMatches 
         };
     } catch (error) {
         if (error instanceof Error) {

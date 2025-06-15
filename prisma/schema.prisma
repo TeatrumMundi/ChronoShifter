@@ -65,15 +65,14 @@ model LeagueRank {
 model RecentMatch {
   id              String   @id @default(uuid())
   matchId         String   @unique
-  matchDetailsId  String   @unique
   leagueAccountId String
   timelineData    Json
-  matchDetails    MatchDetails @relation(fields: [matchDetailsId], references: [id])
+  matchDetails    MatchDetails @relation(fields: [matchId], references: [matchId])
   leagueAccount   LeagueAccount @relation(fields: [leagueAccountId], references: [id])
 }
 
 model MatchDetails {
-  id                String   @id @default(uuid())
+  matchId           String   @id
   gameDuration      Int
   gameCreation      BigInt
   gameEndTimestamp  BigInt
@@ -81,7 +80,7 @@ model MatchDetails {
   gameType          String
   queueId           Int
   participants      Participant[]
-  recentMatch       RecentMatch?
+  recentMatches     RecentMatch[]
 }
 
 model Participant {
@@ -127,5 +126,5 @@ model Participant {
   statPerks                 Json
   items                     Json
   timelineData              Json
-  matchDetails              MatchDetails @relation(fields: [matchDetailsId], references: [id])
+  matchDetails              MatchDetails @relation(fields: [matchDetailsId], references: [matchId])
 }

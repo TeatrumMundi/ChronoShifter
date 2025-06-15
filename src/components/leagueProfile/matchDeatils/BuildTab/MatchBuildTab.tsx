@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Participant, RecentMatch } from "@/interfaces/productionTypes";
+import { Participant, Match } from "@/interfaces/productionTypes";
 import { RunesSection } from "./RunesSection";
 import { ItemTimelineSection } from "./ItemTimelineSection";
 import { SkillOrderSection } from "./SkillOrderSection";
@@ -7,7 +7,7 @@ import { getPlayerFromTimelines } from "@/utils/fetchLeagueAPI/riotEndPoints/get
 
 interface MatchBuildTabProps {
     mainPlayer: Participant;
-    recentMatch: RecentMatch;
+    recentMatch: Match;
 }
 
 export const MatchBuildTab = memo(function MatchBuildTab({ mainPlayer, recentMatch }: MatchBuildTabProps) {
