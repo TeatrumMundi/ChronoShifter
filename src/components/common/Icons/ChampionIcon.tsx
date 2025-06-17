@@ -1,5 +1,3 @@
-"use client";
-
 import { getChampionIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
 import { IconBox } from "./IconBox";
 import { Champion } from "@/interfaces/ChampionType";

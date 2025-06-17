@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Image from "next/image";
 import { Tooltip } from "../Tooltip";
 import { BoxPlaceHolder } from "./IconPlaceholder";
@@ -34,9 +33,7 @@ export function IconBox({
     showTooltip = true,
     tooltipPlacement = 'top',
 }: IconBoxProps) {
-    const [imageError, setImageError] = useState(false);
-
-    const shouldShowPlaceholder = imageError || !src;
+    const shouldShowPlaceholder = !src;
 
     const iconContent = (
         <div
@@ -62,7 +59,6 @@ export function IconBox({
                         maxWidth: childrenSize,
                         maxHeight: childrenSize,
                     }}
-                    onError={() => setImageError(true)}
                     unoptimized
                 />
             )}
