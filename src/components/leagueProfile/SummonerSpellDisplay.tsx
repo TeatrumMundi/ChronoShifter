@@ -1,10 +1,7 @@
-"use client";
-
-import React from "react";
-import { SummonerSpell } from "@/interfaces/productionTypes";
 import { getSummonerSpellIcon } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "../common/Icons/IconBox";
+import { SummonerSpell } from "@/interfaces/productionTypes";
 import { cleanItemDescription } from "@/utils/helpers";
+import { IconBox } from '@/components/common';
 
 export interface SummonerSpellDisplayProps {
     summonerSpell1: SummonerSpell;
@@ -33,7 +30,6 @@ export function SummonerSpellDisplay({ summonerSpell1, summonerSpell2, boxSize =
                 }
                 tooltipClassName="w-60"
             />
-
 
             {/* Secondary summoner spell Icon */}
             <IconBox

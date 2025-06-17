@@ -1,8 +1,5 @@
-"use client";
-
 import { LeagueRank } from "@/interfaces/productionTypes";
 import Image from "next/image";
-import { motion } from "framer-motion";
 
 interface RankDisplayProps {
     leagueSoloRank: LeagueRank;
@@ -14,12 +11,9 @@ export default function RankDisplay({ leagueSoloRank, leagueFlexRank }: RankDisp
         `/rankedIcons/${tier.toLowerCase()}.webp`;
 
     return (
-        <motion.div
+        <div
             className="flex flex-col sm:flex-row lg:flex-col gap-4"
             style={{ fontFamily: "var(--font-verminVibes)" }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
         >
             <div className="flex-1 lg:flex-none">
                 <RankSection
@@ -35,7 +29,7 @@ export default function RankDisplay({ leagueSoloRank, leagueFlexRank }: RankDisp
                     iconUrl={getRankedIconUrl(leagueFlexRank.tier)}
                 />
             </div>
-        </motion.div>
+        </div>
     );
 }
 

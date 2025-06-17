@@ -1,24 +1,23 @@
-"use client";
-
-import { RiotAccount } from "@/interfaces/productionTypes";
+import React from "react";
 import SummonerIcon from "../common/Icons/SummonerIcon";
-import { motion } from "framer-motion";
 
 interface PlayerInfoProps {
-    riotAccount: RiotAccount;
+    gameName: string;
+    tagLine: string;
+    profileIconId: number;
+    summonerLevel: number;
 }
 
-export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
-    const { leagueAccountsDetails } = riotAccount.leagueAccount;
-    const { gameName, tagLine } = riotAccount.riotAccountDetails;
-
+export default function PlayerInfo({ 
+    gameName, 
+    tagLine, 
+    profileIconId, 
+    summonerLevel 
+}: PlayerInfoProps) {
     return (
-        <motion.div
+        <div
             className="relative w-full"
             style={{ fontFamily: "var(--font-verminVibes)" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
         >
             {/* Slim Glass Card */}
             <div className="relative p-4 mb-5 rounded-xl 
@@ -35,8 +34,8 @@ export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
                         <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20" />
                         <div className="relative p-1.5">
                             <SummonerIcon 
-                                prfileIconID={leagueAccountsDetails.profileIconId} 
-                                level={leagueAccountsDetails.summonerLevel.toString()}
+                                prfileIconID={profileIconId} 
+                                level={summonerLevel.toString()}
                                 quality={50}
                                 loading="eager"
                                 priority={true}
@@ -62,6 +61,6 @@ export default function PlayerInfo({ riotAccount }: PlayerInfoProps) {
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }

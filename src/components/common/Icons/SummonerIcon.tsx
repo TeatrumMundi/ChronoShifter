@@ -7,7 +7,7 @@ interface SummonerIconProps {
     quality: number;
     loading: "eager" | "lazy";
     priority: boolean;
-    size: number; // Size in pixels (will be used for both width and height)
+    size: number
 }
 
 export default function SummonerIcon({ 
@@ -30,10 +30,6 @@ export default function SummonerIcon({
                     quality={quality}
                     loading={loading}
                     priority={priority}
-                    onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/summonerIcons/default.jpg';
-                    }}
                 />
             </div>
             <div className="absolute bottom-0 w-full bg-black/70 rounded-b-sm px-2 py-0.25 text-xs text-white text-center tracking-widest">

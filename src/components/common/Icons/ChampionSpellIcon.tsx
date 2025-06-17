@@ -1,5 +1,3 @@
-"use client";
-
 import { getChampionSpellIconByChampionAndID } from "@/utils/getLeagueAssets/getLOLAssets";
 import { IconBox } from "./IconBox";
 import { Champion } from "@/interfaces/ChampionType";
@@ -7,7 +5,7 @@ import { cleanItemDescription } from "@/utils/helpers";
 
 interface ChampionSpellIconProps {
     champion: Champion;
-    spellIndex: number; // 0-3 (Q, W, E, R)
+    spellIndex: number;
     size?: number;
     showTooltip?: boolean;
     className?: string;
@@ -28,7 +26,6 @@ export function ChampionSpellIcon({
     showSpellKey = true,
     level,
 }: ChampionSpellIconProps) {
-    // Walidacja indeksu spella
     if (spellIndex < 0 || spellIndex > 3) {
         console.warn(`Invalid spellIndex: ${spellIndex}. Must be 0-3.`);
         return null;

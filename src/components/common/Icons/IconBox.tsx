@@ -18,6 +18,7 @@ interface IconBoxProps {
     tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
 }
 
+
 export function IconBox({
     src,
     alt,

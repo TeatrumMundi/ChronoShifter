@@ -1,10 +1,6 @@
-"use client";
-
-import React from "react";
-import { Rune } from "@/interfaces/productionTypes";
 import { getRuneTreeIconUrl } from "@/utils/getLeagueAssets/getLOLAssets";
-import { IconBox } from "../common/Icons/IconBox";
-import { RuneIcon } from "../common/Icons/RuneIcon";
+import { IconBox, RuneIcon } from '@/components/common';
+import { Rune } from "@/interfaces/productionTypes";
 
 interface RuneDisplayProps {
     runes: Rune[];

@@ -25,7 +25,12 @@ export default async function Home({params}:
                 <div className="grid grid-cols-12 gap-4">
                     {/* Player Info - Full Width */}
                     <div className="col-span-12 mt-10">
-                        <PlayerInfo riotAccount={riotAccount} />
+                        <PlayerInfo 
+                            gameName={riotAccount.riotAccountDetails.gameName}
+                            tagLine={riotAccount.riotAccountDetails.tagLine}
+                            profileIconId={riotAccount.leagueAccount.leagueAccountsDetails.profileIconId}
+                            summonerLevel={riotAccount.leagueAccount.leagueAccountsDetails.summonerLevel}
+                        />
                     </div>
                     
                     {/* Rank Display - Left Side */}
