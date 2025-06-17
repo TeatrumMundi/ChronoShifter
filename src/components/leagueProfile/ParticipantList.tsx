@@ -1,7 +1,7 @@
+import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
 import { Participant } from "@/interfaces/productionTypes";
-import Link from "next/link";
 import React, { useMemo } from "react";
-import { ChampionIcon } from "../common/Icons/ChampionIcon";
+import Link from "next/link";
 
 const TEAM_COLORS: string[] = [
     'bg-yellow-500/25 border-yellow-400/30',

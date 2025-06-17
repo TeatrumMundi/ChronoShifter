@@ -1,16 +1,16 @@
+"use server";
+
 import { RiotAccount } from "@/interfaces/productionTypes";
-import PlayerInfo from "@/components/leagueProfile/PlayerInfo";
+import PlayerInfo from "@/components/leagueProfile/PlayerBanner/PlayerInfo";
 import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
-import RankDisplay from "@/components/leagueProfile/RankDisplay";
+import RankDisplay from "@/components/leagueProfile/PlayerBanner/RankDisplay";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/createRiotAccount";
 
-export default async function Home({params}: 
-{ params: 
-  Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
+export default async function Home({params}: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
 {
-  const { tagLine, gameName, activeRegion } = await params;
+const { tagLine, gameName, activeRegion } = await params;
 
     const riotAccount: RiotAccount = await createRiotAccount(tagLine, gameName, activeRegion);
 

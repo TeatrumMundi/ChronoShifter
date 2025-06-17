@@ -1,5 +1,5 @@
+import SummonerIcon from "@/components/common/Icons/SummonerIcon";
 import React from "react";
-import SummonerIcon from "../common/Icons/SummonerIcon";
 
 interface PlayerInfoProps {
     gameName: string;
