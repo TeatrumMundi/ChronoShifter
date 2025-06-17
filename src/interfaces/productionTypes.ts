@@ -19,7 +19,7 @@ export interface LeagueAccount
     leagueAccountsDetails : LeagueAccountDetails;
     leagueSoloRank : LeagueRank;
     leagueFlexRank : LeagueRank;
-    recentMatches: RecentMatch[];
+    matchHistory: Match[];
 }
 
 export interface LeagueAccountDetails
@@ -46,22 +46,17 @@ export interface LeagueRank
     hotStreak : boolean;
 }
 
-export interface RecentMatch
+export interface Match
 {
-    matchId : string;
-    matchDetails : MatchDetails;
-    timelineData : ParticipantTimelineData[];
-}
-
-export interface MatchDetails
-{
-    participants : Participant[];
+    matchId : number;
     gameDuration : number;
     gameCreation : number;
     gameEndTimestamp : number;
     gameMode : string;
     gameType : string;
     queueId : number;
+    participants : Participant[];
+    timelineData : ParticipantTimelineData[];
 }
 
 export interface Participant

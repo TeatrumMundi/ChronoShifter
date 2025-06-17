@@ -7,13 +7,124 @@ datasource db {
 // Define custom output path for generated Prisma Client
 generator client {
   provider = "prisma-client-js"
-  output   = "/app/generated/prisma-client"
 }
 
-// Example data model
-model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  email     String   @unique
-  name      String?
+model RiotAccount {
+  id                   Int      @id @default(autoincrement())
+  riotAccountDetailsPuuid String @unique
+  leagueAccountId      String?  @unique
+  riotAccountDetails   RiotAccountDetails @relation(fields: [riotAccountDetailsPuuid], references: [puuid])
+  leagueAccount        LeagueAccount?     @relation(fields: [leagueAccountId], references: [id])
+}
+
+model RiotAccountDetails {
+  puuid       String   @id
+  gameName   String
+  tagLine     String
+  riotAccount RiotAccount?
+}
+
+model LeagueAccount {
+  id                     String   @id @default(uuid())
+  leagueAccountDetailsId  String   @unique
+  leagueSoloRankId        String?
+  leagueFlexRankId        String?
+  leagueAccountDetails    LeagueAccountDetails @relation(fields: [leagueAccountDetailsId], references: [id])
+  leagueSoloRank          LeagueRank? @relation("SoloRank", fields: [leagueSoloRankId], references: [id])
+  leagueFlexRank          LeagueRank? @relation("FlexRank", fields: [leagueFlexRankId], references: [id])
+  recentMatches           RecentMatch[]
+  riotAccount             RiotAccount?
+}
+
+model LeagueAccountDetails {
+  id            String   @id @default(uuid())
+  accountId     String   @unique
+  puuid         String   @unique
+  region        String
+  activeRegion  String
+  profileIconId Int
+  revisionDate  BigInt
+  summonerLevel Int
+  leagueAccount LeagueAccount?
+}
+
+model LeagueRank {
+  id           String   @id @default(uuid())
+  queueType    String
+  tier         String
+  rank         String
+  leaguePoints Int
+  wins         Int
+  losses       Int
+  winRate      Int
+  hotStreak    Boolean
+  soloAccount  LeagueAccount[] @relation("SoloRank")
+  flexAccount  LeagueAccount[] @relation("FlexRank")
+}
+
+model RecentMatch {
+  id              String   @id @default(uuid())
+  matchId         String   @unique
+  leagueAccountId String
+  timelineData    Json
+  matchDetails    MatchDetails @relation(fields: [matchId], references: [matchId])
+  leagueAccount   LeagueAccount @relation(fields: [leagueAccountId], references: [id])
+}
+
+model MatchDetails {
+  matchId           String   @id
+  gameDuration      Int
+  gameCreation      BigInt
+  gameEndTimestamp  BigInt
+  gameMode          String
+  gameType          String
+  queueId           Int
+  participants      Participant[]
+  recentMatches     RecentMatch[]
+}
+
+model Participant {
+  id                        String   @id @default(uuid())
+  puuid                     String
+  participantId             Int
+  riotIdGameName            String
+  riotIdTagline             String
+  summonerName              String
+  region                    String
+  activeRegion              String
+  teamId                    Int
+  teamPosition              String
+  champLevel                Int
+  kills                     Int
+  deaths                    Int
+  assists                   Int
+  kda                       String
+  totalMinionsKilled        Int
+  neutralMinionsKilled      Int
+  allMinionsKilled          Int
+  minionsPerMinute          Float
+  visionScore               Int
+  visionPerMinute           Float
+  wardsPlaced               Int
+  goldEarned                Int
+  performanceScore          Float
+  performancePlacement      Int
+  totalHealsOnTeammates     Int
+  totalDamageShieldedOnTeammates Int
+  totalDamageTaken          Int
+  totalDamageDealtToChampions Int
+  individualPosition        String
+  win                       Boolean
+  champLevelArena           Int?
+  playerSubteamId           Int?
+  matchDetailsId            String
+  summonerSpell1            Json
+  summonerSpell2            Json
+  champion                  Json
+  arenaStats                Json
+  runes                     Json
+  statPerks                 Json
+  items                     Json
+  timelineData              Json
+  matchDetails              MatchDetails @relation(fields: [matchDetailsId], references: [matchId])
 }

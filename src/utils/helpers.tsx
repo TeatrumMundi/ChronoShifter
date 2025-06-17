@@ -1,4 +1,4 @@
-import { ArenaStats, Augment, Item, Participant, RecentMatch, Rune } from "@/interfaces/productionTypes";
+import { ArenaStats, Augment, Item, Participant, Match, Rune } from "@/interfaces/productionTypes";
 import { RawParticipant } from "@/interfaces/rawTypes";
 import { getAugmentById, getItemById, getRuneById } from "./getLeagueAssets/getLOLObject";
 
@@ -105,8 +105,8 @@ export function getMinionsPerMinute(seconds: number, totalMinions: number): numb
     return Number((totalMinions / minutes).toFixed(2));
 }
 
-export function getParticipantByPuuid(matchData: RecentMatch, puuid: string): Participant | null {
-    return matchData.matchDetails.participants.find(participant => participant.puuid === puuid) ?? null;
+export function getParticipantByPuuid(matchData: Match, puuid: string): Participant | null {
+    return matchData.participants.find(participant => participant.puuid === puuid) ?? null;
 }
 
 export const ServerMAP: Record<string, string> = {

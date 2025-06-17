@@ -82,7 +82,7 @@ const ItemEventGroup = memo(function ItemEventGroup({
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/5 to-transparent" />
                 
                 <div className="relative z-5">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center justify-center gap-2 mb-2">
                         {events.map((itemEvent, index) => {
                             const isNegativeEvent = itemEvent.type === 'ITEM_SOLD';
                             const item = itemEvent.type === 'ITEM_PURCHASED' 
@@ -94,7 +94,7 @@ const ItemEventGroup = memo(function ItemEventGroup({
                                     <div className="relative transition-transform duration-200 group-hover:scale-110">
                                         <ItemIcon 
                                             item={item} 
-                                            itemSize={28} // Smaller icon
+                                            itemSize={28}
                                             className="rounded-lg shadow-md"
                                         />
                                         {isNegativeEvent && (
@@ -122,7 +122,10 @@ const ItemEventGroup = memo(function ItemEventGroup({
             </div>
             
             {!isLast && (
-                <div className="w-4 h-px bg-gradient-to-r from-blue-400/40 to-blue-400/20" />
+                <div className="relative backdrop-blur-sm border-y border-white/20 w-5 h-2
+                    bg-gradient-to-br from-white/10 via-white/5 to-white/10 shadow-lg">
+                    <div className="absolute inset-0 rounded bg-gradient-to-r from-white/5 to-transparent" />
+                </div>
             )}
         </div>
     );
@@ -166,7 +169,7 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
                         {itemEvents.length === 0 ? (
                             <EmptyState message="No item events during this match" />
                         ) : (
-                            <div className="flex items-center gap-4 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5">
+                            <div className="flex items-center gap-0 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-white/5">
                                 {groupedItemEvents.map(([minute, events], groupIndex, array) => (
                                     <ItemEventGroup 
                                         key={groupIndex}

@@ -1,5 +1,5 @@
 import { useState, useMemo, memo, lazy, Suspense, useCallback, startTransition } from "react";
-import { RecentMatch } from "@/interfaces/productionTypes";
+import { Match } from "@/interfaces/productionTypes";
 import { motion } from "framer-motion";
 
 // Lazy load all heavy components with preload
@@ -36,7 +36,7 @@ type TabId = keyof typeof TABS_CONFIG;
 const DEFAULT_TAB: TabId = 'game';
 
 interface MatchDetailsProps {
-    match: RecentMatch;
+    match: Match;
     mainPlayerPUUID: string;
     region: string;
 }
@@ -46,16 +46,16 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
 
     // Memoize team splitting - only recalculate when match changes
     const { team1, team2, mainPlayer, isWin } = useMemo(() => {
-        const teams = match.matchDetails.participants.reduce((acc, participant) => {
+        const teams = match.participants.reduce((acc, participant) => {
             if (!acc[participant.teamId]) {
                 acc[participant.teamId] = [];
             }
             acc[participant.teamId].push(participant);
             return acc;
-        }, {} as Record<number, typeof match.matchDetails.participants>);
+        }, {} as Record<number, typeof match.participants>);
 
         const teamIds = Object.keys(teams).map(Number).sort();
-        const mainPlayer = match.matchDetails.participants.find(p => p.puuid === mainPlayerPUUID);
+        const mainPlayer = match.participants.find(p => p.puuid === mainPlayerPUUID);
         
         return {
             team1: teams[teamIds[0]] || [],
@@ -92,7 +92,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         team2={team2}
                         mainPlayerPUUID={mainPlayerPUUID}
                         region={region}
-                        time={match.matchDetails.gameDuration}
+                        time={match.gameDuration}
                     />
                 );
             case 'performance':

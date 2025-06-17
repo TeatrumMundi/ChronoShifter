@@ -1,4 +1,4 @@
-import { MatchDetails, Participant } from "@/interfaces/productionTypes";
+import { Match, Participant } from "@/interfaces/productionTypes";
 import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
 import { RawMatchData, RawParticipant } from "@/interfaces/rawTypes";
 import { calculatePerformanceScore, extractArenaStats, extractItems, fetchParticipantRunes, getKDA, getMinionsPerMinute } from "@/utils/helpers";
@@ -26,7 +26,7 @@ import { getChampionById, getStatPerkById, getSummonerSpellByID } from "@/utils/
  * }
  * ```
  */
-export default async function getMatchDetailsByMatchID(matchID: string, region: string, activeRegion: string): Promise<MatchDetails> {
+export default async function getMatchDetailsByMatchID(matchID: string, region: string, activeRegion: string): Promise<Match> {
     // Input validation
     if (!matchID || typeof matchID !== 'string' || matchID.trim().length === 0) {
         throw new Error('Match ID is required and must be a non-empty string');
@@ -86,7 +86,8 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
             throw new Error('Invalid game duration in match data');
         }
 
-        const matchDetails: MatchDetails = {
+        const matchDetails: Match = {
+            matchId: data.info.gameId,
             gameDuration: data.info.gameDuration,
             gameCreation: data.info.gameCreation,
             gameEndTimestamp: data.info.gameEndTimestamp,
@@ -104,8 +105,8 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                         throw new Error(`Invalid PUUID for participant at index ${index}`);
                     }
 
-                    if (typeof participantData.kills !== 'number' || 
-                        typeof participantData.deaths !== 'number' || 
+                    if (typeof participantData.kills !== 'number' ||
+                        typeof participantData.deaths !== 'number' ||
                         typeof participantData.assists !== 'number') {
                         throw new Error(`Invalid KDA data for participant at index ${index}`);
                     }
@@ -161,7 +162,7 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                                 offense: await getStatPerkById(participantData.perks?.statPerks?.offense)
                             },
                             arenaStats: await extractArenaStats(participantData),
-                            
+
                             // Timeline data for this participant
                             timelineData: undefined,
                         };
@@ -170,6 +171,7 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                     }
                 })
             ),
+            timelineData: []
         };
 
         // Calculate performance placement after all participants are processed

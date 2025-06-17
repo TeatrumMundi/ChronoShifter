@@ -1,9 +1,10 @@
-﻿import { LeagueAccount, LeagueAccountDetails, LeagueRank, MatchDetails } from '@/interfaces/productionTypes';
+﻿import { LeagueAccount, LeagueAccountDetails, LeagueRank, Match } from '@/interfaces/productionTypes';
 import getSummonerByPuuid from './riotEndPoints/getSummonerByPuuid';
 import getRankedLeagueEntries from './riotEndPoints/getRankedLeagueEntries';
 import getRecentMatchesIDsByPuuid from './riotEndPoints/getRecentMatchesIDsByPuuid';
 import getMatchDetailsByMatchID from './riotEndPoints/getMatchDetailsByMatchID';
 import getMatchTimelineByMatchID from './riotEndPoints/getMatchTimelineByMatchID';
+import { saveLeagueAccountDetails } from '@/utils/database/saveLeagueAccountDetails';
 
 /**
  * Creates a complete LeagueAccount object with summoner details, ranked information, and recent matches.
@@ -49,48 +50,35 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
 
         // Get ranked league entries (optional but important)
         let leagueRanks: LeagueRank[] = [];
-        try {
-            leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);
-        } catch (error) {
+        try { leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);} 
+        catch (error) {
             console.warn(`Failed to fetch ranked entries for PUUID ${puuid}:`, error);
             leagueRanks = [];
         }
 
         // Extract or create default solo queue rank
-        const leagueSoloRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_SOLO_5x5") ?? {
-            queueType: "RANKED_SOLO_5x5",
-            tier: "UNRANKED",
-            rank: "",
-            leaguePoints: 0,
-            wins: 0,
-            losses: 0,
-            winRate: 0,
-            hotStreak: false
-        };
+        const leagueSoloRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_SOLO_5x5");
 
         // Extract or create default flex queue rank
-        const leagueFlexRank: LeagueRank = leagueRanks.find(r => r.queueType === "RANKED_FLEX_SR") ?? {
-            queueType: "RANKED_FLEX_SR",
-            tier: "UNRANKED",
-            rank: "",
-            leaguePoints: 0,
-            wins: 0,
-            losses: 0,
-            winRate: 0,
-            hotStreak: false
-        };
+        const leagueFlexRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_FLEX_SR");
+
+        // Save LeagueAccountDetails to database and create/link accounts
+        await saveLeagueAccountDetails(
+            leagueAccountsDetails, 
+            leagueSoloRank, 
+            leagueFlexRank
+        );
 
         // Get recent match IDs (optional)
         let recentMatchesIDs: string[] = [];
-        try {
-            recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
-        } catch (error) {
+        try { recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5); } 
+        catch (error) {
             console.warn(`Failed to fetch recent matches IDs for PUUID ${puuid}:`, error);
             recentMatchesIDs = [];
         }
 
-        // Fetch match details and timeline data for each recent match ID
-        const recentMatchesRaw = await Promise.all(
+        // Fetch complete match data for each recent match ID
+        const recentMatches = await Promise.all(
             recentMatchesIDs.map(async (matchId, index) => {
                 try {
                     // Fetch match details and timeline data in parallel
@@ -109,11 +97,13 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
                         return null;
                     }
                     
-                    return { 
-                        matchId, 
-                        matchDetails,
-                        timelineData
+                    // Create complete Match object with integrated timeline data
+                    const completeMatch: Match = {
+                        ...matchDetails,
+                        timelineData: timelineData
                     };
+                    
+                    return completeMatch;
                 } catch (error) {
                     console.warn(`Failed to fetch match data for match ${matchId} (index ${index}):`, error);
                     return null;
@@ -122,20 +112,16 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         );
 
         // Filter out any null values from the recent matches
-        const recentMatches = recentMatchesRaw.filter((m): m is { 
-            matchId: string; 
-            matchDetails: MatchDetails; 
-            timelineData: import('@/interfaces/proudctionTimeLapTypes').ParticipantTimelineData[];
-        } => m !== null);
+        const validMatches = recentMatches.filter((match): match is Match => match !== null);
 
         // Log summary for debugging
-        console.log(`Successfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${recentMatches.length}/${recentMatchesIDs.length} matches loaded with timeline data`);
+        console.log(`\nSuccessfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${validMatches.length}/${recentMatchesIDs.length} matches loaded with timeline data`);
 
         return { 
             leagueAccountsDetails, 
             leagueSoloRank, 
             leagueFlexRank, 
-            recentMatches 
+            matchHistory: validMatches 
         };
     } catch (error) {
         if (error instanceof Error) {
@@ -143,4 +129,20 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         }
         throw new Error(`Unexpected error while creating league account: ${String(error)}`);
     }
+}
+
+/**
+ * Finds a LeagueRank by queueType or returns a default unranked LeagueRank.
+ */
+function getOrDefaultLeagueRank(leagueRanks: LeagueRank[], queueType: string): LeagueRank {
+    return leagueRanks.find(r => r.queueType === queueType) ?? {
+        queueType,
+        tier: "UNRANKED",
+        rank: "",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0,
+        winRate: 0,
+        hotStreak: false
+    };
 }

@@ -31,7 +31,7 @@ export interface RawParticipant {
     baronKills: number;
     basicPings: number;
     bountyLevel: number;
-    challenges: Record<string, number>; // Możesz zdefiniować dokładniej, jeśli chcesz
+    challenges: Record<string, number>;
     champExperience: number;
     champLevel: number;
     championId: number;

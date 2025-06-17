@@ -1,4 +1,4 @@
-import { Participant, RecentMatch } from "@/interfaces/productionTypes";
+import { Participant, Match } from "@/interfaces/productionTypes";
 import { ChampionKillEvent, EliteMonsterKillEvent } from "@/interfaces/proudctionTimeLapTypes";
 import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
 import { useMemo, useState, useRef, useEffect } from "react";
@@ -9,7 +9,7 @@ interface MatchStatsTabProps {
     team1: Participant[];
     team2: Participant[];
     mainPlayerPUUID: string;
-    recentMatch: RecentMatch;
+    recentMatch: Match;
 }
 
 interface ExtendedChampionKillEvent extends ChampionKillEvent {
