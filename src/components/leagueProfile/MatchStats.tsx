@@ -49,7 +49,10 @@ export function MatchStats({ participant, gameMode }: {
                 <span className="text-blue-300 font-bold">{participant.assists}</span>
             </div>
         ), "Kills / Deaths / Assists (KDA)"),
-        createStat("Gold", formatNumber(participant.goldEarned), "Gold earned in the match", "text-yellow-300 font-semibold"),
+        // Only show gold for non-support roles
+        ...(!isSupport ? [
+            createStat("Gold", formatNumber(participant.goldEarned), "Gold earned in the match", "text-yellow-300 font-semibold"),
+        ] : []),
     ];
 
     // Conditional stats based on game mode and role
@@ -60,7 +63,7 @@ export function MatchStats({ participant, gameMode }: {
             createStat("Shielded", formatNumber(participant.totalDamageShieldedOnTeammates), "Total shields on teammates", "text-blue-300 font-semibold"),
         ] : []),
         
-        // Damage (always, but priority for Arena and non-support)
+        // Damage (always shown)
         createStat("Damage", formatNumber(participant.totalDamageDealtToChampions), "Total damage dealt", "text-red-300 font-semibold"),
         
         // CS (non-support, non-arena)

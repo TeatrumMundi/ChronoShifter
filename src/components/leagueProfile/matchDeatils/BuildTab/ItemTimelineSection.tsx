@@ -1,3 +1,5 @@
+"use client";
+
 import { memo, useMemo, useEffect, useState } from "react";
 import { Participant } from "@/interfaces/productionTypes";
 import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame } from "@/interfaces/proudctionTimeLapTypes";
@@ -10,6 +12,8 @@ interface ItemTimelineSectionProps {
 type ItemEvent = (ItemPurchasedEvent | ItemSoldEvent) & {
     count?: number;
 };
+
+const CONTROL_WARD_ID = 2055;
 
 const getItemFromEvent = (event: ItemPurchasedEvent | ItemSoldEvent) => {
     return event.type === 'ITEM_PURCHASED' ? event.itemPurchased : event.itemSold;
@@ -60,6 +64,36 @@ const EmptyState = memo(function EmptyState({ message }: { message: string }) {
         <div className="text-center text-white/60 py-8">
             <div className="text-4xl mb-2">📦</div>
             <p>{message}</p>
+        </div>
+    );
+});
+
+const ControlWardStats = memo(function ControlWardStats({ 
+    controlWardsPurchased, 
+    totalGoldSpent 
+}: { 
+    controlWardsPurchased: number; 
+    totalGoldSpent: number; 
+}) {
+    if (controlWardsPurchased === 0) return null;
+
+    return (
+        <div className="mb-4 p-1 px-2 rounded-lg bg-purple-500/10 border border-purple-400/20">
+            <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                    <span className="text-purple-300 font-medium">Control Wards:</span>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                        <span className="text-white font-bold">{controlWardsPurchased}</span>
+                        <span className="text-white/60 text-sm">purchased</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                        <span className="text-yellow-300 font-bold">{totalGoldSpent}</span>
+                        <span className="text-yellow-300/60 text-sm">gold spent</span>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 });
@@ -141,8 +175,8 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
         }
     }, [mainPlayer.timelineData]);
 
-    const groupedItemEvents = useMemo(() => {
-        return Object.entries(
+    const { groupedItemEvents, controlWardStats } = useMemo(() => {
+        const grouped = Object.entries(
             itemEvents.reduce((groups, itemEvent) => {
                 const timeInMinutes = Math.floor(itemEvent.timestamp / 60000);
                 if (!groups[timeInMinutes]) {
@@ -152,6 +186,26 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
                 return groups;
             }, {} as Record<number, ItemEvent[]>)
         );
+
+        // Calculate control ward stats from item events
+        let controlWardsPurchased = 0;
+        let totalGoldSpent = 0;
+
+        itemEvents.forEach(event => {
+            if (event.type === 'ITEM_PURCHASED') {
+                const item = event.itemPurchased;
+                if (item.id === CONTROL_WARD_ID) {
+                    const purchaseCount = event.count || 1;
+                    controlWardsPurchased += purchaseCount;
+                    totalGoldSpent += item.price * purchaseCount;
+                }
+            }
+        });
+
+        return {
+            groupedItemEvents: grouped,
+            controlWardStats: { controlWardsPurchased, totalGoldSpent }
+        };
     }, [itemEvents]);
 
     return (
@@ -180,6 +234,11 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
                                 ))}
                             </div>
                         )}
+
+                        <ControlWardStats 
+                            controlWardsPurchased={controlWardStats.controlWardsPurchased}
+                            totalGoldSpent={controlWardStats.totalGoldSpent}
+                        />
                     </div>
                 ) : (
                     <EmptyState message="No timeline data available" />
