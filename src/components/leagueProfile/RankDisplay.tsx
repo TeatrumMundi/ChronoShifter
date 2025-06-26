@@ -12,17 +12,17 @@ export default function RankDisplay({ leagueSoloRank, leagueFlexRank }: RankDisp
 
     return (
         <div
-            className="flex flex-col sm:flex-row lg:flex-col gap-4"
+            className="flex flex-col sm:flex-row 2xl:flex-col gap-4"
             style={{ fontFamily: "var(--font-verminVibes)" }}
         >
-            <div className="flex-1 lg:flex-none">
+            <div className="flex-1 2xl:flex-none">
                 <RankSection
                     title="Solo Queue"
                     ranked={leagueSoloRank}
                     iconUrl={getRankedIconUrl(leagueSoloRank.tier)}
                 />
             </div>
-            <div className="flex-1 lg:flex-none">
+            <div className="flex-1 2xl:flex-none">
                 <RankSection
                     title="Flex Queue"
                     ranked={leagueFlexRank}

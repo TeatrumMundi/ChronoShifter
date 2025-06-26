@@ -61,18 +61,22 @@ export interface Match
 
 export interface Participant
 {
+    // Basic Info
     puuid : string;
     participantId : number;
+    summonerId : string;
     riotIdGameName : string;
     riotIdTagline : string;
     summonerName : string;
     region : string;
     activeRegion : string;
+
+    // Team Info
     teamId : number;
     teamPosition : string;
-    champLevel : number;
-
+    
     // Stats
+    champLevel : number;
     kills : number;
     deaths : number;
     assists : number;
@@ -105,8 +109,6 @@ export interface Participant
     runes : Rune[];
     statPerks : StatPerks;
     items : Item[];
-
-    timelineData?: ParticipantTimelineData;
 }
 
 export interface ArenaStats

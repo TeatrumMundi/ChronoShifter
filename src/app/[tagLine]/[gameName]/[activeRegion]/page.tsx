@@ -3,7 +3,7 @@
 import { RiotAccount } from "@/interfaces/productionTypes";
 import PlayerInfo from "@/components/leagueProfile/PlayerBanner/PlayerInfo";
 import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
-import RankDisplay from "@/components/leagueProfile/PlayerBanner/RankDisplay";
+import RankDisplay from "@/components/leagueProfile/RankDisplay";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/common/Navbar";
 import { createRiotAccount } from "@/utils/fetchLeagueAPI/createRiotAccount";
@@ -34,7 +34,7 @@ const { tagLine, gameName, activeRegion } = await params;
                     </div>
                     
                     {/* Rank Display - Left Side */}
-                    <div className="col-span-12 lg:col-span-3 xl:col-span-2">
+                    <div className="col-span-12 2xl:col-span-3">
                         <RankDisplay 
                             leagueSoloRank={riotAccount.leagueAccount.leagueSoloRank}
                             leagueFlexRank={riotAccount.leagueAccount.leagueFlexRank}
@@ -42,7 +42,7 @@ const { tagLine, gameName, activeRegion } = await params;
                     </div>
                     
                     {/* Match History - Right Side */}
-                    <div className="col-span-12 lg:col-span-9 xl:col-span-10">
+                    <div className="col-span-12 2xl:col-span-9">
                         <MatchHistory riotAccount={riotAccount} />
                     </div>
                 </div>

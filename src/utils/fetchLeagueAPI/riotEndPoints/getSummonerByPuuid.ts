@@ -72,9 +72,14 @@ export default async function getSummonerByPuuid(puuid: string, region: string, 
         }
 
         return {
-            ...data,
+            id: data.id,
+            accountId: data.id,
+            puuid: data.puuid,
             region,
-            activeRegion
+            activeRegion,
+            profileIconId: data.profileIconId,
+            revisionDate: data.revisionDate,
+            summonerLevel: data.summonerLevel
         } as LeagueAccountDetails;
     } catch (error) {
         if (error instanceof Error) {

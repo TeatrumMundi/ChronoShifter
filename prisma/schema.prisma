@@ -3,18 +3,19 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 // Define custom output path for generated Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
+// Riot Account
 model RiotAccount {
-  id                   Int      @id @default(autoincrement())
-  riotAccountDetailsPuuid String @unique
-  leagueAccountId      String?  @unique
-  riotAccountDetails   RiotAccountDetails @relation(fields: [riotAccountDetailsPuuid], references: [puuid])
-  leagueAccount        LeagueAccount?     @relation(fields: [leagueAccountId], references: [id])
+  id                        Int      @id @default(autoincrement())
+  riotAccountDetailsPuuid   String @unique
+  leagueAccountId           String?  @unique
+  riotAccountDetails        RiotAccountDetails @relation(fields: [riotAccountDetailsPuuid], references: [puuid])
+  leagueAccount             LeagueAccount?     @relation(fields: [leagueAccountId], references: [id])
+  participants              Participant[]
 }
 
 model RiotAccountDetails {
@@ -24,15 +25,15 @@ model RiotAccountDetails {
   riotAccount RiotAccount?
 }
 
+// League Account
 model LeagueAccount {
-  id                     String   @id @default(uuid())
+  id                      String   @id @default(uuid())
   leagueAccountDetailsId  String   @unique
   leagueSoloRankId        String?
   leagueFlexRankId        String?
   leagueAccountDetails    LeagueAccountDetails @relation(fields: [leagueAccountDetailsId], references: [id])
   leagueSoloRank          LeagueRank? @relation("SoloRank", fields: [leagueSoloRankId], references: [id])
   leagueFlexRank          LeagueRank? @relation("FlexRank", fields: [leagueFlexRankId], references: [id])
-  recentMatches           RecentMatch[]
   riotAccount             RiotAccount?
 }
 
@@ -62,16 +63,8 @@ model LeagueRank {
   flexAccount  LeagueAccount[] @relation("FlexRank")
 }
 
-model RecentMatch {
-  id              String   @id @default(uuid())
-  matchId         String   @unique
-  leagueAccountId String
-  timelineData    Json
-  matchDetails    MatchDetails @relation(fields: [matchId], references: [matchId])
-  leagueAccount   LeagueAccount @relation(fields: [leagueAccountId], references: [id])
-}
-
-model MatchDetails {
+// Match
+model Match {
   matchId           String   @id
   gameDuration      Int
   gameCreation      BigInt
@@ -79,8 +72,10 @@ model MatchDetails {
   gameMode          String
   gameType          String
   queueId           Int
+  timelineData      Json?
+  
+  // Relations
   participants      Participant[]
-  recentMatches     RecentMatch[]
 }
 
 model Participant {
@@ -117,14 +112,117 @@ model Participant {
   win                       Boolean
   champLevelArena           Int?
   playerSubteamId           Int?
-  matchDetailsId            String
-  summonerSpell1            Json
-  summonerSpell2            Json
-  champion                  Json
-  arenaStats                Json
-  runes                     Json
-  statPerks                 Json
-  items                     Json
-  timelineData              Json
-  matchDetails              MatchDetails @relation(fields: [matchDetailsId], references: [matchId])
+  matchId                   String
+  
+  // Relations to League assets
+  championId                String
+  summonerSpell1Id          BigInt
+  summonerSpell2Id          BigInt
+  
+  // Store items, runes, and stat perks as arrays of IDs
+  itemIds                   Int[]
+  runeIds                   Int[]
+  statPerkIds               Int[]
+  
+  arenaStats                Json?
+  
+  // Relations
+  match                     Match @relation(fields: [matchId], references: [matchId])
+  riotAccount               RiotAccount? @relation(fields: [puuid], references: [riotAccountDetailsPuuid])
+  champion                  Champion @relation(fields: [championId], references: [id])
+  summonerSpell1            SummonerSpell @relation("SummonerSpell1", fields: [summonerSpell1Id], references: [id])
+  summonerSpell2            SummonerSpell @relation("SummonerSpell2", fields: [summonerSpell2Id], references: [id])
+}
+
+// League Assets
+model Champion {
+  id            String   @id
+  key           String   @unique
+  name          String
+  title         String
+  image         Json
+  skins         Json
+  lore          String
+  blurb         String
+  allytips      String[]
+  enemytips     String[]
+  tags          String[]
+  partype       String
+  info          Json
+  stats         Json
+  spells        Json
+  passive       Json
+  recommended   String[]
+  participants  Participant[]
+}
+
+model SummonerSpell {
+  id            BigInt      @id
+  name          String
+  description   String
+  summonerLevel Int
+  cooldown      Int
+  gameModes     Json
+  iconPath      String
+  participantsSpell1 Participant[] @relation("SummonerSpell1")
+  participantsSpell2 Participant[] @relation("SummonerSpell2")
+}
+
+model Item {
+  id            Int      @id
+  name          String
+  description   String
+  active        Boolean
+  inStore       Boolean
+  from          Json?
+  to            Json?
+  categories    Json?
+  maxStacks     Int
+  price         Int
+  priceTotal    Int
+  iconPath      String
+}
+
+model RuneTree {
+  id            Int      @id
+  key           String   @unique
+  icon          String
+  name          String
+  slots         Json
+  runes         Rune[]
+}
+
+model Rune {
+  id            Int      @id
+  key           String   @unique
+  icon          String
+  name          String
+  shortDesc     String
+  longDesc      String
+  runeTreeId    Int
+  slot          Int
+  tier          Int
+  
+  runeTree      RuneTree @relation(fields: [runeTreeId], references: [id])
+}
+
+model StatPerk {
+  id            Int      @id
+  name          String
+  desc          String
+  longDesc      String
+  path          String
+}
+
+model Augment {
+  id            Int      @id
+  apiName       String
+  calculations  Json
+  dataValues    Json
+  desc          String
+  iconLarge     String
+  iconSmall     String
+  name          String
+  rarity        Int
+  tooltip       String
 }

@@ -5,6 +5,7 @@ import getRecentMatchesIDsByPuuid from './riotEndPoints/getRecentMatchesIDsByPuu
 import getMatchDetailsByMatchID from './riotEndPoints/getMatchDetailsByMatchID';
 import getMatchTimelineByMatchID from './riotEndPoints/getMatchTimelineByMatchID';
 import { saveLeagueAccountDetails } from '@/utils/database/saveLeagueAccountDetails';
+import { saveMatchHistory } from '@/utils/database/saveMatchData';
 
 /**
  * Creates a complete LeagueAccount object with summoner details, ranked information, and recent matches.
@@ -48,6 +49,12 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
             throw new Error(`League account details not found for PUUID: ${puuid}`);
         }
 
+        // Validate that we have the required fields for database operations
+        if (!leagueAccountsDetails.puuid || !leagueAccountsDetails.accountId) {
+            console.error('Invalid league account details:', leagueAccountsDetails);
+            throw new Error(`Invalid league account details: missing puuid (${!!leagueAccountsDetails.puuid}) or accountId (${!!leagueAccountsDetails.accountId})`);
+        }
+
         // Get ranked league entries (optional but important)
         let leagueRanks: LeagueRank[] = [];
         try { leagueRanks = await getRankedLeagueEntries(puuid, activeRegion);} 
@@ -63,11 +70,18 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
         const leagueFlexRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_FLEX_SR");
 
         // Save LeagueAccountDetails to database and create/link accounts
-        await saveLeagueAccountDetails(
+        const savedLeagueAccountDetails = await saveLeagueAccountDetails(
             leagueAccountsDetails, 
             leagueSoloRank, 
             leagueFlexRank
         );
+
+        // Extract the LeagueAccount ID for linking matches
+        const leagueAccountId = savedLeagueAccountDetails?.leagueAccount?.id;
+        
+        if (!leagueAccountId) {
+            throw new Error('Failed to get LeagueAccount ID from saved details');
+        }
 
         // Get recent match IDs (optional)
         let recentMatchesIDs: string[] = [];
@@ -113,6 +127,16 @@ export async function createLeagueAccount(puuid: string, region: string, activeR
 
         // Filter out any null values from the recent matches
         const validMatches = recentMatches.filter((match): match is Match => match !== null);
+
+        // Save all valid matches to database
+        if (validMatches.length > 0) {
+            try {
+                await saveMatchHistory(validMatches);
+                console.log(`Successfully saved ${validMatches.length} matches to database`);
+            } catch (error) {
+                console.error('Failed to save match history to database:', error);
+            }
+        }
 
         // Log summary for debugging
         console.log(`\nSuccessfully created LeagueAccount for ${leagueAccountsDetails.accountId || 'Unknown'}: ${validMatches.length}/${recentMatchesIDs.length} matches loaded with timeline data`);

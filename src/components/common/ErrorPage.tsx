@@ -35,6 +35,7 @@ export default function ErrorPage({ imagePath, errorMessage }: ErrorPageProps) {
                     src={imagePath}
                     alt={errorMessage}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="rounded-sm shadow-md mx-auto object-contain"
                     priority
                 />

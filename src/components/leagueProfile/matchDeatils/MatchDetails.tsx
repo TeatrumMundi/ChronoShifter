@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 // Lazy load all heavy components with preload
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
+const MatchArenaGameTab = lazy(() => import("./GameTab/MatchArenaGameTab").then(m => ({ default: m.MatchArenaGameTab })));
 const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 const MatchBuildTab = lazy(() => import("./BuildTab/MatchBuildTab").then(m => ({ default: m.MatchBuildTab })));
 const MatchTimelineTab = lazy(() => import("./TimeLineTab/MatchTimeLineTab").then(m => ({ default: m.MatchTimeLineTab })));
@@ -39,10 +40,22 @@ interface MatchDetailsProps {
     match: Match;
     mainPlayerPUUID: string;
     region: string;
+    gameMode: string;
 }
 
-export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsProps) {
+export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region, gameMode }: MatchDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>(DEFAULT_TAB);
+
+    // Filter tabs based on game mode
+    const availableTabs = useMemo(() => {
+        if (gameMode === 'Arena') { // Arena game mode
+            return {
+                game: TABS_CONFIG.game,
+                build: TABS_CONFIG.build
+            };
+        }
+        return TABS_CONFIG;
+    }, [gameMode]);
 
     // Memoize team splitting - only recalculate when match changes
     const { team1, team2, mainPlayer, isWin } = useMemo(() => {
@@ -86,6 +99,16 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
     const renderActiveTabContent = useMemo(() => {
         switch (activeTab) {
             case 'game':
+                // Use Arena-specific component for Arena game mode
+                if (gameMode === 'Arena') {
+                    return (
+                        <MatchArenaGameTab
+                            participants={match.participants}
+                            mainPlayerPUUID={mainPlayerPUUID}
+                            region={region}
+                        />
+                    );
+                }
                 return (
                     <MatchGameTab
                         team1={team1}
@@ -127,7 +150,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
+    }, [activeTab, gameMode, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
 
     return (
         <motion.div 
@@ -180,8 +203,12 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
             >
-                <div className="relative z-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {Object.values(TABS_CONFIG).map((tab) => (
+                <div className={`relative z-5 gap-3 ${
+                    gameMode === 'Arena' 
+                        ? 'grid grid-cols-2' 
+                        : 'grid grid-cols-2 sm:grid-cols-4'
+                }`}>
+                    {Object.values(availableTabs).map((tab) => (
                         <TabButton 
                             key={tab.id}
                             isActive={activeTab === tab.id} 

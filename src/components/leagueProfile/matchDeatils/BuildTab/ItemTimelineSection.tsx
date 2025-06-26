@@ -2,11 +2,11 @@
 
 import { memo, useMemo, useEffect, useState } from "react";
 import { Participant } from "@/interfaces/productionTypes";
-import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame } from "@/interfaces/proudctionTimeLapTypes";
+import { ItemPurchasedEvent, ItemSoldEvent, TimelineFrame, ParticipantTimelineData } from "@/interfaces/proudctionTimeLapTypes";
 import { ItemIcon } from "@/components/common/Icons/ItemIcon";
 
 interface ItemTimelineSectionProps {
-    mainPlayer: Participant;
+    mainPlayer: Participant & { timelineData?: ParticipantTimelineData };
 }
 
 type ItemEvent = (ItemPurchasedEvent | ItemSoldEvent) & {
@@ -15,36 +15,14 @@ type ItemEvent = (ItemPurchasedEvent | ItemSoldEvent) & {
 
 const CONTROL_WARD_ID = 2055;
 
-const getItemFromEvent = (event: ItemPurchasedEvent | ItemSoldEvent) => {
-    return event.type === 'ITEM_PURCHASED' ? event.itemPurchased : event.itemSold;
-};
-
 const processItemEvents = (frames: TimelineFrame[]): ItemEvent[] => {
-    const allItemEvents = frames
+    return frames
         .flatMap(frame => 
             frame.events.filter(event => 
                 event.type === 'ITEM_PURCHASED' || event.type === 'ITEM_SOLD'
             ) as (ItemPurchasedEvent | ItemSoldEvent)[]
         )
         .sort((a, b) => a.timestamp - b.timestamp);
-
-    const groupedEvents: ItemEvent[] = [];
-    
-    for (const itemEvent of allItemEvents) {
-        const lastEvent = groupedEvents[groupedEvents.length - 1];
-        const currentItem = getItemFromEvent(itemEvent);
-        const lastItem = lastEvent ? getItemFromEvent(lastEvent) : null;
-        
-        if (lastEvent && 
-            lastItem?.id === currentItem?.id && 
-            lastEvent.type === itemEvent.type) {
-            lastEvent.count = (lastEvent.count || 1) + 1;
-        } else {
-            groupedEvents.push({ ...itemEvent });
-        }
-    }
-    
-    return groupedEvents;
 };
 
 const SectionHeader = memo(function SectionHeader({ title }: { title: string }) {
@@ -176,16 +154,36 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
     }, [mainPlayer.timelineData]);
 
     const { groupedItemEvents, controlWardStats } = useMemo(() => {
-        const grouped = Object.entries(
-            itemEvents.reduce((groups, itemEvent) => {
-                const timeInMinutes = Math.floor(itemEvent.timestamp / 60000);
-                if (!groups[timeInMinutes]) {
-                    groups[timeInMinutes] = [];
+        // First group by minute
+        const groupedByMinute = itemEvents.reduce((groups, itemEvent) => {
+            const timeInMinutes = Math.floor(itemEvent.timestamp / 60000);
+            if (!groups[timeInMinutes]) {
+                groups[timeInMinutes] = [];
+            }
+            groups[timeInMinutes].push(itemEvent);
+            return groups;
+        }, {} as Record<number, ItemEvent[]>);
+
+        // Then group identical items within each minute
+        const processedGroups = Object.entries(groupedByMinute).map(([minute, events]) => {
+            const groupedEvents: ItemEvent[] = [];
+            
+            for (const itemEvent of events) {
+                const item = itemEvent.type === 'ITEM_PURCHASED' ? itemEvent.itemPurchased : itemEvent.itemSold;
+                const existingEvent = groupedEvents.find(e => {
+                    const existingItem = e.type === 'ITEM_PURCHASED' ? e.itemPurchased : e.itemSold;
+                    return existingItem.id === item.id && e.type === itemEvent.type;
+                });
+                
+                if (existingEvent) {
+                    existingEvent.count = (existingEvent.count || 1) + 1;
+                } else {
+                    groupedEvents.push({ ...itemEvent, count: 1 });
                 }
-                groups[timeInMinutes].push(itemEvent);
-                return groups;
-            }, {} as Record<number, ItemEvent[]>)
-        );
+            }
+            
+            return [minute, groupedEvents] as [string, ItemEvent[]];
+        });
 
         // Calculate control ward stats from item events
         let controlWardsPurchased = 0;
@@ -195,15 +193,14 @@ export const ItemTimelineSection = memo(function ItemTimelineSection({ mainPlaye
             if (event.type === 'ITEM_PURCHASED') {
                 const item = event.itemPurchased;
                 if (item.id === CONTROL_WARD_ID) {
-                    const purchaseCount = event.count || 1;
-                    controlWardsPurchased += purchaseCount;
-                    totalGoldSpent += item.price * purchaseCount;
+                    controlWardsPurchased += 1;
+                    totalGoldSpent += item.price;
                 }
             }
         });
 
         return {
-            groupedItemEvents: grouped,
+            groupedItemEvents: processedGroups,
             controlWardStats: { controlWardsPurchased, totalGoldSpent }
         };
     }, [itemEvents]);
