@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate --no-engine",
-    "download-assets": "python src/utils/getLeagueAssets/download-jsons.py",
+    "download-assets": "tsx src/utils/getLeagueAssets/download-jsons.ts",
     "seed": "npm run download-assets && tsx src/utils/database/seedGameAssets.ts",
     "seed:prod": "npm run download-assets && tsx src/utils/database/seedGameAssets.ts",
     "build:with-seed": "npm run seed && next build",

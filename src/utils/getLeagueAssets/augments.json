@@ -5,7 +5,7 @@
       "calculations": {},
       "dataValues": {
         "DamagePerStack": 0.009999999776482582,
-        "MaxStacks": 24.0
+        "MaxStacks": 24
       },
       "desc": "Gain the <spellName>Warmup Routine</spellName> Summoner Spell.<br><br><rules><spellName>Warmup Routine:</spellName> Channel your inner dancer to increase your damage for the rest of the round.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/warmuproutine_large.png",
@@ -19,7 +19,7 @@
       "apiName": "Vanish",
       "calculations": {},
       "dataValues": {
-        "StealthDuration": 4.0
+        "StealthDuration": 4
       },
       "desc": "Gain the <spellName>Vanish</spellName> Summoner Spell.<br><br><rules><spellName>Vanish</spellName> turns you <keywordStealth>Invisible</keywordStealth>.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/vanish_large.png",
@@ -34,7 +34,7 @@
       "calculations": {},
       "dataValues": {
         "DamageMod": 0.4000000059604645,
-        "Range": 800.0
+        "Range": 800
       },
       "desc": "Dealing damage to an enemy also damages their partner for <trueDamage>@DamageMod*100@% damage dealt true damage</trueDamage> if they're nearby.",
       "iconLarge": "assets/ux/cherry/augments/icons/chainlightning_large.png",
@@ -73,10 +73,10 @@
       "apiName": "SelfDestruct",
       "calculations": {},
       "dataValues": {
-        "BombDelay": 15.0,
+        "BombDelay": 15,
         "KnockupDuration": 0.75,
         "MaxHealthDamage": 0.20000000298023224,
-        "Radius": 350.0
+        "Radius": 350
       },
       "desc": "Start each round with a bomb attached to you. After @BombDelay@ seconds, it explodes, dealing <trueDamage>massive true damage</trueDamage> and <status>Knocking Up</status> nearby enemies.<br>",
       "iconLarge": "assets/ux/cherry/augments/icons/selfdestruct_large.png",
@@ -104,13 +104,13 @@
         }
       },
       "dataValues": {
-        "DecayDuration": 3.0,
-        "Duration": 6.0,
-        "MaxStatMultiplier": 2.0,
-        "TagDuration": 6.0,
-        "TicksBeforeDeath": 10.0,
-        "TicksPerSecond": 4.0,
-        "TriumphPercent": 20.0
+        "DecayDuration": 3,
+        "Duration": 6,
+        "MaxStatMultiplier": 2,
+        "TagDuration": 6,
+        "TicksBeforeDeath": 10,
+        "TicksPerSecond": 4,
+        "TriumphPercent": 20
       },
       "desc": "The first time you would die each round, instead return to full Health, decaying over @DecayDuration@ seconds. Taking down an enemy champion while your Health is decaying stops the decay and sets your Health to <healing>@TriumphPercent@% max Health</healing>.",
       "iconLarge": "assets/ux/cherry/augments/icons/servebeyonddeath_large.png",
@@ -128,8 +128,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 350.0,
-              "mStartValue": 200.0
+              "mEndValue": 350,
+              "mStartValue": 200
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -171,24 +171,24 @@
         }
       },
       "dataValues": {
-        "ADRequiredFor1PercentDamage": 35.0,
+        "ADRequiredFor1PercentDamage": 35,
         "ADRequiredTooltipOnly": 0.0002500000118743628,
-        "APRequiredFor1PercentDamage": 60.0,
+        "APRequiredFor1PercentDamage": 60,
         "APRequiredTooltipOnly": 0.00015999999595806003,
-        "AutoCastCooldown": 10.0,
+        "AutoCastCooldown": 10,
         "BADRatio": 0.6000000238418579,
-        "BaseDamage": 40.0,
-        "BlastLength": 650.0,
-        "BonusHPRequiredFor1PercentDamag": 600.0,
-        "BonusHPRequiredTooltipOnly": 9.999999747378752e-06,
+        "BaseDamage": 40,
+        "BlastLength": 650,
+        "BonusHPRequiredFor1PercentDamag": 600,
+        "BonusHPRequiredTooltipOnly": 0.000009999999747378752,
         "ChargeDuration": 0.75,
-        "ConeAngle": 45.0,
-        "MonsterDamageReduction": 50.0,
+        "ConeAngle": 45,
+        "MonsterDamageReduction": 50,
         "MonsterHealingCap": 0.10000000149011612,
-        "OuterConeHealingRatio": 80.0,
+        "OuterConeHealingRatio": 80,
         "OuterConeMaxHPDamage": 0.10000000149011612,
-        "SlowDuration": 2.0,
-        "SlowPercentage": 80.0
+        "SlowDuration": 2,
+        "SlowPercentage": 80
       },
       "desc": "Periodically <keywordMajor>Autocast</keywordMajor> a massive slash around you, dealing <physicalDamage>physical damage</physicalDamage>. Enemies hit by the outer half are <status>Slowed</status>, take additional <physicalDamage>max Health physical damage</physicalDamage>, and you heal for a percent of the bonus damage.",
       "iconLarge": "assets/ux/cherry/augments/icons/quantumcomputing_large.png",
@@ -203,21 +203,21 @@
       "calculations": {},
       "dataValues": {
         "FFHealAPRatio": 0.20000000298023224,
-        "FFHealBase": 10.0,
+        "FFHealBase": 10,
         "FFHealBonusADRatio": 0.30000001192092896,
         "FFHealCritMod": 0,
-        "FFHealMax": 100.0,
+        "FFHealMax": 100,
         "FFMSBuff": 0.20000000298023224,
         "FFMSBuffMelee": 0.20000000298023224,
-        "FFMSDuration": 1.0,
-        "GRMaxHealthPerProc": 7.0,
-        "GRMeleeFlatHeal": 3.0,
+        "FFMSDuration": 1,
+        "GRMaxHealthPerProc": 7,
+        "GRMeleeFlatHeal": 3,
         "GRPercentHealthDamage": 3.5,
         "GRPercentHealthHeal": 0.012000000104308128,
-        "GRRangedHealthPerProc": 4.0,
+        "GRRangedHealthPerProc": 4,
         "GRRangedPenaltyMod": 0.4000000059604645,
-        "GRTriggerTime": 4.0,
-        "GRWindow": 5.0
+        "GRTriggerTime": 4,
+        "GRWindow": 5
       },
       "desc": "Gain the <spellName>Fleet Footwork</spellName> and <spellName>Grasp of the Undying</spellName> Keystone Runes.<br>",
       "iconLarge": "assets/ux/cherry/augments/icons/demonsdance_large.png",
@@ -235,8 +235,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 440.0,
-              "mStartValue": 110.0
+              "mEndValue": 440,
+              "mStartValue": 110
             }
           ]
         },
@@ -245,14 +245,14 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 318.0,
-              "mStartValue": 80.0
+              "mEndValue": 318,
+              "mStartValue": 80
             }
           ]
         }
       },
       "dataValues": {
-        "AllyRange": 835.0,
+        "AllyRange": 835,
         "MoveSpeed": 0.30000001192092896,
         "ShieldDuration": 2.5
       },
@@ -268,10 +268,10 @@
       "apiName": "TransmuteChaos",
       "calculations": {},
       "dataValues": {
-        "Augment1GoldChance": 70.0,
-        "Augment1SilverChance": 30.0,
-        "Augment2GoldChance": 70.0,
-        "Augment2SilverChance": 30.0
+        "Augment1GoldChance": 70,
+        "Augment1SilverChance": 30,
+        "Augment2GoldChance": 70,
+        "Augment2SilverChance": 30
       },
       "desc": "Gain 2 random Augments.",
       "iconLarge": "assets/ux/cherry/augments/icons/transmutechaos_large.png",
@@ -286,7 +286,7 @@
       "calculations": {},
       "dataValues": {
         "AttackSpeed": 0.6499999761581421,
-        "Haste": 130.0
+        "Haste": 130
       },
       "desc": "You are attached to your ally and can't move on your own. Your <speed>bonus Move Speed</speed> is also granted to your ally, and you gain Ability Haste and <attackSpeed>Attack Speed</attackSpeed>.",
       "iconLarge": "assets/ux/cherry/augments/icons/chauffeur_large.png",
@@ -314,7 +314,7 @@
         }
       },
       "dataValues": {
-        "APRatio": 1.0
+        "APRatio": 1
       },
       "desc": "Your Attacks deal additional <physicalDamage>physical damage</physicalDamage> equal to <scaleAP>@APRatio*100@% Ability Power</scaleAP>.",
       "iconLarge": "assets/ux/cherry/augments/icons/marksmage_large.png",
@@ -332,8 +332,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 100.0,
-              "mStartValue": 40.0
+              "mEndValue": 100,
+              "mStartValue": 40
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -349,7 +349,7 @@
         }
       },
       "dataValues": {
-        "Cooldown": 8.0,
+        "Cooldown": 8,
         "ShieldDuration": 2.5
       },
       "desc": "Every few seconds, <keywordMajor>Autocast</keywordMajor> a warding light towards your ally, <shield>Shielding</shield> yourself and allies it passes through. It then returns, repeating the effect.",
@@ -368,8 +368,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 150.0,
-              "mStartValue": 30.0
+              "mEndValue": 150,
+              "mStartValue": 30
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -385,7 +385,7 @@
         }
       },
       "dataValues": {
-        "TotalHits": 8.0
+        "TotalHits": 8
       },
       "desc": "Gain the <spellName>Blade Waltz</spellName> Summoner Spell.<br><br><rules><spellName>Blade Waltz</spellName> makes you untargetable while you dash at and damage enemies @TotalHits@ times.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/bladewaltz_large.png",
@@ -427,8 +427,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 160.0,
-              "mStartValue": 35.0
+              "mEndValue": 160,
+              "mStartValue": 35
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -444,17 +444,17 @@
         }
       },
       "dataValues": {
-        "AcquisitionRange": 550.0,
-        "BaseDamage": 20.0,
-        "BonusAcquisitionRange": 725.0,
-        "Cooldown": 7.0,
+        "AcquisitionRange": 550,
+        "BaseDamage": 20,
+        "BonusAcquisitionRange": 725,
+        "Cooldown": 7,
         "FlameDuration": 2.5,
         "InitialDelay": 0.25,
-        "MinionBonusDamageMultiplier": 2.0,
+        "MinionBonusDamageMultiplier": 2,
         "MinionBonusDamageThreshold": 0.20000000298023224,
         "MovementSpeed": 0.4000000059604645,
-        "MovementSpeedDuration": 2.0,
-        "OrbitRadius": 150.0,
+        "MovementSpeedDuration": 2,
+        "OrbitRadius": 150,
         "RepeatDamageMod": 0.30000001192092896,
         "SecondaryDelay": 0.4000000059604645
       },
@@ -470,7 +470,7 @@
       "apiName": "SummonerRevolution",
       "calculations": {},
       "dataValues": {
-        "CooldownBetweenCasts": 3.0
+        "CooldownBetweenCasts": 3
       },
       "desc": "Your Summoner Spells gain an additional charge. <br><br>Additionally, Flash resets every round.",
       "iconLarge": "assets/ux/cherry/augments/icons/summonerrevolution_large.png",
@@ -484,7 +484,7 @@
       "apiName": "IceCold",
       "calculations": {},
       "dataValues": {
-        "ExtraSlowAmount": 100.0
+        "ExtraSlowAmount": 100
       },
       "desc": "Your <status>Slowing</status> effects reduce <speed>Move Speed</speed> by an extra 100.",
       "iconLarge": "assets/ux/cherry/augments/icons/icecold_large.png",
@@ -499,7 +499,7 @@
       "calculations": {},
       "dataValues": {
         "SpinDamageAmp": 0.30000001192092896,
-        "SpinHaste": 30.0
+        "SpinHaste": 30
       },
       "desc": "Your spin Abilities gain @SpinHaste@ Ability Haste and deal @SpinDamageAmp*100@% more damage!",
       "iconLarge": "assets/ux/cherry/augments/icons/spintowin_large.png",
@@ -513,7 +513,7 @@
       "apiName": "BannerofCommand",
       "calculations": {},
       "dataValues": {
-        "BuffDuration": 10.0,
+        "BuffDuration": 10,
         "EmpowermentValue": 0.15000000596046448
       },
       "desc": "Gain the <spellName>Banner of Command</spellName> Summoner Spell.<br><br><rules><spellName>Banner of Command</spellName> empowers your ally for a brief duration.</rules>",
@@ -544,7 +544,7 @@
       "apiName": "WitchfulThinking",
       "calculations": {},
       "dataValues": {
-        "AP": 70.0
+        "AP": 70
       },
       "desc": "Gain <scaleAP>@AP@ Ability Power</scaleAP>.",
       "iconLarge": "assets/ux/cherry/augments/icons/witchfulthinking_large.png",
@@ -558,7 +558,7 @@
       "apiName": "Quest_UrfsChampion",
       "calculations": {},
       "dataValues": {
-        "TakedownsNeeded": 8.0
+        "TakedownsNeeded": 8
       },
       "desc": "Requirement: Score @TakedownsNeeded@ takedowns.<br><br>Reward: Golden Spatula",
       "iconLarge": "assets/ux/cherry/augments/icons/quest_urfschampion_large.png",
@@ -599,15 +599,15 @@
             },
             {
               "__type": "NumberCalculationPart",
-              "mNumber": 10.0
+              "mNumber": 10
             }
           ]
         }
       },
       "dataValues": {
-        "MaxStacks": 20.0,
+        "MaxStacks": 20,
         "Shred": 0.014999999664723873,
-        "ShredDuration": 4.0
+        "ShredDuration": 4
       },
       "desc": "Damaging enemies adds a stacking <scaleArmor>Armor</scaleArmor> and <scaleMR>Magic Resist</scaleMR> shred for @ShredDuration@s. ",
       "iconLarge": "assets/ux/cherry/augments/icons/erosion_large.png",
@@ -621,7 +621,7 @@
       "apiName": "Stats",
       "calculations": {},
       "dataValues": {
-        "AmountOfStatAnvils": 2.0
+        "AmountOfStatAnvils": 2
       },
       "desc": "Gain @AmountOfStatAnvils@ Stat Anvils!",
       "iconLarge": "assets/ux/cherry/augments/icons/stats_large.png",
@@ -639,8 +639,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 9.0,
-              "mStartValue": 3.0
+              "mEndValue": 9,
+              "mStartValue": 3
             }
           ]
         },
@@ -649,8 +649,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 18.0,
-              "mStartValue": 6.0
+              "mEndValue": 18,
+              "mStartValue": 6
             }
           ]
         }
@@ -672,8 +672,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 80.0,
-              "mStartValue": 11.0
+              "mEndValue": 80,
+              "mStartValue": 11
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -692,8 +692,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 320.0,
-              "mStartValue": 44.0
+              "mEndValue": 320,
+              "mStartValue": 44
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -725,8 +725,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 200.0,
-              "mStartValue": 40.0
+              "mEndValue": 200,
+              "mStartValue": 40
             }
           ]
         }
@@ -746,8 +746,8 @@
       "apiName": "SlapAround",
       "calculations": {},
       "dataValues": {
-        "AdaptiveForce": 20.0,
-        "SpellIDCD": 5.0
+        "AdaptiveForce": 20,
+        "SpellIDCD": 5
       },
       "desc": "Each time you <status>Immobilize</status> or <status>Ground</status> an enemy, gain <font color = '#8347ff'>@AdaptiveForce@ Adaptive Force</font> for the round, stacking infinitely.",
       "iconLarge": "assets/ux/cherry/augments/icons/slaparound_large.png",
@@ -761,11 +761,11 @@
       "apiName": "MagicMissile",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 6.0,
+        "Cooldown": 6,
         "MaxHealthDamagePerMissile": 0.0033400000538676977,
-        "MaxHealthDamageTooltip": 1.0,
-        "MaxRangeThreshold": 1000.0,
-        "NumberOfMissiles": 3.0
+        "MaxHealthDamageTooltip": 1,
+        "MaxRangeThreshold": 1000,
+        "NumberOfMissiles": 3
       },
       "desc": "Dealing damage with an Ability fires @NumberOfMissiles@ magic missiles at them, each dealing <trueDamage>percent max Health true damage</trueDamage> based on distance traveled.",
       "iconLarge": "assets/ux/cherry/augments/icons/magicmissile_large.png",
@@ -783,8 +783,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 250.0,
-              "mStartValue": 100.0
+              "mEndValue": 250,
+              "mStartValue": 100
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -802,9 +802,9 @@
       "dataValues": {
         "APRatio": 0.30000001192092896,
         "BonusADRatio": 1.649999976158142,
-        "Cooldown": 6.0,
+        "Cooldown": 6,
         "ExplosionDelayTime": 0.75,
-        "ExplosionRadius": 100.0,
+        "ExplosionRadius": 100,
         "PerwaveDamageCD": 0.5
       },
       "desc": "Hitting enemies with Abilities creates a blast that deals <magicDamage>magic damage</magicDamage> from you to the location you hit them.",
@@ -823,8 +823,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelBreakpointsCalculationPart",
-              "mInitialBonusPerLevel": 7.0,
-              "mLevel1Value": 5.0
+              "mInitialBonusPerLevel": 7,
+              "mLevel1Value": 5
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -840,7 +840,7 @@
         }
       },
       "dataValues": {
-        "MissileWidth": 50.0
+        "MissileWidth": 50
       },
       "desc": "Stars orbit you at your Attack Range, dealing <magicDamage>magic damage</magicDamage> to enemies they pass through.",
       "iconLarge": "assets/ux/cherry/augments/icons/centeroftheuniverse_large.png",
@@ -854,10 +854,10 @@
       "apiName": "PhenomenalEvil",
       "calculations": {},
       "dataValues": {
-        "APPerProc": 1.0,
-        "ProcCooldown": 1.0,
-        "SpellIDCD": 5.0,
-        "StartingAPIfSecondAugment": 40.0
+        "APPerProc": 1,
+        "ProcCooldown": 1,
+        "SpellIDCD": 5,
+        "StartingAPIfSecondAugment": 40
       },
       "desc": "Permanently gain <scaleAP>@APPerProc@ Ability Power</scaleAP> when you hit enemies with Abilities.<br><br>If taken as your second Augment, starts with  <scaleAP>@StartingAPIfSecondAugment@ Ability Power</scaleAP>.",
       "iconLarge": "assets/ux/cherry/augments/icons/phenomenalevil_large.png",
@@ -881,9 +881,9 @@
         }
       },
       "dataValues": {
-        "AP": 1.0,
-        "APRatio": 3.0,
-        "ShieldBase": 3.0
+        "AP": 1,
+        "APRatio": 3,
+        "ShieldBase": 3
       },
       "desc": "At the start of each round, gain<shield> @ShieldBase@ Shield </shield>for every <scaleAP>%i:scaleAP% @AP@ Ability Power</scaleAP>.",
       "iconLarge": "assets/ux/cherry/augments/icons/bigbrain_large.png",
@@ -924,7 +924,7 @@
       "apiName": "UltimateRoulette",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 6.0
+        "Cooldown": 6
       },
       "desc": "Replace Summoner Flee with a random Ultimate. After casting the Ultimate, replace it with new random Ultimate.",
       "iconLarge": "assets/ux/cherry/augments/icons/ultimaterevolution_large.png",
@@ -942,8 +942,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 35.0,
-              "mStartValue": 20.0
+              "mEndValue": 35,
+              "mStartValue": 20
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -970,7 +970,7 @@
                 },
                 {
                   "__type": "StatByCoefficientCalculationPart",
-                  "mCoefficient": 1.0,
+                  "mCoefficient": 1,
                   "mStat": 9,
                   "mStatFormula": 2
                 }
@@ -999,15 +999,15 @@
         }
       },
       "dataValues": {
-        "BaseDamage": 100.0,
-        "CastRange": 400.0,
+        "BaseDamage": 100,
+        "CastRange": 400,
         "EDITDECEIVEFORREALVALUES": 0,
-        "ExtraAATime": 1.0,
+        "ExtraAATime": 1,
         "FearDamage": 0.25,
-        "FearDuration": 1.0,
-        "FearRadius": 350.0,
+        "FearDuration": 1,
+        "FearRadius": 350,
         "PseudoCastTime": 0.125,
-        "StealthDuration": 3.0
+        "StealthDuration": 3
       },
       "desc": "Gain <spellName>Deceive</spellName> Summoner Spell.<br>Gain <spellName>Backstab</spellName> Passive.<br><br>When you die, spawn an exploding box that deals a large amount of <trueDamage>true damage</trueDamage> and <status>Fear</status> nearby enemies.",
       "iconLarge": "assets/ux/cherry/augments/icons/clowncollege_large.png",
@@ -1048,7 +1048,7 @@
         }
       },
       "dataValues": {
-        "BleedDuration": 6.0,
+        "BleedDuration": 6,
         "MeleeReduction": 0.30000001192092896,
         "RangedReduction": 0.15000000596046448
       },
@@ -1066,7 +1066,7 @@
       "dataValues": {
         "ADAmp": 0.30000001192092896,
         "APAmp": 0.30000001192092896,
-        "Haste": 70.0,
+        "Haste": 70,
         "HealthAmp": 0.20000000298023224,
         "MovespeedAmp": 0.4000000059604645,
         "SizeAmp": 0.4000000059604645
@@ -1111,8 +1111,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 300.0,
-              "mStartValue": 100.0
+              "mEndValue": 300,
+              "mStartValue": 100
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -1129,8 +1129,8 @@
       },
       "dataValues": {
         "APRatio": 0.6000000238418579,
-        "BaseDamage": 100.0,
-        "Radius": 300.0,
+        "BaseDamage": 100,
+        "Radius": 300,
         "bonusADRatio": 0.4000000059604645
       },
       "desc": "When you exit stealth explode for <magicDamage>@TotalDamage@ Magic Damage</magicDamage>, your clones and traps will do the same on death.",
@@ -1145,8 +1145,8 @@
       "apiName": "Dematerialize",
       "calculations": {},
       "dataValues": {
-        "AdaptiveForce": 15.0,
-        "SecondPickBonus": 30.0
+        "AdaptiveForce": 15,
+        "SecondPickBonus": 30
       },
       "desc": "Gain <font color = '#8347ff'>@AdaptiveForce@ Adaptive Force</font> on takedown, once per champion per round.<br><br>If taken as your second Augment, starts with <font color = '#8347ff'>@SecondPickBonus@ Adaptive Force</font>.",
       "iconLarge": "assets/ux/cherry/augments/icons/dematerialize_large.png",
@@ -1175,7 +1175,7 @@
         }
       },
       "dataValues": {
-        "ASMultiplier": 75.0,
+        "ASMultiplier": 75,
         "StaticRatio": 0.625
       },
       "desc": "Your <speed>Attack Speed</speed> becomes @StaticRatio@. All Bonus <speed>Attack Speed</speed> is converted to <scaleAD>Attack Damage</scaleAD>. (<scaleAD>@ADPerAS@AD</scaleAD> per <speed>1% AS</speed>).<br>",
@@ -1191,7 +1191,7 @@
       "calculations": {},
       "dataValues": {
         "Cooldown": 6.5,
-        "Radius": 450.0,
+        "Radius": 450,
         "RootDuration": 1.25
       },
       "desc": "<keywordMajor>Autocast</keywordMajor> <status>Root</status> nearby enemies for @RootDuration@ seconds every @Cooldown@ seconds.<br>",
@@ -1274,18 +1274,18 @@
         }
       },
       "dataValues": {
-        "ASCap": 10.0,
-        "BuffDuration": 5.0,
-        "Duration": 6.0,
+        "ASCap": 10,
+        "BuffDuration": 5,
+        "Duration": 6,
         "HealingPercent": 0.10000000149011612,
         "MaxAdaptivePerStack": 5.5,
-        "MaxStacks": 12.0,
-        "MinAdaptivePerStack": 3.0,
-        "PerCastIDLockout": 10.0,
-        "RangeBonus": 50.0,
+        "MaxStacks": 12,
+        "MinAdaptivePerStack": 3,
+        "PerCastIDLockout": 10,
+        "RangeBonus": 50,
         "RangedHealingPercent": 0.07999999821186066,
-        "StackCap": 6.0,
-        "TimeUntilNextStackFromSameSpell": 5.0
+        "StackCap": 6,
+        "TimeUntilNextStackFromSameSpell": 5
       },
       "desc": "Gain the <spellName>Lethal Tempo</spellName> and <spellName>Conqueror</spellName> Keystone Runes.",
       "iconLarge": "assets/ux/cherry/augments/icons/symphonyofwar_large.png",
@@ -1303,12 +1303,12 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 525.0,
-              "mStartValue": 175.0
+              "mEndValue": 525,
+              "mStartValue": 175
             },
             {
               "__type": "StatByCoefficientCalculationPart",
-              "mCoefficient": 1.0,
+              "mCoefficient": 1,
               "mStat": 2,
               "mStatFormula": 2
             },
@@ -1320,8 +1320,8 @@
         }
       },
       "dataValues": {
-        "Cooldown": 5.0,
-        "SnipeDistance": 700.0
+        "Cooldown": 5,
+        "SnipeDistance": 700
       },
       "desc": "When you damage a champion from far away, fire a <abilityName>Trueshot Barrage</abilityName> at them.",
       "iconLarge": "assets/ux/cherry/augments/icons/trueshotprodigy_large.png",
@@ -1371,7 +1371,7 @@
       "apiName": "CircleofDeath",
       "calculations": {},
       "dataValues": {
-        "DamageRange": 1000.0,
+        "DamageRange": 1000,
         "HealToDamageConversion": 0.699999988079071
       },
       "desc": "<healing>Healing</healing> and <healing>Health Regen</healing> you do deals a portion of the value as <magicDamage>magic damage</magicDamage> to the nearest enemy champion.",
@@ -1402,8 +1402,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 200.0,
-              "mStartValue": 140.0
+              "mEndValue": 200,
+              "mStartValue": 140
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -1420,9 +1420,9 @@
       },
       "dataValues": {
         "APRatio": 0.30000001192092896,
-        "BonusADRatio": 1.0,
+        "BonusADRatio": 1,
         "ExplosionDelayTime": 0.75,
-        "ExplosionRadius": 300.0,
+        "ExplosionRadius": 300,
         "PerwaveDamageCD": 0.5
       },
       "desc": "Your dash, leap, blink, or teleport Abilities leave behind a trail that detonates after 1 second.",
@@ -1437,8 +1437,8 @@
       "apiName": "ScopedWeapons",
       "calculations": {},
       "dataValues": {
-        "MeleeRangeIncrease": 75.0,
-        "RangedRangeIncrease": 50.0
+        "MeleeRangeIncrease": 75,
+        "RangedRangeIncrease": 50
       },
       "desc": "Gain @MeleeRangeIncrease@ Attack Range, reduced to @RangedRangeIncrease@ if you are Ranged.",
       "iconLarge": "assets/ux/cherry/augments/icons/scopedweapons_large.png",
@@ -1452,8 +1452,8 @@
       "apiName": "BreadAndButter",
       "calculations": {},
       "dataValues": {
-        "QAbilityHaste": 200.0,
-        "QReducedAbilityHaste": 200.0
+        "QAbilityHaste": 200,
+        "QReducedAbilityHaste": 200
       },
       "desc": "Your Q gains @QAbilityHaste@ Ability Haste.",
       "iconLarge": "assets/ux/cherry/augments/icons/breadandbutter_large.png",
@@ -1467,9 +1467,9 @@
       "apiName": "TheBrutalizer",
       "calculations": {},
       "dataValues": {
-        "AD": 25.0,
-        "AbilityHaste": 10.0,
-        "Lethality": 5.0
+        "AD": 25,
+        "AbilityHaste": 10,
+        "Lethality": 5
       },
       "desc": "Gain <scaleAD>@AD@ Attack Damage</scaleAD>, @AbilityHaste@ Ability Haste, and <scaleLethality>@Lethality@ Lethality</scaleLethality>.",
       "iconLarge": "assets/ux/cherry/augments/icons/thebrutalizer_large.png",
@@ -1487,15 +1487,15 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 150.0,
-              "mStartValue": 30.0
+              "mEndValue": 150,
+              "mStartValue": 30
             }
           ]
         }
       },
       "dataValues": {
-        "ProcCooldown": 2.0,
-        "Radius": 450.0,
+        "ProcCooldown": 2,
+        "Radius": 450,
         "SlowAmount": -0.30000001192092896
       },
       "desc": "Buffing, <healing>Healing</healing>, or <shield>Shielding</shield> your ally deals damage and <status>Slows</status> enemies surrounding them.",
@@ -1537,7 +1537,7 @@
       "calculations": {},
       "dataValues": {
         "DamageReduction": 0.10000000149011612,
-        "Health": 1250.0
+        "Health": 1250
       },
       "desc": "Gain <scaleHealth>@Health@ Health</scaleHealth>, but you deal @DamageReduction*100@% less damage.",
       "iconLarge": "assets/ux/cherry/augments/icons/celestialbody_large.png",
@@ -1551,7 +1551,7 @@
       "apiName": "BreadAndJam",
       "calculations": {},
       "dataValues": {
-        "WAbilityHaste": 200.0
+        "WAbilityHaste": 200
       },
       "desc": "Your W gains @WAbilityHaste@ Ability Haste.",
       "iconLarge": "assets/ux/cherry/augments/icons/breadandjam_large.png",
@@ -1594,14 +1594,14 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 350.0,
-              "mStartValue": 50.0
+              "mEndValue": 350,
+              "mStartValue": 50
             }
           ]
         }
       },
       "dataValues": {
-        "ShieldDuration": 12.0
+        "ShieldDuration": 12
       },
       "desc": "Start combat with a <abilityName>Black Shield</abilityName> for @ShieldDuration@s.<br><br><rules><abilityName>Black Shield</abilityName> blocks Magic Damage and <status>Immobilizing</status> effects.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/fallenaegis_large.png",
@@ -1634,11 +1634,11 @@
         }
       },
       "dataValues": {
-        "BurnDuration": 5.0,
+        "BurnDuration": 5,
         "BurnPercentMax": 0.03999999910593033,
         "BurnPercentMin": 0.009999999776482582,
         "Cooldown": 1.5,
-        "Radius": 650.0
+        "Radius": 650
       },
       "desc": "<healing>Healing</healing> or <shield>Shielding</shield> applies an infinitely stacking <keywordMajor>Burn</keywordMajor> to a nearby enemy, dealing <magicDamage>percent max Health magic damage</magicDamage> over a few seconds.",
       "iconLarge": "assets/ux/cherry/augments/icons/holyfire_large.png",
@@ -1671,7 +1671,7 @@
         }
       },
       "dataValues": {
-        "InitialAmpPercent": 10.0
+        "InitialAmpPercent": 10
       },
       "desc": "Your <scaleMana>Mana</scaleMana> costs double. Your Ability <healing>Heals</healing>, <shield>Shields</shield>, and damage are increased based on your <scaleMana>max Mana</scaleMana>.",
       "iconLarge": "assets/ux/cherry/augments/icons/overflow_large.png",
@@ -1697,8 +1697,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 410.0,
-              "mStartValue": 70.0
+              "mEndValue": 410,
+              "mStartValue": 70
             }
           ]
         },
@@ -1707,20 +1707,20 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 600.0,
-              "mStartValue": 100.0
+              "mEndValue": 600,
+              "mStartValue": 100
             }
           ]
         }
       },
       "dataValues": {
         "DamageReductionTOOLTIPONLY": 0.3499999940395355,
-        "DotDuration": 5.0,
-        "ExhaustDuration": 3.0,
+        "DotDuration": 5,
+        "ExhaustDuration": 3,
         "GrievousAmount": 0.4000000059604645,
         "InverseDuration": 0.20000000298023224,
-        "Range": 1000.0,
-        "SightRadius": 100.0,
+        "Range": 1000,
+        "SightRadius": 100,
         "SlowAmount": 0.5
       },
       "desc": "Gain the <spellName>Feel the Burn</spellName> Summoner Spell.<br><br><rules><spellName>Feel the Burn</spellName> casts <spellName>Ignite</spellName> and <spellName>Exhaust</spellName> on all nearby enemy champions.</rules>",
@@ -1739,8 +1739,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 150.0,
-              "mStartValue": 10.0
+              "mEndValue": 150,
+              "mStartValue": 10
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -1752,7 +1752,7 @@
       },
       "dataValues": {
         "HealPercentage": 0.014999999664723873,
-        "SpellIDCD": 5.0
+        "SpellIDCD": 5
       },
       "desc": "<status>Immobilizing</status> or <status>Grounding</status> enemy champions <healing>heals you</healing>.",
       "iconLarge": "assets/ux/cherry/augments/icons/guiltypleasure_large.png",
@@ -1766,8 +1766,8 @@
       "apiName": "ScopierWeapons",
       "calculations": {},
       "dataValues": {
-        "MeleeRangeIncrease": 200.0,
-        "RangedRangeIncrease": 100.0
+        "MeleeRangeIncrease": 200,
+        "RangedRangeIncrease": 100
       },
       "desc": "Gain @MeleeRangeIncrease@ Attack Range, reduced to @RangedRangeIncrease@ if you are Ranged.",
       "iconLarge": "assets/ux/cherry/augments/icons/scopierweapons_large.png",
@@ -1796,8 +1796,8 @@
         "BreakoutHealthThreshold": 0.5,
         "DamageReductionMax": 0.699999988079071,
         "DamageReductionMin": 0.4000000059604645,
-        "DamageReductionRoundCap": 11.0,
-        "ImprisonDuration": 9.0,
+        "DamageReductionRoundCap": 11,
+        "ImprisonDuration": 9,
         "MissingHPHealUponRelease": 0.30000001192092896,
         "ShieldHealthRatio": 0.3499999940395355,
         "StatIncrease": 0.4000000059604645
@@ -1831,8 +1831,8 @@
         }
       },
       "dataValues": {
-        "MaxStacks": 5.0,
-        "ResistsPerStack": 12.0
+        "MaxStacks": 5,
+        "ResistsPerStack": 12
       },
       "desc": "After using a dash, leap, blink, or teleport Ability you gain <scaleArmor>@ResistsPerStack@ Armor</scaleArmor> and <scaleMR>Magic Resist</scaleMR> up to @MaxResistTooltipOnly@ at @MaxStacks@ stacks.",
       "iconLarge": "assets/ux/cherry/augments/icons/outlawsgrit_large.png",
@@ -1860,8 +1860,8 @@
       "apiName": "ShadowRunner",
       "calculations": {},
       "dataValues": {
-        "BuffDuration": 2.0,
-        "MSAmount": 300.0
+        "BuffDuration": 2,
+        "MSAmount": 300
       },
       "desc": "After using a dash, leap, blink, or teleport Ability or exiting <stealth>Stealth</stealth>, gain <speed>@spell.Augment_ShadowRunner:MSAmount@ Move Speed</speed> for @spell.Augment_ShadowRunner:BuffDuration@ seconds.",
       "iconLarge": "assets/ux/cherry/augments/icons/shadowrunner_large.png",
@@ -1887,8 +1887,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 60.0,
-              "mStartValue": 6.0
+              "mEndValue": 60,
+              "mStartValue": 6
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -1904,9 +1904,9 @@
         }
       },
       "dataValues": {
-        "BleedDuration": 5.0,
+        "BleedDuration": 5,
         "FlatCooldownRefundPerTick": 0.07999999821186066,
-        "ProcCooldown": 1.0
+        "ProcCooldown": 1
       },
       "desc": "Your Abilities apply an infinitely stacking <keywordMajor>Burn</keywordMajor>, dealing <magicDamage>magic damage</magicDamage> over time.<br><br>Your <keywordMajor>Burn</keywordMajor> effects reduce your basic Ability Cooldowns.",
       "iconLarge": "assets/ux/cherry/augments/icons/infernalconduit_large.png",
@@ -1947,7 +1947,7 @@
       "calculations": {},
       "dataValues": {
         "DamageAmp": 0.3499999940395355,
-        "Haste": 70.0,
+        "Haste": 70,
         "HealingAmp": 0.3499999940395355,
         "ShieldingAmp": 0.3499999940395355
       },
@@ -1963,9 +1963,9 @@
       "apiName": "PrismaticEgg",
       "calculations": {},
       "dataValues": {
-        "KillStackCredit": 1.0,
-        "RequiredKillCount": 5.0,
-        "RerollsToGrant": 1.0
+        "KillStackCredit": 1,
+        "RequiredKillCount": 5,
+        "RerollsToGrant": 1
       },
       "desc": "Gain @KillStackCredit@ stack on takedown, once per champion per round.<br><br>Every @RequiredKillCount@ stacks, this hatches into a Prismatic Anvil and @RerollsToGrant@ bonus reroll.",
       "iconLarge": "assets/ux/cherry/augments/icons/quest_prismaticegg_large.png",
@@ -1983,7 +1983,7 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 50.0,
+              "mEndValue": 50,
               "mStartValue": 1.25
             },
             {
@@ -2009,13 +2009,13 @@
           "mModifiedGameCalculation": "BurnDamage",
           "mMultiplier": {
             "__type": "NumberCalculationPart",
-            "mNumber": 4.0
+            "mNumber": 4
           },
           "tooltipOnly": true
         }
       },
       "dataValues": {
-        "RectangleHalfWidth": 50.0
+        "RectangleHalfWidth": 50
       },
       "desc": "There is a tether between you and your partner that deals constant <magicDamage>magic damage</magicDamage> to enemies inside.",
       "iconLarge": "assets/ux/cherry/augments/icons/clothesline_large.png",
@@ -2042,8 +2042,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 125.0,
-              "mStartValue": 15.0
+              "mEndValue": 125,
+              "mStartValue": 15
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -2062,8 +2062,8 @@
         "APRatioPerSecond": 0.10000000149011612,
         "CloudDuration": 3.25,
         "PoisonDuration": 2.0999999046325684,
-        "TicksPerSecond": 4.0,
-        "ToggleCooldown": 1.0
+        "TicksPerSecond": 4,
+        "ToggleCooldown": 1
       },
       "desc": "You become Ghosted and leave a trail of poisonous gas behind you, dealing <magicDamage>magic damage</magicDamage> to enemies inside.",
       "iconLarge": "assets/ux/cherry/augments/icons/dontchase_large.png",
@@ -2092,12 +2092,12 @@
       "apiName": "GambaAnvil",
       "calculations": {},
       "dataValues": {
-        "GoldBonus": 1000.0,
-        "LegendaryCostReduction": -500.0,
-        "LegendaryGoldBasisDiscount": 1000.0,
-        "PrismaticCostReduction": -1000.0,
-        "PrismaticGoldBasisDiscount": 1250.0,
-        "StatCostReduction": -100.0
+        "GoldBonus": 1000,
+        "LegendaryCostReduction": -500,
+        "LegendaryGoldBasisDiscount": 1000,
+        "PrismaticCostReduction": -1000,
+        "PrismaticGoldBasisDiscount": 1250,
+        "StatCostReduction": -100
       },
       "desc": "Gain @GoldBonus@ gold and reduce the price of all anvils.<br><br>Prismatic Anvils: @PrismaticCostReduction@<br>Legendary Anvils: @LegendaryCostReduction@<br>Stat Anvils: @StatCostReduction@<br><br><rules>Items acquired from anvils resell for 500 gold less.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/thiefsgloves_large.png",
@@ -2111,10 +2111,10 @@
       "apiName": "DivineIntervention",
       "calculations": {},
       "dataValues": {
-        "BaseCD": 35.0,
-        "InitalDelay": 15.0,
+        "BaseCD": 35,
+        "InitalDelay": 15,
         "InvulnerabilityDuration": 2.5,
-        "Radius": 400.0,
+        "Radius": 400,
         "WarningDelay": 2.5
       },
       "desc": "@InitalDelay@ seconds into combat, call upon a protective star that slowly descends upon you. When it lands, you and nearby allies become <keywordMajor>Invulnerable</keywordMajor> for a few seconds. Then <keywordMajor>Autocast</keywordMajor> this every @BaseCD@ seconds.",
@@ -2143,7 +2143,7 @@
       "apiName": "BreadAndCheese",
       "calculations": {},
       "dataValues": {
-        "EAbilityHaste": 200.0
+        "EAbilityHaste": 200
       },
       "desc": "Your E gains @EAbilityHaste@ Ability Haste.",
       "iconLarge": "assets/ux/cherry/augments/icons/breadandcheese_large.png",
@@ -2157,35 +2157,35 @@
       "apiName": "Impassable",
       "calculations": {},
       "dataValues": {
-        "BeamPosIndent": 100.0,
-        "BonusResistsMax": 150.0,
-        "BonusResistsMin": 80.0,
-        "CCCarryOverRatio": 1.0,
-        "Cooldown": 15.0,
-        "DamageRadius": 350.0,
+        "BeamPosIndent": 100,
+        "BonusResistsMax": 150,
+        "BonusResistsMin": 80,
+        "CCCarryOverRatio": 1,
+        "Cooldown": 15,
+        "DamageRadius": 350,
         "DamageRatioAD": 0,
         "DamageRatioAP": 0,
         "DelayBeforeBurst": 2.5,
         "DmgReduction": 0.15000000596046448,
-        "FlatResists": 35.0,
-        "FlatResistsMax": 35.0,
-        "HealthRatio": 8.0,
+        "FlatResists": 35,
+        "FlatResistsMax": 35,
+        "HealthRatio": 8,
         "MRRatio": 0,
-        "MaxBaseDamage": 120.0,
+        "MaxBaseDamage": 120,
         "PercentBonusResists": 0.800000011920929,
-        "RayCount": 3.0,
+        "RayCount": 3,
         "ResistInc": 0,
         "SizeInc": 0.25,
         "SlowAmount": 0.15000000596046448,
         "SlowDuration": 2.5,
-        "SlowZoneDuration": 3.0,
-        "SlowZoneLength": 700.0,
+        "SlowZoneDuration": 3,
+        "SlowZoneLength": 700,
         "SlowZoneSlowAPRatio": 0.05999999865889549,
         "SlowZoneSlowBase": 0.20000000298023224,
         "SlowZoneSlowHealShieldRatio": 0.09000000357627869,
         "SlowZoneSlowbADRatio": 0.07000000029802322,
-        "SlowZoneWidth": 80.0,
-        "StartingBaseDamage": 25.0
+        "SlowZoneWidth": 80,
+        "StartingBaseDamage": 25
       },
       "desc": "Gain the <spellName>Aftershock</spellName> and <spellName>Glacial Augment</spellName> Keystone Runes.",
       "iconLarge": "assets/ux/cherry/augments/icons/impassable_large.png",
@@ -2199,7 +2199,7 @@
       "apiName": "ExtendoArm",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 12.0
+        "Cooldown": 12
       },
       "desc": "<keywordMajor>Autocast</keywordMajor> fire a Blitzcrank hook every 12 seconds at a nearby enemy champion.",
       "iconLarge": "assets/ux/cherry/augments/icons/extendoarm_large.png",
@@ -2232,8 +2232,8 @@
         }
       },
       "dataValues": {
-        "BleedDuration": 5.0,
-        "Range": 500.0
+        "BleedDuration": 5,
+        "Range": 500
       },
       "desc": "Every second, apply an infinitely stacking <keywordMajor>Burn</keywordMajor> to nearby enemy champions, scaling with your <scaleHealth>max Health</scaleHealth>.",
       "iconLarge": "assets/ux/cherry/augments/icons/slowcooker_large.png",
@@ -2247,7 +2247,7 @@
       "apiName": "DieAnotherDay",
       "calculations": {},
       "dataValues": {
-        "HealFlatTooltip": 250.0
+        "HealFlatTooltip": 250
       },
       "desc": "Gain the <spellName>Die Another Day</spellName> Summoner Spell.<br><br><rules><spellName>Die Another Day</spellName> creates a zone where no unit can die for 4 seconds.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/dieanotherday_large.png",
@@ -2261,7 +2261,7 @@
       "apiName": "Augment404",
       "calculations": {},
       "dataValues": {
-        "HatsToGrant": 3.0
+        "HatsToGrant": 3
       },
       "desc": "How did you find this?!?!? <br><br>Gain @HatsToGrant@ hats.",
       "iconLarge": "assets/ux/cherry/augments/icons/augment404_large.png",
@@ -2333,8 +2333,8 @@
       "calculations": {},
       "dataValues": {
         "AttackSpeedRatio": 0.0010000000474974513,
-        "BleedDuration": 5.0,
-        "CurseCounter": 2.0,
+        "BleedDuration": 5,
+        "CurseCounter": 2,
         "OnHitDamageRatio": 0.30000001192092896,
         "PercentMaxHPDamagePer5Seconds": 0.029999999329447746
       },
@@ -2374,16 +2374,16 @@
           ],
           "mMultiplier": {
             "__type": "NumberCalculationPart",
-            "mNumber": 100.0
+            "mNumber": 100
           }
         }
       },
       "dataValues": {
-        "AttackSpeed": 1.0,
+        "AttackSpeed": 1,
         "HealPowerToDamageConversion": 3.5,
-        "HealPowerToDamageTooltip": 350.0,
-        "RequirementAmount": 2500.0,
-        "Test": 100.0
+        "HealPowerToDamageTooltip": 350,
+        "RequirementAmount": 2500,
+        "Test": 100
       },
       "desc": "Requirement: <healing>Heal</healing> or prevent @RequirementAmount@ damage to allies.<br><br>Reward: Gain <attackSpeed>@AttackSpeed*100@% Attack Speed</attackSpeed>, and your Attacks deal additional <magicDamage>magic damage</magicDamage> equal to <healing>@HealPowerToDamageConversion*100@% Heal/Shield Power</healing>.",
       "iconLarge": "assets/ux/cherry/augments/icons/quest_angelofretribution_large.png",
@@ -2398,7 +2398,7 @@
       "calculations": {},
       "dataValues": {
         "DamageAmp": 0.15000000596046448,
-        "Gold": 150.0
+        "Gold": 150
       },
       "desc": "Each round, mark an opponent to take @spell.Augment_ContractKiller:DamageAmp*100@% more damage and grant an extra @spell.Augment_ContractKiller:Gold@ gold on death.",
       "iconLarge": "assets/ux/cherry/augments/icons/contractkiller_large.png",
@@ -2430,8 +2430,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 410.0,
-              "mStartValue": 70.0
+              "mEndValue": 410,
+              "mStartValue": 70
             }
           ]
         },
@@ -2440,15 +2440,15 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 600.0,
-              "mStartValue": 100.0
+              "mEndValue": 600,
+              "mStartValue": 100
             }
           ]
         }
       },
       "dataValues": {
         "HealAmountPercent": 0.4000000059604645,
-        "Range": 600.0,
+        "Range": 600,
         "SelfDuration": 1.75,
         "StasisDuration": 2.5
       },
@@ -2482,8 +2482,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 200.0,
-              "mStartValue": 40.0
+              "mEndValue": 200,
+              "mStartValue": 40
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -2499,7 +2499,7 @@
         }
       },
       "dataValues": {
-        "BaseCooldown": 7.0
+        "BaseCooldown": 7
       },
       "desc": "<keywordMajor>Autocast</keywordMajor> throw a boomerang at a nearby enemy every @BaseCooldown@s.",
       "iconLarge": "assets/ux/cherry/augments/icons/okboomerang_large.png",
@@ -2525,8 +2525,8 @@
       "apiName": "ScopiestWeapons",
       "calculations": {},
       "dataValues": {
-        "MeleeRangeIncrease": 250.0,
-        "RangedRangeIncrease": 150.0
+        "MeleeRangeIncrease": 250,
+        "RangedRangeIncrease": 150
       },
       "desc": "Gain @MeleeRangeIncrease@ Attack Range, reduced to @RangedRangeIncrease@ if you are Ranged.",
       "iconLarge": "assets/ux/cherry/augments/icons/scopiestweapons_large.png",
@@ -2544,8 +2544,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 80.0,
-              "mStartValue": 40.0
+              "mEndValue": 80,
+              "mStartValue": 40
             }
           ]
         },
@@ -2584,8 +2584,8 @@
         }
       },
       "dataValues": {
-        "Cooldown": 7.0,
-        "Radius": 450.0
+        "Cooldown": 7,
+        "Radius": 450
       },
       "desc": "Every few seconds <keywordMajor>Autocast</keywordMajor> a burst slime from your body, dealing <magicDamage>magic damage</magicDamage> to nearby enemies. If you hit a champion, secrete a blob that heals you when walked over.",
       "iconLarge": "assets/ux/cherry/augments/icons/slimetime_large.png",
@@ -2621,10 +2621,10 @@
         }
       },
       "dataValues": {
-        "BleedDuration": 5.0,
-        "CurseStacksPerTick": 1.0,
-        "MaxHealthRatio": 4.0,
-        "Range": 500.0,
+        "BleedDuration": 5,
+        "CurseStacksPerTick": 1,
+        "MaxHealthRatio": 4,
+        "Range": 500,
         "TickCadence": 0.25
       },
       "desc": "Gain an aura that continuously harvests permanent <keywordMajor>Cursed Power</keywordMajor> per enemy champion inside. Gain <scaleHealth>max Health</scaleHealth> based on your <keywordMajor>Cursed Power</keywordMajor>.<br><br>The max <keywordMajor>Cursed Power</keywordMajor> you can gain per round scales with total <keywordMajor>Curse</keywordMajor> sources between you and your ally.",
@@ -2680,9 +2680,9 @@
       "apiName": "FeyMagic",
       "calculations": {},
       "dataValues": {
-        "PolyCooldown": 15.0,
-        "PolyDuration": 2.0,
-        "WEnemySlow": 60.0
+        "PolyCooldown": 15,
+        "PolyDuration": 2,
+        "WEnemySlow": 60
       },
       "desc": "Damaging with your Ultimate <status>Polymorphs</status> enemies for a few seconds.",
       "iconLarge": "assets/ux/cherry/augments/icons/feymagic_large.png",
@@ -2696,7 +2696,7 @@
       "apiName": "Firebrand",
       "calculations": {},
       "dataValues": {
-        "BleedDuration": 5.0,
+        "BleedDuration": 5,
         "PercentMaxHPDamagePer5Seconds": 0.019999999552965164
       },
       "desc": "Your Attacks apply an infinitely stacking <keywordMajor>Burn</keywordMajor>, dealing damage over time.",
@@ -2712,9 +2712,9 @@
       "calculations": {},
       "dataValues": {
         "AdaptiveForceRatio": 1.5,
-        "BleedDuration": 5.0,
-        "Cooldown": 3.0,
-        "CurseCounter": 2.0,
+        "BleedDuration": 5,
+        "Cooldown": 3,
+        "CurseCounter": 2,
         "PercentMaxHPDamagePer5Seconds": 0.029999999329447746
       },
       "desc": "Hitting an enemy champion with an ability hits grant you permanent <keywordMajor>Cursed Power</keywordMajor>. Gain <font color = '#8347ff'>Adaptive Force</font> based on your <keywordMajor>Cursed Power</keywordMajor>.<br><br>The max <keywordMajor>Cursed Power</keywordMajor> you can gain per round scales with total <keywordMajor>Curse</keywordMajor> sources between you and your ally.",
@@ -2729,8 +2729,8 @@
       "apiName": "Flashy",
       "calculations": {},
       "dataValues": {
-        "FlashAmmoTooltip": 3.0,
-        "FlashCooldown": 2.0
+        "FlashAmmoTooltip": 3,
+        "FlashCooldown": 2
       },
       "desc": "Your Flash has @FlashAmmoTooltip@ Ammo and a @FlashCooldown@ second Cooldown.",
       "iconLarge": "assets/ux/cherry/augments/icons/flashy_large.png",
@@ -2744,7 +2744,7 @@
       "apiName": "NestingDoll",
       "calculations": {},
       "dataValues": {
-        "ReviveArmTime": 2.0,
+        "ReviveArmTime": 2,
         "ReviveDuration": 1.5,
         "ReviveMod": 0.4000000059604645,
         "SecondReviveMod": 0.1599999964237213,
@@ -2777,7 +2777,7 @@
         }
       },
       "dataValues": {
-        "MSPerHit": 10.0,
+        "MSPerHit": 10,
         "MSToASConversion": 0.0010000000474974513
       },
       "desc": "Your Attacks grant you <speed>@MSPerHit@ Move Speed</speed>, stacking infinitely. Gain <attackSpeed>Attack Speed</attackSpeed> equal to @MSToASConversion*10000@% of your <speed>Move Speed</speed>.",
@@ -2797,7 +2797,7 @@
             {
               "__type": "ByCharLevelBreakpointsCalculationPart",
               "mInitialBonusPerLevel": 2.5,
-              "mLevel1Value": 10.0
+              "mLevel1Value": 10
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -2809,10 +2809,10 @@
         }
       },
       "dataValues": {
-        "AdditionalBolts": 5.0,
-        "Cooldown": 5.0,
+        "AdditionalBolts": 5,
+        "Cooldown": 5,
         "MaxDamageAmp": 0.5,
-        "MaxDamageAmpDistance": 750.0,
+        "MaxDamageAmpDistance": 750,
         "OnHitRatio": 0.20000000298023224
       },
       "desc": "When you Attack, fire @AdditionalBolts@ additional bolts that each deal <physicalDamage>physical damage</physicalDamage> based on distance travelled. Has a per direction Cooldown.",
@@ -2827,9 +2827,9 @@
       "apiName": "Tormentor",
       "calculations": {},
       "dataValues": {
-        "BleedDuration": 5.0,
+        "BleedDuration": 5,
         "PercentMaxHPDamagePer5Seconds": 0.03999999910593033,
-        "SpellIDCD": 5.0
+        "SpellIDCD": 5
       },
       "desc": "<status>Immobilizing</status> or <status>Grounding</status> enemy champions applies a <keywordMajor>Burn</keywordMajor> that deals damage over time, stacking infinitely.",
       "iconLarge": "assets/ux/cherry/augments/icons/tormentor_large.png",
@@ -2888,7 +2888,7 @@
       "apiName": "OmniSoul",
       "calculations": {},
       "dataValues": {
-        "SoulsToAdd": 3.0
+        "SoulsToAdd": 3
       },
       "desc": "Gain 3 random Dragon Souls.",
       "iconLarge": "assets/ux/cherry/augments/icons/omnisoul_large.png",
@@ -2920,7 +2920,7 @@
         }
       },
       "dataValues": {
-        "Duration": 3.0,
+        "Duration": 3,
         "HealAmount": 0.30000001192092896,
         "HealthThreshold": 0.5
       },
@@ -2967,8 +2967,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 200.0,
-              "mStartValue": 60.0
+              "mEndValue": 200,
+              "mStartValue": 60
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -2984,9 +2984,9 @@
         }
       },
       "dataValues": {
-        "ASDuration": 5.0,
+        "ASDuration": 5,
         "BonusDamage": 0.10000000149011612,
-        "BonusMS": 1.0,
+        "BonusMS": 1,
         "HoldStillDuration": 1.25
       },
       "desc": "Gain <spellName>Guerrilla Warfare</spellName>.<br><br><rules>After not moving for @HoldStillDuration@ seconds, turn <keywordStealth>Invisibile</keywordStealth> until you move. When you exit this <keywordStealth>Invisibility</keywordStealth>,your first hit deals bonus <magicDamage>magic damage</magicDamage> gain <attackSpeed>@BonusAS@ Attack Speed and @BonusMS*100@% <movementSpeed>decaying Move Speed</movementSpeed></attackSpeed>.</rules>",
@@ -3018,8 +3018,8 @@
               "__type": "ProductOfSubPartsCalculationPart",
               "mPart1": {
                 "__type": "ByCharLevelInterpolationCalculationPart",
-                "mEndValue": 15.0,
-                "mStartValue": 25.0
+                "mEndValue": 15,
+                "mStartValue": 25
               },
               "mPart2": {
                 "__type": "NamedDataValueCalculationPart",
@@ -3033,7 +3033,7 @@
           "mFormulaParts": [
             {
               "__type": "NumberCalculationPart",
-              "mNumber": 2.0
+              "mNumber": 2
             }
           ]
         },
@@ -3042,7 +3042,7 @@
           "mFormulaParts": [
             {
               "__type": "NumberCalculationPart",
-              "mNumber": 1.0
+              "mNumber": 1
             }
           ]
         }
@@ -3050,23 +3050,23 @@
       "dataValues": {
         "ADRatio": 0.3499999940395355,
         "APRatio": 0.25,
-        "BaseDamageHigh": 100.0,
-        "BaseDamageLow": 50.0,
+        "BaseDamageHigh": 100,
+        "BaseDamageLow": 50,
         "CooldownResetValue": 1.5,
-        "DHCooldown": 45.0,
+        "DHCooldown": 45,
         "DamageAmp": 0.15000000596046448,
-        "DamagePerSoulEssence": 20.0,
-        "Duration": 3.0,
+        "DamagePerSoulEssence": 20,
+        "Duration": 3,
         "GoldPercentBonus": 1.2000000476837158,
         "GoldPercentBonusRanged": 0.8999999761581421,
-        "GoldProcBonus": 6.0,
+        "GoldProcBonus": 6,
         "GraceWindow": 0.25,
         "HarvestThreshold": 0.5,
-        "MissileNoiseNumberLimiter": 3.0,
-        "MissileNoiseRangeLimiter": 1500.0,
-        "ModesCooldownReduction": 1.0,
-        "OOCTimer": 10.0,
-        "StartingSoulsPerAugment": 8.0
+        "MissileNoiseNumberLimiter": 3,
+        "MissileNoiseRangeLimiter": 1500,
+        "ModesCooldownReduction": 1,
+        "OOCTimer": 10,
+        "StartingSoulsPerAugment": 8
       },
       "desc": "Gain the <spellName>First Strike</spellName> and <spellName>Dark Harvest</spellName> Keystone Runes.",
       "iconLarge": "assets/ux/cherry/augments/icons/frombeginningtoend_large.png",
@@ -3092,8 +3092,8 @@
       "apiName": "CantTouchThis",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 8.0,
-        "InvulnDuration": 2.0
+        "Cooldown": 8,
+        "InvulnDuration": 2
       },
       "desc": "Casting your Ultimate makes you <keywordMajor>Invulnerable</keywordMajor> for a short duration.",
       "iconLarge": "assets/ux/cherry/augments/icons/canttouchthis_large.png",
@@ -3107,7 +3107,7 @@
       "apiName": "SnowballFight",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 6.0
+        "Cooldown": 6
       },
       "desc": "Replace Summoner Flee with Mark.<br><br><rules>Mark throws a snowball that marks the first enemy hit and deals damage. <recast>Recast</recast> to dash to the marked enemy.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/snowballfight_large.png",
@@ -3139,8 +3139,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 45.0,
-              "mStartValue": 15.0
+              "mEndValue": 45,
+              "mStartValue": 15
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -3157,24 +3157,24 @@
               "mBreakpoints": [
                 {
                   "__type": "Breakpoint",
-                  "mBonusPerLevelAtAndAfter": 15.0,
+                  "mBonusPerLevelAtAndAfter": 15,
                   "mLevel": 11
                 },
                 {
                   "__type": "Breakpoint",
-                  "mBonusPerLevelAtAndAfter": 30.0,
+                  "mBonusPerLevelAtAndAfter": 30,
                   "mLevel": 14
                 }
               ],
-              "mInitialBonusPerLevel": 5.0,
-              "mLevel1Value": 30.0
+              "mInitialBonusPerLevel": 5,
+              "mLevel1Value": 30
             }
           ]
         }
       },
       "dataValues": {
-        "BleedDuration": 5.0,
-        "MaxStacks": 5.0,
+        "BleedDuration": 5,
+        "MaxStacks": 5,
         "SecondsPerTick": 1.2599999904632568
       },
       "desc": "Gain Darius's Passive <spellName>Hemorrhage</spellName>.<br><br><rules>Attacks and damaging Abilities cause the target to <keywordMajor>Hemorrhage</keywordMajor>, dealing <physicalDamage>@BleedDamagePerStack@ physical damage</physicalDamage> over @BleedDuration@ seconds, stacking up to @MaxStacks@ times.<br><br>Draven gains  <scaleAD>@NoxianMightBonusAD@ Attack Damage</scaleAD> at @MaxStacks@ <keywordMajor>Hemorrhage</keywordMajor> stacks.</rules><br><br>",
@@ -3189,8 +3189,8 @@
       "apiName": "UltimateUnstoppable",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 8.0,
-        "UnstoppableDuration": 3.0
+        "Cooldown": 8,
+        "UnstoppableDuration": 3
       },
       "desc": "After using your Ultimate, you become immune to crowd control for @UnstoppableDuration@ seconds. (@Cooldown@ second Cooldown).",
       "iconLarge": "assets/ux/cherry/augments/icons/ultimateunstoppable_large.png",
@@ -3204,7 +3204,7 @@
       "apiName": "Recursion",
       "calculations": {},
       "dataValues": {
-        "AbilityHaste": 60.0
+        "AbilityHaste": 60
       },
       "desc": "Gain @AbilityHaste@ Ability Haste.",
       "iconLarge": "assets/ux/cherry/augments/icons/recursion_large.png",
@@ -3218,7 +3218,7 @@
       "apiName": "StatsOnStatsOnStats",
       "calculations": {},
       "dataValues": {
-        "AmountOfStatAnvils": 4.0
+        "AmountOfStatAnvils": 4
       },
       "desc": "Gain @AmountOfStatAnvils@ Stat Anvils!",
       "iconLarge": "assets/ux/cherry/augments/icons/statsonstatsonstats_large.png",
@@ -3263,7 +3263,7 @@
       "apiName": "JuicePress",
       "calculations": {},
       "dataValues": {
-        "BonusHats": 2.0,
+        "BonusHats": 2,
         "JuiceAmp": 0.5,
         "PowerJuicePercentPen": 0.15000000596046448,
         "PriceReduction": 0.5,
@@ -3282,7 +3282,7 @@
       "apiName": "LegDay",
       "calculations": {},
       "dataValues": {
-        "MovementSpeed": 50.0,
+        "MovementSpeed": 50,
         "SlowResist": 0.4000000059604645
       },
       "desc": "Gain <speed>@MovementSpeed@ Movement Speed</speed> and <speed>@SlowResist*100@% Slow Resist</speed>.",
@@ -3297,9 +3297,9 @@
       "apiName": "Trailblazer",
       "calculations": {},
       "dataValues": {
-        "BurnDuration": 5.0,
+        "BurnDuration": 5,
         "BurnPercent": 0.03999999910593033,
-        "Radius": 650.0,
+        "Radius": 650,
         "SpellIDCD": 1.5
       },
       "desc": "Dashing or Blinking applies a <keywordMajor>Burn</keywordMajor> to a nearby enemy that deals damage over time, stacking infinitely.",
@@ -3314,7 +3314,7 @@
       "apiName": "AcceleratingSorcery",
       "calculations": {},
       "dataValues": {
-        "HastePerCast": 12.0
+        "HastePerCast": 12
       },
       "desc": "Using Abilities grant you infinitely stacking Ability Haste, this resets each round.",
       "iconLarge": "assets/ux/cherry/augments/icons/acceleratingsorcery_large.png",
@@ -3332,8 +3332,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 120.0,
-              "mStartValue": 45.0
+              "mEndValue": 120,
+              "mStartValue": 45
             }
           ]
         },
@@ -3348,17 +3348,17 @@
             },
             "mPart2": {
               "__type": "NumberCalculationPart",
-              "mNumber": 4.0
+              "mNumber": 4
             }
           },
           "tooltipOnly": true
         }
       },
       "dataValues": {
-        "AOESize": 550.0,
-        "CastRange": 5500.0,
+        "AOESize": 550,
+        "CastRange": 5500,
         "DamagetoChampions": 0.30000001192092896,
-        "GroundDuration": 3.0,
+        "GroundDuration": 3,
         "LaserDelay": 2.5,
         "TickRate": 0.25
       },
@@ -3388,9 +3388,9 @@
       "apiName": "Homeguard",
       "calculations": {},
       "dataValues": {
-        "DisableCooldown": 3.0,
-        "Duration": 10.0,
-        "MovementSpeed": 1.0
+        "DisableCooldown": 3,
+        "Duration": 10,
+        "MovementSpeed": 1
       },
       "desc": "Gain <speed>@spell.Augment_Homeguard:MovementSpeed*100@% Move Speed</speed>, disabled for @spell.Augment_Homeguard:DisableCooldown@ seconds after taking damage.",
       "iconLarge": "assets/ux/cherry/augments/icons/homeguard_large.png",
@@ -3420,8 +3420,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 500.0,
-              "mStartValue": 300.0
+              "mEndValue": 500,
+              "mStartValue": 300
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -3433,13 +3433,13 @@
         }
       },
       "dataValues": {
-        "Cooldown": 3.0,
-        "HatTrickPriceReduction": 350.0,
-        "HatsToGrant": 3.0,
+        "Cooldown": 3,
+        "HatTrickPriceReduction": 350,
+        "HatsToGrant": 3,
         "LowHealthThreshold": 0.30000001192092896,
         "MovespeedBoostPercent": 0.3499999940395355,
         "MovespeedShieldPercent": 0.75,
-        "ShieldDuration": 3.0
+        "ShieldDuration": 3
       },
       "desc": "Instantly gain @HatsToGrant@ hats, and reduce the price of Cappa Juice by @HatTrickPriceReduction@.<br><br>Taking damage that would reduce your Health below @LowHealthThreshold*100@% gain <speed>@MoveSpeedBoostPercent*100@% Move Speed</speed> and a <shield>@ShieldHealth@ shield</shield> for @ShieldDuration@, but lose one hat. @Cooldown@ second Cooldown.",
       "iconLarge": "assets/ux/cherry/augments/icons/hattrick_large.png",
@@ -3487,8 +3487,8 @@
             },
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 60.0,
-              "mStartValue": 5.0
+              "mEndValue": 60,
+              "mStartValue": 5
             }
           ]
         }
@@ -3539,10 +3539,10 @@
       "apiName": "FrozenFoundations",
       "calculations": {},
       "dataValues": {
-        "ChampPushDistance": 120.0,
-        "NonChampPushDistance": 250.0,
-        "WallDuration": 5.0,
-        "WallWidth": 400.0
+        "ChampPushDistance": 120,
+        "NonChampPushDistance": 250,
+        "WallDuration": 5,
+        "WallWidth": 400
       },
       "desc": "Gain the <spellName>Frozen Foundations</spellName> Summoner Spell.<br><br><rules><spellName>Frozen Foundations</spellName> summons a wall of ice at a location.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/frozenfoundations_large.png",
@@ -3583,8 +3583,8 @@
       "apiName": "ApexInventor",
       "calculations": {},
       "dataValues": {
-        "ItemHaste": 300.0,
-        "TooltipCDR": 75.0
+        "ItemHaste": 300,
+        "TooltipCDR": 75
       },
       "desc": "Gain <scaleBonus>@ItemHaste@ Item Haste</scaleBonus> (equivalent to @TooltipCDR@% Item CDR).<br><br><rules>Item Haste reduces the cooldown %i:cooldown% of all Item Abilities.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/apexinventor_large.png",
@@ -3598,8 +3598,8 @@
       "apiName": "MirrorImage",
       "calculations": {},
       "dataValues": {
-        "AugmentCooldown": 30.0,
-        "CloneDuration": 8.0,
+        "AugmentCooldown": 30,
+        "CloneDuration": 8,
         "HealthThreshold": 0.30000001192092896,
         "StealthDuration": 1.25
       },
@@ -3616,8 +3616,8 @@
       "calculations": {},
       "dataValues": {
         "ArmorMRRatio": 0.25,
-        "BleedDuration": 5.0,
-        "CurseCounter": 8.0,
+        "BleedDuration": 5,
+        "CurseCounter": 8,
         "PercentMaxHPDamagePer5Seconds": 0.05000000074505806
       },
       "desc": "<status>Immobilizing</status> enemy champions grants you permanent <keywordMajor>Cursed Power</keywordMajor>. Gain <armor>Armor</armor> and <magicresistance>Magic Resistance</magicresistance> based on your <keywordMajor>Cursed Power</keywordMajor>.<br><br>The max <keywordMajor>Cursed Power</keywordMajor> you can gain per round scales with total <keywordMajor>Curse</keywordMajor> sources between you and your ally.",
@@ -3651,14 +3651,14 @@
         "AoEPercentRefund": 0.10000000149011612,
         "DamageADRatio": 0.15000000596046448,
         "DamageAPRatio": 0.10000000149011612,
-        "DamageBase": 10.0,
-        "DamageMax": 40.0,
+        "DamageBase": 10,
+        "DamageMax": 40,
         "DotPercentRefund": 0.05000000074505806,
         "PercentRefund": 0.20000000298023224,
-        "RechargeTime": 20.0,
-        "RechargeTimeMin": 8.0,
-        "ShieldBase": 30.0,
-        "ShieldMax": 75.0,
+        "RechargeTime": 20,
+        "RechargeTimeMin": 8,
+        "ShieldBase": 30,
+        "ShieldMax": 75,
         "ShieldRatio": 0.22499999403953552,
         "ShieldRatioAD": 0.3499999940395355
       },
@@ -3678,8 +3678,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 60.0,
-              "mStartValue": 5.0
+              "mEndValue": 60,
+              "mStartValue": 5
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -3697,8 +3697,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 240.0,
-              "mStartValue": 20.0
+              "mEndValue": 240,
+              "mStartValue": 20
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -3718,8 +3718,8 @@
         "ADRatioTooltip": 0.5600000023841858,
         "APRatio": 0.09000000357627869,
         "APRatioTooltip": 0.36000001430511475,
-        "LaserLength": 700.0,
-        "RectHalfWidth": 60.0
+        "LaserLength": 700,
+        "RectHalfWidth": 60
       },
       "desc": "There is a laser in the direction you are facing that deals continuous <magicDamage>magic damage</magicDamage>.",
       "iconLarge": "assets/ux/cherry/augments/icons/lasereyes_large.png",
@@ -3733,7 +3733,7 @@
       "apiName": "StatsOnStats",
       "calculations": {},
       "dataValues": {
-        "AmountOfStatAnvils": 3.0
+        "AmountOfStatAnvils": 3
       },
       "desc": "Gain @AmountOfStatAnvils@ Stat Anvils!",
       "iconLarge": "assets/ux/cherry/augments/icons/statsonstats_large.png",
@@ -3747,7 +3747,7 @@
       "apiName": "Dashing",
       "calculations": {},
       "dataValues": {
-        "Haste": 250.0
+        "Haste": 250
       },
       "desc": "Your dash, leap, blink, or teleport Abilities gain @Haste@ Ability Haste.",
       "iconLarge": "assets/ux/cherry/augments/icons/dashing_large.png",
@@ -3761,10 +3761,10 @@
       "apiName": "FireSale",
       "calculations": {},
       "dataValues": {
-        "BootsStarterSellValue": 500.0,
-        "LegendarySellValue": 2500.0,
-        "PrismaticSellValue": 3750.0,
-        "SellValueTooltip": 100.0
+        "BootsStarterSellValue": 500,
+        "LegendarySellValue": 2500,
+        "PrismaticSellValue": 3750,
+        "SellValueTooltip": 100
       },
       "desc": "Instantly sell all your non-quest items for @SellValueTooltip@% of their direct buy price. Great for all those discounted anvils.",
       "iconLarge": "assets/ux/cherry/augments/icons/firesale_large.png",
@@ -3778,9 +3778,9 @@
       "apiName": "LightningStrikes",
       "calculations": {},
       "dataValues": {
-        "Breakpoint1": 5.0,
-        "OnHitDamage": 40.0,
-        "SlowResistValue": 1.0,
+        "Breakpoint1": 5,
+        "OnHitDamage": 40,
+        "SlowResistValue": 1,
         "TotalASValue": 0.25
       },
       "desc": "Gain <attackSpeed>@TotalASValue*100@% total Attack Speed</attackSpeed>. <br><br>At @Breakpoint1@ <attackSpeed>Attacks per second</attackSpeed>, deal additional <magicDamage>magic damage</magicDamage> {{ Item_Keyword_OnHit }}.",
@@ -3797,8 +3797,8 @@
       "dataValues": {
         "HealthThreshold1": 0.6000000238418579,
         "HealthThreshold2": 0.30000001192092896,
-        "KnockbackDistance": 750.0,
-        "KnockbackRange": 500.0
+        "KnockbackDistance": 750,
+        "KnockbackRange": 500
       },
       "desc": "On dropping below @HealthThreshold1*100@% or @HealthThreshold2*100@% Health, nearby enemies are <status>Knocked Back</status>.",
       "iconLarge": "assets/ux/cherry/augments/icons/repulsor_large.png",
@@ -3812,9 +3812,9 @@
       "apiName": "SkilledSniper",
       "calculations": {},
       "dataValues": {
-        "PeriodicReductionAmount": 3.0,
+        "PeriodicReductionAmount": 3,
         "ReducedCooldown": 0.5,
-        "SnipeDistance": 700.0
+        "SnipeDistance": 700
       },
       "desc": "Hitting an enemy with a non-Ultimate Ability at far range reduces its Cooldown to @ReducedCooldown@ seconds (@PeriodicReductionAmount@ for periodic Abilities).",
       "iconLarge": "assets/ux/cherry/augments/icons/skilledsniper_large.png",
@@ -3842,7 +3842,7 @@
       "apiName": "Restart",
       "calculations": {},
       "dataValues": {
-        "CoolDown": 10.0
+        "CoolDown": 10
       },
       "desc": "Your non-Ultimate Abilities <keywordMajor>Automatically</keywordMajor> refresh every @CoolDown@ seconds.",
       "iconLarge": "assets/ux/cherry/augments/icons/restart_large.png",
@@ -3861,10 +3861,10 @@
         "BonusHP": 0.3499999940395355,
         "BonusLifesteal": 0.25,
         "BonusMS": 0.25,
-        "ExtraStackAttackRangeCeiling": 650.0,
-        "ExtraStackAttackRangeFloor": 500.0,
+        "ExtraStackAttackRangeCeiling": 650,
+        "ExtraStackAttackRangeFloor": 500,
         "MaxStatMod": 0.30000001192092896,
-        "MeleeAttackRange": 200.0
+        "MeleeAttackRange": 200
       },
       "desc": "You are now melee. Gain <physicalDamage>@BonusAD*100@% Attack Damage</physicalDamage>, <healing>@BonusHP*100@% Health</healing>, <attackSpeed>@BonusAS*100@% Attack Speed</attackSpeed>, <lifesteal>@BonusLifesteal*100@% Lifesteal</lifesteal>, and <speed>@BonusMS*100@% Move Speed</speed> (each further increased based on Attack Range lost).",
       "iconLarge": "assets/ux/cherry/augments/icons/drawyoursword_large.png",
@@ -3887,8 +3887,8 @@
             },
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 120.0,
-              "mStartValue": 20.0
+              "mEndValue": 120,
+              "mStartValue": 20
             }
           ]
         }
@@ -3908,7 +3908,7 @@
       "apiName": "DiveBomber",
       "calculations": {},
       "dataValues": {
-        "ExplosionRadius": 500.0,
+        "ExplosionRadius": 500,
         "PercentMaxHPDamage": 0.20000000298023224
       },
       "desc": "Your team's first death each round explodes, dealing <trueDamage>massive damage true damage</trueDamage>.",
@@ -3924,7 +3924,7 @@
       "calculations": {},
       "dataValues": {
         "HealthReduction": 0.25,
-        "RoundCountCap": 4.0
+        "RoundCountCap": 4
       },
       "desc": "Sacrifice <lifeSteal>@HealthReduction*100@% of your current health</lifeSteal>. <br><br>After @RoundCountCap@ rounds, gain a bonus <keywordMajor>Gold Augment</keywordMajor> and restore your health.",
       "iconLarge": "assets/ux/cherry/augments/icons/gohsacrificeforgold_large.png",
@@ -3977,8 +3977,8 @@
             },
             {
               "__type": "ByCharLevelBreakpointsCalculationPart",
-              "mInitialBonusPerLevel": 10.0,
-              "mLevel1Value": 70.0
+              "mInitialBonusPerLevel": 10,
+              "mLevel1Value": 70
             }
           ]
         }
@@ -3999,7 +3999,7 @@
       "apiName": "SummonersRoulette",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 5.0
+        "Cooldown": 5
       },
       "desc": "Replace your Summoner Spells with random ones. When you use a Summoner Spell, replace it with another random one on a @Cooldown@ second Cooldown.",
       "iconLarge": "assets/ux/cherry/augments/icons/summonersroulette_large.png",
@@ -4014,7 +4014,7 @@
       "calculations": {},
       "dataValues": {
         "HealthReduction": 0,
-        "RoundCountCap": 2.0
+        "RoundCountCap": 2
       },
       "desc": "After @RoundCountCap@ rounds, gain a bonus <keywordMajor>Silver Augment</keywordMajor>.",
       "iconLarge": "assets/ux/cherry/augments/icons/gohsacrificefor_large.png",
@@ -4046,8 +4046,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 250.0,
-              "mStartValue": 80.0
+              "mEndValue": 250,
+              "mStartValue": 80
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -4060,7 +4060,7 @@
       "dataValues": {
         "HealthScalar": 0.05000000074505806,
         "MSBuffAmount": 0.6000000238418579,
-        "MSBuffDuration": 4.0
+        "MSBuffDuration": 4
       },
       "desc": "Gain the <spellName>Castle</spellName> Summoner Spell.<br><br><rules><spellName>Castle:</spellName> Swap places with your ally, gaining <speed>Move Speed</speed> and a <shield>Shield</shield>.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/castle_large.png",
@@ -4074,8 +4074,8 @@
       "apiName": "Quest_SteelYourHeart",
       "calculations": {},
       "dataValues": {
-        "StackMultiplication": 6.0,
-        "StackThreshold": 400.0,
+        "StackMultiplication": 6,
+        "StackThreshold": 400,
         "StacktoRegenConversion": 0.125
       },
       "desc": "Requirement: Possess Heartsteel with @StackThreshold@+ stacks.<br><br>Reward: Multiply your Heartsteel stacks by @StackMultiplication@. Increase your <healing>Health Regeneration</healing> by @StacktoRegenConversion*100@% of your Heartsteel stacks.",
@@ -4109,8 +4109,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 300.0,
-              "mStartValue": 100.0
+              "mEndValue": 300,
+              "mStartValue": 100
             },
             {
               "__type": "StatByNamedDataValueCalculationPart",
@@ -4122,7 +4122,7 @@
       },
       "dataValues": {
         "HealthScalar": 0.05000000074505806,
-        "SpellIDCD": 5.0
+        "SpellIDCD": 5
       },
       "desc": "Gain <shield>@TotalShield@ Shield</shield> after <status>Immobilizing</status> or <status>Grounding</status> an enemy champion.<br>",
       "iconLarge": "assets/ux/cherry/augments/icons/courageofthecolossus_large.png",
@@ -4137,8 +4137,8 @@
       "calculations": {},
       "dataValues": {
         "AmpAmount": 0.25,
-        "AmpAmountTooltip": 25.0,
-        "Duration": 2.0,
+        "AmpAmountTooltip": 25,
+        "Duration": 2,
         "MSBoost": 0.4000000059604645
       },
       "desc": "Power Flowers are @AmpAmountTooltip@% more effective on you and are shared with your ally.",
@@ -4169,8 +4169,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 10.0,
-              "mStartValue": 20.0
+              "mEndValue": 10,
+              "mStartValue": 20
             }
           ]
         },
@@ -4179,8 +4179,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 300.0,
-              "mStartValue": 60.0
+              "mEndValue": 300,
+              "mStartValue": 60
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -4198,13 +4198,13 @@
       "dataValues": {
         "HasteBase": 0.30000001192092896,
         "HasteBaseMelee": 0.4000000059604645,
-        "HasteDuration": 3.0,
+        "HasteDuration": 3,
         "HasteMax": 0.800000011920929,
         "HasteMaxMelee": 0.800000011920929,
-        "MaxBonusSeconds": 4.0,
-        "NumberToProc": 3.0,
+        "MaxBonusSeconds": 4,
+        "NumberToProc": 3,
         "SlowResist": 0.75,
-        "WindowDuration": 4.0
+        "WindowDuration": 4
       },
       "desc": "Gain the <spellName>Electrocute</spellName> and <spellName>Phase Rush</spellName> Keystone Runes.",
       "iconLarge": "assets/ux/cherry/augments/icons/combomaster_large.png",
@@ -4219,10 +4219,10 @@
       "calculations": {},
       "dataValues": {
         "AbilityHasteRatio": 0.33000001311302185,
-        "BleedDuration": 5.0,
+        "BleedDuration": 5,
         "Cooldown": 1.5,
-        "CurseCounter": 5.0,
-        "Radius": 25000.0
+        "CurseCounter": 5,
+        "Radius": 25000
       },
       "desc": "Healing/Shielding grants you permanent <keywordMajor>Cursed Power</keywordMajor>. Gain Ability Haste based on your <keywordMajor>Cursed Power</keywordMajor>.<br><br>The max <keywordMajor>Cursed Power</keywordMajor> you can gain per round scales with total <keywordMajor>Curse</keywordMajor> sources between you and your ally.",
       "iconLarge": "assets/ux/cherry/augments/icons/darkblessing_large.png",
@@ -4258,10 +4258,10 @@
       "apiName": "ItsKillingTime",
       "calculations": {},
       "dataValues": {
-        "Cooldown": 8.0,
+        "Cooldown": 8,
         "DamageStorePercentage": 0.4000000059604645,
-        "MarkDuration": 5.0,
-        "VFXHighDamageThreshold": 500.0
+        "MarkDuration": 5,
+        "VFXHighDamageThreshold": 500
       },
       "desc": "After casting your Ultimate, mark all enemy champions for death. While marked, store a percentage of damage dealt to them, and detonate the damage when the mark ends.",
       "iconLarge": "assets/ux/cherry/augments/icons/itskillingtime_large.png",
@@ -4288,7 +4288,7 @@
       "calculations": {},
       "dataValues": {
         "HealthReduction": 0.5,
-        "RoundCountCap": 7.0
+        "RoundCountCap": 7
       },
       "desc": "Sacrifice <lifeSteal>@HealthReduction*100@% of your current health</lifeSteal>. <br><br>After @RoundCountCap@ rounds, gain a bonus <keywordMajor>Prismatic Augment</keywordMajor> and restore your health.",
       "iconLarge": "assets/ux/cherry/augments/icons/gohsacrificeforprismatic_large.png",
@@ -4303,7 +4303,7 @@
       "calculations": {},
       "dataValues": {
         "MSBuffAmount": 0.5,
-        "MSBuffDuration": 2.0
+        "MSBuffDuration": 2
       },
       "desc": "Gain the <spellName>Now You See Me</spellName> Summoner Spell.<br><br><rules><spellName>Now You See Me</spellName> teleports you back to the starting position of your last Movement Ability.</rules>",
       "iconLarge": "assets/ux/cherry/augments/icons/nowyouseeme_large.png",
@@ -4318,8 +4318,8 @@
       "calculations": {},
       "dataValues": {
         "AmpedHPThreshold": 0.25,
-        "AmpedRegen": 16.0,
-        "BaseRegen": 8.0
+        "AmpedRegen": 16,
+        "BaseRegen": 8
       },
       "desc": "Gain hugely increased <healing>Health Regen</healing>, even further increased at low <scaleHealth>Health</scaleHealth>.",
       "iconLarge": "assets/ux/cherry/augments/icons/perseverance_large.png",
@@ -4364,8 +4364,8 @@
           "mFormulaParts": [
             {
               "__type": "ByCharLevelInterpolationCalculationPart",
-              "mEndValue": 200.0,
-              "mStartValue": 60.0
+              "mEndValue": 200,
+              "mStartValue": 60
             },
             {
               "__type": "StatByCoefficientCalculationPart",
@@ -4381,11 +4381,11 @@
         }
       },
       "dataValues": {
-        "AutoCastRange": 950.0,
-        "BaseDamage": 10.0,
+        "AutoCastRange": 950,
+        "BaseDamage": 10,
         "CDIfPickedUp": 1.5,
-        "Cooldown": 12.0,
-        "DebuffDuration": 4.0,
+        "Cooldown": 12,
+        "DebuffDuration": 4,
         "ShredAmount": 0.20000000298023224,
         "SlowAmount": 0.4000000059604645,
         "SlowDuration": 1.5
