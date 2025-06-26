@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 // Lazy load all heavy components with preload
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
+const MatchArenaGameTab = lazy(() => import("./GameTab/MatchArenaGameTab").then(m => ({ default: m.MatchArenaGameTab })));
 const MatchPerformanceTab = lazy(() => import("./PerformanceTab/MatchPerformanceTab").then(m => ({ default: m.MatchPerformanceTab })));
 const MatchBuildTab = lazy(() => import("./BuildTab/MatchBuildTab").then(m => ({ default: m.MatchBuildTab })));
 const MatchTimelineTab = lazy(() => import("./TimeLineTab/MatchTimeLineTab").then(m => ({ default: m.MatchTimeLineTab })));
@@ -98,6 +99,16 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
     const renderActiveTabContent = useMemo(() => {
         switch (activeTab) {
             case 'game':
+                // Use Arena-specific component for Arena game mode
+                if (gameMode === 'Arena') {
+                    return (
+                        <MatchArenaGameTab
+                            participants={match.participants}
+                            mainPlayerPUUID={mainPlayerPUUID}
+                            region={region}
+                        />
+                    );
+                }
                 return (
                     <MatchGameTab
                         team1={team1}
@@ -139,7 +150,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
+    }, [activeTab, gameMode, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
 
     return (
         <motion.div 
