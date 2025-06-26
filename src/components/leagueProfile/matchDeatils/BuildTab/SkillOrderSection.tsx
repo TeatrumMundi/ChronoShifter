@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import { Participant } from "@/interfaces/productionTypes";
 import { ChampionSpellIcon } from "@/components/common/Icons/ChampionSpellIcon";
-import { SkillLevelUpEvent } from "@/interfaces/proudctionTimeLapTypes";
+import { SkillLevelUpEvent, ParticipantTimelineData } from "@/interfaces/proudctionTimeLapTypes";
 
 interface SkillRowSkill {
     id: number;
@@ -10,7 +10,7 @@ interface SkillRowSkill {
 }
 
 interface SkillOrderSectionProps {
-    mainPlayer: Participant;
+    mainPlayer: Participant & { timelineData?: ParticipantTimelineData };
 }
 
 const SectionHeader = memo(function SectionHeader({ title }: { title: string }) {

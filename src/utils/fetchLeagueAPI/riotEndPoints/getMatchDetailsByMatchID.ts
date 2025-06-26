@@ -113,18 +113,22 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
 
                     try {
                         return {
+                            // Basic Info
                             puuid: participantData.puuid,
                             participantId: participantData.participantId,
+                            summonerId: participantData.summonerId || '',
                             riotIdGameName: participantData.riotIdGameName || '',
                             riotIdTagline: participantData.riotIdTagline || '',
                             summonerName: participantData.summonerName || '',
                             region: region,
                             activeRegion: activeRegion,
-                            champLevel: participantData.champLevel || 1,
+
+                            // Team Info
                             teamId: participantData.teamId,
                             teamPosition: participantData.teamPosition || '',
 
                             // Stats
+                            champLevel: participantData.champLevel || 1,
                             kills: participantData.kills,
                             deaths: participantData.deaths,
                             assists: participantData.assists,

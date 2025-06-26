@@ -9,7 +9,7 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "seed": "tsx src/utils/database/seedGameAssets.ts",
-    "seed:prod": "node dist/utils/database/seedGameAssets.js",
+    "seed:prod": "tsx src/utils/database/seedGameAssets.ts",
     "build:with-seed": "npm run seed && next build",
     "postbuild": "npm run seed:prod"
   },
@@ -25,7 +25,8 @@
     "lucide-react": "^0.511.0",
     "next": "15.3.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "tsx": "^4.20.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -38,7 +39,6 @@
     "eslint-config-next": "15.3.3",
     "prisma": "^6.10.0",
     "tailwindcss": "^4",
-    "tsx": "^4.20.3",
     "typescript": "^5"
   },
   "overrides": {
