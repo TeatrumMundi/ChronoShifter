@@ -52,7 +52,7 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                     
                     {/* Main Glass Card */}
                     <div
-                        className={`relative p-4 py-2 font-sans flex-1 rounded-xl 
+                        className={`relative p-4 py-2 font-sans h-[200px] sm:h-[400px] lg:h-[170px] xl:h-[130px] rounded-xl 
                             backdrop-blur-xl border
                             shadow-2xl shadow-black/10
                             ${isDetailsOpen ? "rounded-b-none" : ""}
@@ -119,8 +119,8 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 <div className="flex flex-col gap-3 flex-1 sm:flex-row items-center justify-center">
                                     <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2 w-full sm:min-w-[180px] justify-center">
 
-                                        {/* Champion + Spells + Runes */}
-                                        <div className="flex items-center justify-center gap-2">
+                                        {/* Champion + Spells + Items Row - Mobile first, then responsive */}
+                                        <div className="flex items-center justify-center gap-2 flex-wrap">
                                             {/* Champion */}
                                             <div className="relative">
                                                 <div className="absolute inset-0 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20" />
@@ -153,16 +153,16 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                                     <RuneDisplay boxSize={28} keyStoneIconSize={26} secendaryRuneIconSize={18} runes={participant.runes} />
                                                 </div>
                                             )}
-                                        </div>
 
-                                        {/* Items only - show below on mobile, inline on larger screens */}
-                                        <div className="flex justify-center items-center">
-                                            <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
-                                                <ItemDisplay itemSize={28} items={participant.items} />
+                                            {/* Items - now inline on mobile */}
+                                            <div className="flex justify-center items-center">
+                                                <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
+                                                    <ItemDisplay itemSize={28} items={participant.items} />
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {/* Augments - hide on mobile, show on larger screens if Arena */}
+                                        {/* Augments - separate row for Arena, hide on mobile, show on larger screens */}
                                         {gameMode === "Arena" && participant.arenaStats && participant.arenaStats.augments.length > 0 && (
                                             <div className="hidden sm:flex justify-center items-center">
                                                 <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
@@ -174,14 +174,14 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 </div>
 
                                 {/* Stats Section */}
-                                <div className="flex flex-col justify-center w-full min-w-[220px] lg:max-w-[140px] xl:max-w-[280px]">
+                                <div className="hidden sm:flex flex-col justify-center w-full min-w-[220px] lg:max-w-[140px] xl:max-w-[280px]">
                                     <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-1">
                                         <MatchStats participant={participant} gameMode={gameMode} />
                                     </div>
                                 </div>
 
                                 {/* Participants Section */}
-                                <div className="flex flex-col justify-center w-full min-w-0 max-w-full sm:min-w-[160px] lg:min-w-[140px] lg:max-w-[260px] xl:min-w-[200px] xl:max-w-[260px] border-t lg:border-t-0 lg:border-l border-white/20 pt-2 lg:pt-0 lg:pl-2 pr-6">
+                                <div className="hidden sm:flex flex-col justify-center w-full min-w-0 max-w-full sm:min-w-[160px] lg:min-w-[140px] lg:max-w-[260px] xl:min-w-[200px] xl:max-w-[260px] border-t lg:border-t-0 lg:border-l border-white/20 pt-2 lg:pt-0 lg:pl-2 pr-6">
                                     <div className="flex items-center w-full">
                                         <ParticipantList
                                             participants={match.participants}

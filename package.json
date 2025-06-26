@@ -4,16 +4,20 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate --no-engine && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "seed": "tsx src/utils/database/seedGameAssets.ts",
+    "seed:prod": "node dist/utils/database/seedGameAssets.js",
+    "build:with-seed": "npm run seed && next build",
+    "postbuild": "npm run seed:prod"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.12",
     "@headlessui/react": "^2.2.3",
     "@next/env": "15.3.3",
-    "@prisma/client": "^6.8.2",
+    "@prisma/client": "^6.10.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "framer-motion": "^12.15.0",
@@ -32,8 +36,9 @@
     "@types/react-dom": "19.1.6",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "prisma": "^6.8.2",
+    "prisma": "^6.10.0",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "typescript": "^5"
   },
   "overrides": {

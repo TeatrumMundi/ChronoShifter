@@ -61,7 +61,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
     }, [participants]);
 
     return (
-        <div className="h-full w-full text-xs">
+        <div className="h-[100px] w-full text-xs">
             <div className="flex flex-col gap-0.5 lg:gap-1 h-full">
                 {Array.from({ length: 5 }).map((_, i) => {
                     const leftPlayer = teams.leftTeam[i];
@@ -154,36 +154,58 @@ function ArenaParticipantList({ participants, region }: {
         [teams]
     );
 
-    return (
-        <div className="h-full text-xs">
-            <div className="flex flex-col gap-0.5 lg:gap-1 h-full">
-                {sortedTeamIds.map((teamId, index) => (
-                    <div
-                        key={teamId}
-                        className={`flex items-center p-1 lg:p-1.5 rounded-md backdrop-blur-sm border flex-1 min-h-0
-                            ${TEAM_COLORS[index % TEAM_COLORS.length]}
-                            hover:bg-white/10 hover:border-white/20
-                            transition-all duration-200 ease-out overflow-hidden
-                            shadow-sm`}
+    // Group teams into pairs for displaying two teams per row
+    const teamPairs = useMemo(() => {
+        const pairs: number[][] = [];
+        for (let i = 0; i < sortedTeamIds.length; i += 2) {
+            pairs.push(sortedTeamIds.slice(i, i + 2));
+        }
+        return pairs;
+    }, [sortedTeamIds]);
+
+    const renderTeam = (teamId: number, teamIndex: number) => (
+        <div
+            className={`flex items-center px-1 rounded-md h-full min-w-0 w-1/2 flex-shrink-0
+                ${TEAM_COLORS[teamIndex % TEAM_COLORS.length]} backdrop-blur-sm border
+                hover:bg-white/10 hover:border-white/20
+                transition-all duration-200 ease-out overflow-hidden`}
+        >
+            {teams[teamId].map((player, playerIndex) => (
+                <React.Fragment key={playerIndex}>
+                    <div className="relative flex-shrink-0">
+                        <ChampionIcon champion={player.champion} size={12} className="rounded-xl" />
+                    </div>
+                    <Link
+                        href={`/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
+                        className="text-xs truncate text-white/90 hover:text-white 
+                            transition-colors font-medium min-w-0 flex-1 ml-1"
+                        title={`${player.riotIdGameName}#${player.riotIdTagline}`}
+                        aria-label={`View profile for ${player.riotIdGameName}`}
                     >
-                        {teams[teamId].map((player, playerIndex) => (
-                            <div key={playerIndex} className="flex items-center gap-1 mr-1 flex-shrink-0 last:mr-0 min-w-0">
-                                <div className="relative flex-shrink-0">
-                                    <div className="absolute inset-0 rounded-sm bg-white/10 backdrop-blur-sm border border-white/15" />
-                                    <div className="relative p-0.5">
-                                        <ChampionIcon champion={player.champion} size={12} />
-                                    </div>
-                                </div>
-                                <Link
-                                    href={`/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
-                                    className="text-xs truncate text-white/90 hover:text-white 
-                                        transition-colors font-medium min-w-0 flex-1"
-                                    title={player.riotIdGameName}
-                                >
-                                    {player.riotIdGameName}
-                                </Link>
-                            </div>
-                        ))}
+                        {player.riotIdGameName}
+                    </Link>
+                </React.Fragment>
+            ))}
+        </div>
+    );
+
+    return (
+        <div className="h-[100px] w-full text-xs">
+            <div className="flex flex-col gap-0.5 lg:gap-1 h-full">
+                {teamPairs.map((pair, pairIndex) => (
+                    <div
+                        key={pairIndex}
+                        className="flex flex-row items-stretch w-full gap-0.5 lg:gap-1 flex-1 h-[28px]"
+                    >
+                        {/* First team in the pair */}
+                        {renderTeam(pair[0], pair[0])}
+                        
+                        {/* Second team in the pair (if exists) */}
+                        {pair[1] !== undefined ? (
+                            renderTeam(pair[1], pair[1])
+                        ) : (
+                            <div className="w-1/2 flex-shrink-0" />
+                        )}
                     </div>
                 ))}
             </div>

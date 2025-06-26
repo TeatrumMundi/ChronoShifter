@@ -162,9 +162,6 @@ export default async function getMatchDetailsByMatchID(matchID: string, region: 
                                 offense: await getStatPerkById(participantData.perks?.statPerks?.offense)
                             },
                             arenaStats: await extractArenaStats(participantData),
-
-                            // Timeline data for this participant
-                            timelineData: undefined,
                         };
                     } catch (participantError) {
                         throw new Error(`Failed to process participant at index ${index}: ${participantError instanceof Error ? participantError.message : String(participantError)}`);
