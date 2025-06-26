@@ -39,10 +39,22 @@ interface MatchDetailsProps {
     match: Match;
     mainPlayerPUUID: string;
     region: string;
+    gameMode: string;
 }
 
-export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region }: MatchDetailsProps) {
+export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region, gameMode }: MatchDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>(DEFAULT_TAB);
+
+    // Filter tabs based on game mode
+    const availableTabs = useMemo(() => {
+        if (gameMode === 'Arena') { // Arena game mode
+            return {
+                game: TABS_CONFIG.game,
+                build: TABS_CONFIG.build
+            };
+        }
+        return TABS_CONFIG;
+    }, [gameMode]);
 
     // Memoize team splitting - only recalculate when match changes
     const { team1, team2, mainPlayer, isWin } = useMemo(() => {
@@ -180,8 +192,12 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
             >
-                <div className="relative z-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {Object.values(TABS_CONFIG).map((tab) => (
+                <div className={`relative z-5 gap-3 ${
+                    gameMode === 'Arena' 
+                        ? 'grid grid-cols-2' 
+                        : 'grid grid-cols-2 sm:grid-cols-4'
+                }`}>
+                    {Object.values(availableTabs).map((tab) => (
                         <TabButton 
                             key={tab.id}
                             isActive={activeTab === tab.id} 

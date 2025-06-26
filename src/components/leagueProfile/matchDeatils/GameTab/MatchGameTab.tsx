@@ -1,11 +1,11 @@
-import { memo, useMemo, useCallback } from "react";
 import { SummonerSpellDisplay } from "@/components/leagueProfile/SummonerSpellDisplay";
 import { ChampionIcon } from "@/components/common/Icons/ChampionIcon";
 import { RuneDisplay } from "@/components/leagueProfile/RuneDisplay";
 import { ItemDisplay } from "@/components/leagueProfile/ItemDisplay";
 import { Participant } from "@/interfaces/productionTypes";
-import Link from "next/link";
 import { getOrdinalPlacement } from "@/utils/helpers";
+import { memo, useMemo, useCallback } from "react";
+import Link from "next/link";
 
 interface MatchGameTabProps {
     team1: Participant[];
@@ -184,12 +184,10 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
                 {participant.wardsPlaced}
             </td>
             <td className="px-4 py-1">
-                <div className="flex justify-center w-[45px] mx-auto">
+                <div className="flex justify-center w-[50px] mx-auto">
                     <ItemDisplay 
                         items={participant.items}
                         itemSize={20}
-                        smMinWidth={95}
-                        trinketMaxWidth={14}
                     />
                 </div>
             </td>

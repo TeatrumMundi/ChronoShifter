@@ -38,7 +38,62 @@ export function MatchStats({ participant, gameMode }: {
         </div>
     );
 
-    // Base stats (always shown)
+    // For Arena: only show KDA and Damage
+    if (isArena) {
+        const arenaStats: StatItem[] = [
+            createStat("KDA", (
+                <div className="flex items-center gap-0.5">
+                    <span className="text-emerald-300 font-bold">{participant.kills}</span>
+                    <span className="text-white/60">/</span>
+                    <span className="text-rose-300 font-bold">{participant.deaths}</span>
+                    <span className="text-white/60">/</span>
+                    <span className="text-blue-300 font-bold">{participant.assists}</span>
+                </div>
+            ), "Kills / Deaths / Assists (KDA)"),
+            createStat("Damage", formatNumber(participant.totalDamageDealtToChampions), "Total damage dealt", "text-red-300 font-semibold"),
+        ];
+
+        return (
+            <div className="w-full">
+                {/* Stats Grid - Horizontal for Arena */}
+                <div className="flex gap-1">
+                    {arenaStats.map((stat) => (
+                        <div
+                            key={stat.label}
+                            title={stat.tooltip}
+                            className={`
+                                relative p-1.5 rounded-md backdrop-blur-sm border flex-1
+                                bg-white/5 border-white/15
+                                hover:bg-white/10 hover:border-white/25
+                                transition-all duration-200 ease-out
+                                ${stat.highlight ? 'ring-1 ring-emerald-400/30 bg-emerald-500/5' : ''}
+                            `}
+                        >
+                            {/* Stat Content */}
+                            <div className="flex flex-col space-y-0.5">
+                                {/* Label */}
+                                <span className="text-xs font-medium text-white/60 uppercase tracking-wide">
+                                    {stat.label}
+                                </span>
+                                
+                                {/* Value */}
+                                <div className={`text-xs font-semibold ${stat.className || 'text-white/90'}`}>
+                                    {stat.value}
+                                </div>
+                            </div>
+
+                            {/* Highlight glow for good performance */}
+                            {stat.highlight && (
+                                <div className="absolute inset-0 rounded-md bg-gradient-to-r from-emerald-400/5 to-green-400/5 pointer-events-none" />
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    // Base stats (always shown for non-Arena)
     const baseStats: StatItem[] = [
         createStat("KDA", (
             <div className="flex items-center gap-0.5">
@@ -57,8 +112,8 @@ export function MatchStats({ participant, gameMode }: {
 
     // Conditional stats based on game mode and role
     const conditionalStats: StatItem[] = [
-        // Healing and shielding (Arena or Support)
-        ...(isArena || isSupport ? [
+        // Healing and shielding (Support only)
+        ...(isSupport ? [
             createStat("Healed", formatNumber(participant.totalHealsOnTeammates), "Total heals on teammates", "text-green-300 font-semibold"),
             createStat("Shielded", formatNumber(participant.totalDamageShieldedOnTeammates), "Total shields on teammates", "text-blue-300 font-semibold"),
         ] : []),
@@ -66,20 +121,18 @@ export function MatchStats({ participant, gameMode }: {
         // Damage (always shown)
         createStat("Damage", formatNumber(participant.totalDamageDealtToChampions), "Total damage dealt", "text-red-300 font-semibold"),
         
-        // CS (non-support, non-arena)
-        ...(!isSupport && !isArena ? [
+        // CS (non-support)
+        ...(!isSupport ? [
             createStat("CS", csValue, "Minions killed (and per minute)", 
                 participant.minionsPerMinute >= 8 ? "text-emerald-300 font-bold" : "text-white/90",
                 participant.minionsPerMinute >= 8),
         ] : []),
         
-        // Vision stats (non-arena)
-        ...(!isArena ? [
-            createStat("Vision", visionValue, "Vision Score",
-                participant.visionPerMinute >= 2 ? "text-emerald-300 font-bold" : "text-white/90",
-                participant.visionPerMinute >= 2),
-            createStat("Wards", participant.wardsPlaced.toString(), "Wards Placed", "text-purple-300 font-semibold"),
-        ] : []),
+        // Vision stats
+        createStat("Vision", visionValue, "Vision Score",
+            participant.visionPerMinute >= 2 ? "text-emerald-300 font-bold" : "text-white/90",
+            participant.visionPerMinute >= 2),
+        createStat("Wards", participant.wardsPlaced.toString(), "Wards Placed", "text-purple-300 font-semibold"),
     ];
 
     return (
