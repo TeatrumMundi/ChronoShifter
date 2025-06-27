@@ -60,6 +60,18 @@ export function IconBox({
                         maxWidth: childrenSize,
                         maxHeight: childrenSize,
                     }}
+                    onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent && !parent.querySelector('.error-placeholder')) {
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-placeholder flex items-center justify-center text-gray-400 font-bold';
+                            errorDiv.style.fontSize = `${childrenSize * 0.7}px`;
+                            errorDiv.textContent = '?';
+                            parent.appendChild(errorDiv);
+                        }
+                    }}
                     unoptimized
                 />
             )}
