@@ -72,14 +72,17 @@ model Match {
   gameMode          String
   gameType          String
   queueId           Int
-  timelineData      Json?
   
   // Relations
   participants      Participant[]
+  timeline          MatchTimeline?
 }
 
 model Participant {
+  // Unique identifier for the participant
   id                        String   @id @default(uuid())
+
+  // Basic Info
   puuid                     String
   participantId             Int
   riotIdGameName            String
@@ -87,17 +90,25 @@ model Participant {
   summonerName              String
   region                    String
   activeRegion              String
+
+  // Team Info
   teamId                    Int
   teamPosition              String
+
+  // Stats
   champLevel                Int
   kills                     Int
   deaths                    Int
   assists                   Int
   kda                       String
+
+  // Minions Info
   totalMinionsKilled        Int
   neutralMinionsKilled      Int
   allMinionsKilled          Int
   minionsPerMinute          Float
+
+  // Performance Stats
   visionScore               Int
   visionPerMinute           Float
   wardsPlaced               Int
@@ -110,21 +121,16 @@ model Participant {
   totalDamageDealtToChampions Int
   individualPosition        String
   win                       Boolean
-  champLevelArena           Int?
-  playerSubteamId           Int?
-  matchId                   String
   
+  // Match Info
+  matchId                   String
+
   // Relations to League assets
   championId                String
   summonerSpell1Id          BigInt
   summonerSpell2Id          BigInt
   
-  // Store items, runes, and stat perks as arrays of IDs
-  itemIds                   Int[]
-  runeIds                   Int[]
-  statPerkIds               Int[]
-  
-  arenaStats                Json?
+  arenaStatsId              String? @unique
   
   // Relations
   match                     Match @relation(fields: [matchId], references: [matchId])
@@ -132,6 +138,72 @@ model Participant {
   champion                  Champion @relation(fields: [championId], references: [id])
   summonerSpell1            SummonerSpell @relation("SummonerSpell1", fields: [summonerSpell1Id], references: [id])
   summonerSpell2            SummonerSpell @relation("SummonerSpell2", fields: [summonerSpell2Id], references: [id])
+  arenaStats                ArenaStats? @relation(fields: [arenaStatsId], references: [id])
+  
+  // Many-to-many relations for storing actual objects
+  items                     ParticipantItem[]
+  runes                     ParticipantRune[]
+  statPerks                 ParticipantStatPerk[]
+}
+
+// Arena Stats table based on the ArenaStats interface
+model ArenaStats {
+  id                String   @id @default(uuid())
+  placement         Int
+  playerSubteamId   Int
+  
+  // Relations
+  participant       Participant?
+  augments          ArenaStatsAugment[]
+}
+
+// Junction tables for many-to-many relationships
+model ParticipantItem {
+  id              String      @id @default(uuid())
+  participantId   String
+  itemId          Int
+  position        Int         // To maintain order of items (0-5)
+  
+  participant     Participant @relation(fields: [participantId], references: [id])
+  item            Item        @relation(fields: [itemId], references: [id])
+  
+  @@unique([participantId, position])
+}
+
+model ParticipantRune {
+  id              String      @id @default(uuid())
+  participantId   String
+  runeId          Int
+  slot            Int         // To maintain rune structure
+  
+  participant     Participant @relation(fields: [participantId], references: [id])
+  rune            Rune        @relation(fields: [runeId], references: [id])
+  
+  @@unique([participantId, slot])
+}
+
+model ParticipantStatPerk {
+  id              String      @id @default(uuid())
+  participantId   String
+  statPerkId      Int
+  position        Int         // To maintain order (0-2 typically)
+  
+  participant     Participant @relation(fields: [participantId], references: [id])
+  statPerk        StatPerk    @relation(fields: [statPerkId], references: [id])
+  
+  @@unique([participantId, position])
+}
+
+model ArenaStatsAugment {
+  id              String      @id @default(uuid())
+  arenaStatsId    String
+  augmentId       Int
+  position        Int         // To maintain order of augments
+  
+  arenaStats      ArenaStats  @relation(fields: [arenaStatsId], references: [id])
+  augment         Augment     @relation(fields: [augmentId], references: [id])
+  
+  @@unique([arenaStatsId, position])
 }
 
 // League Assets
@@ -181,6 +253,9 @@ model Item {
   price         Int
   priceTotal    Int
   iconPath      String
+  
+  // Relations
+  participantItems ParticipantItem[]
 }
 
 model RuneTree {
@@ -204,6 +279,9 @@ model Rune {
   tier          Int
   
   runeTree      RuneTree @relation(fields: [runeTreeId], references: [id])
+  
+  // Relations
+  participantRunes ParticipantRune[]
 }
 
 model StatPerk {
@@ -212,6 +290,9 @@ model StatPerk {
   desc          String
   longDesc      String
   path          String
+  
+  // Relations
+  participantStatPerks ParticipantStatPerk[]
 }
 
 model Augment {
@@ -225,4 +306,18 @@ model Augment {
   name          String
   rarity        Int
   tooltip       String
+  
+  // Relations
+  arenaStatsAugments ArenaStatsAugment[]
+}
+
+model MatchTimeline {
+  id            String   @id @default(uuid())
+  matchId       String   @unique
+  timelineData  Json     @map("timeline_data")
+  
+  // Relations
+  match         Match    @relation(fields: [matchId], references: [matchId])
+  
+  @@map("match_timelines")
 }
