@@ -3,7 +3,7 @@ import { Participant, Match } from "@/interfaces/productionTypes";
 import { RunesSection } from "./RunesSection";
 import { ItemTimelineSection } from "./ItemTimelineSection";
 import { SkillOrderSection } from "./SkillOrderSection";
-import { getPlayerFromTimelines } from "@/utils/fetchLeagueAPI/riotEndPoints/getMatchTimelineByMatchID";
+import { getPlayerFromTimelines } from "@/utils/fetchLeagueAPI/getMatchTimelineByMatchID";
 
 interface MatchBuildTabProps {
     mainPlayer: Participant;
