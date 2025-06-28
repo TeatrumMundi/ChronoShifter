@@ -1,22 +1,23 @@
 "use client";
 
 import { MatchHistoryHeader } from "./MatchHistoryHeader/MatchHistoryHeader";
-import { RiotAccount } from "@/interfaces/productionTypes";
+import { Match } from "@/interfaces/productionTypes";
 import { gameModeOptions, getParticipantByPuuid, positionToApiMap } from "@/utils/helpers";
 import { MatchCard } from "./MatchCard";
 import { useState } from "react";
 
 interface MatchHistoryProps {
-    riotAccount: RiotAccount;
+    puuid: string;
+    recentMatches: Match[];
 }
 
-export function MatchHistory({ riotAccount }: MatchHistoryProps) {
+export function MatchHistory({ puuid, recentMatches }: MatchHistoryProps) {
     const [selectedGameMode, setSelectedGameMode] = useState("All Matches");
     const [selectedPosition, setSelectedPosition] = useState<string>("ALL");
     const [searchQuery, setSearchQuery] = useState("");
 
     // Filter matches based on selected game mode, position and search query
-    const filteredMatches = riotAccount.leagueAccount.matchHistory.filter((match) => {
+    const filteredMatches = recentMatches.filter((match) => {
 
         // Filter by game mode
         const selectedMode = gameModeOptions.find(mode => mode.name === selectedGameMode);
@@ -29,7 +30,7 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
         // Filter by position
         let positionMatch = true;
         if (selectedPosition !== "ALL") {
-            const participant = getParticipantByPuuid(match, riotAccount.riotAccountDetails.puuid);
+            const participant = getParticipantByPuuid(match, puuid);
             if (participant) {
                 const allowedPositions = positionToApiMap[selectedPosition] || [];
                 positionMatch = allowedPositions.includes(participant.teamPosition);
@@ -92,14 +93,13 @@ export function MatchHistory({ riotAccount }: MatchHistoryProps) {
             <div className="space-y-2 relative z-0">
                 {filteredMatches
                     .map((match) => {
-                        const participant = getParticipantByPuuid(match, riotAccount.riotAccountDetails.puuid);
+                        const participant = getParticipantByPuuid(match, puuid);
                         if (!participant) return null;
                         return (
                             <MatchCard
                                 key={match.matchId}
                                 match={match}
                                 participant={participant}
-                                region={riotAccount.leagueAccount.leagueAccountsDetails.region}
                             />
                         );
                     })

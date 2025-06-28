@@ -8,13 +8,11 @@ interface MatchPerformanceTabProps {
     team1: Participant[];
     team2: Participant[];
     mainPlayerPUUID: string;
-    region: string;
 }
 
 interface ParticipantRowProps {
     participant: Participant;
     isMain: boolean;
-    region: string;
     sortKey: SortKey;
 }
 
@@ -22,13 +20,7 @@ type SortKey = "kills" | "kda" | "damage" | "gold" | "wards" | "cs";
 type SortOrder = "asc" | "desc";
 
 // Memoized participant info component
-const ParticipantInfo = memo(function ParticipantInfo({ 
-    participant, 
-    region 
-}: { 
-    participant: Participant; 
-    region: string 
-}) {
+const ParticipantInfo = memo(function ParticipantInfo({ participant }: { participant: Participant }) {
     const handleLinkClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
     }, []);
@@ -43,7 +35,7 @@ const ParticipantInfo = memo(function ParticipantInfo({
                 className="flex-shrink-0"
             />
             <Link
-                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
+                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${participant.region}`}
                 className="text-white/90 hover:text-blue-300 transition-colors duration-200 font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis"
                 title={`${participant.riotIdGameName}#${participant.riotIdTagline}`}
                 aria-label={`View profile for ${participant.riotIdGameName}`}
@@ -56,12 +48,7 @@ const ParticipantInfo = memo(function ParticipantInfo({
 });
 
 // Memoized participant row component
-const ParticipantRow = memo(function ParticipantRow({ 
-    participant, 
-    isMain, 
-    region, 
-    sortKey 
-}: ParticipantRowProps) {
+const ParticipantRow = memo(function ParticipantRow({ participant, isMain, sortKey }: ParticipantRowProps) {
     const rowClasses = useMemo(() => {
         const baseClasses = "transition-all duration-200 border border-white/10 backdrop-blur-sm";
         const backgroundClasses = isMain 
@@ -82,7 +69,7 @@ const ParticipantRow = memo(function ParticipantRow({
     return (
         <tr className={rowClasses}>
             <td className="px-4 py-1">
-                <ParticipantInfo participant={participant} region={region} />
+                <ParticipantInfo participant={participant} />
             </td>
             <td className={`px-4 py-1 text-center text-white/90 font-medium ${getCellHighlight("kills")}`}>
                 {participant.kills}
@@ -164,12 +151,7 @@ const SortableHeader = memo(function SortableHeader({
     );
 });
 
-export const MatchPerformanceTab = memo(function MatchPerformanceTab({ 
-    team1, 
-    team2, 
-    mainPlayerPUUID, 
-    region 
-}: MatchPerformanceTabProps) {
+export const MatchPerformanceTab = memo(function MatchPerformanceTab({ team1, team2, mainPlayerPUUID }: MatchPerformanceTabProps) {
     const [sortKey, setSortKey] = useState<SortKey>("damage");
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
@@ -294,7 +276,6 @@ export const MatchPerformanceTab = memo(function MatchPerformanceTab({
                                 key={participant.puuid}
                                 participant={participant}
                                 isMain={participant.puuid === mainPlayerPUUID}
-                                region={region}
                                 sortKey={sortKey}
                             />
                         ))}

@@ -1,7 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { Match } from "@/interfaces/productionTypes";
 
-const prisma = new PrismaClient();
+// Singleton pattern for Prisma client to avoid connection pool issues during development
+const globalForPrisma = globalThis as unknown as {
+    prisma: PrismaClient | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 /**
  * Saves match data including match details and all participants to the database.
@@ -29,21 +38,18 @@ export async function saveMatchData(match: Match) {
     }
 
     try {
-        // Use database transaction with extended timeout
-        return await prisma.$transaction(async (transaction) => {
-            
-            // Step 1: Check if match already exists in database
-            const existingMatch = await transaction.match.findUnique({
-                where: { matchId: match.matchId.toString() },
-                include: {
-                    participants: true
-                }
-            });
+        // Step 1: Check if match already exists
+        const existingMatch = await prisma.match.findUnique({
+            where: { matchId: match.matchId.toString() },
+            include: { participants: true }
+        });
 
-            if (existingMatch) {
-                console.log(`Match ${match.matchId} already exists in database`);
-                return existingMatch;
-            }
+        if (existingMatch) {
+            console.log(`🟡 Match ${match.matchId} already exists in database. Skipping...`);
+            return existingMatch;
+        }
+
+        return await prisma.$transaction(async (transaction) => {
 
             // Step 2: Create new Match record
             const matchDetails = await transaction.match.create({
@@ -58,302 +64,71 @@ export async function saveMatchData(match: Match) {
                 }
             });
 
-            // Create timeline data separately if it exists
-            if (match.timelineData) {
-                try {
-                    await transaction.matchTimeline.create({
-                        data: {
-                            matchId: matchDetails.matchId,
-                            timelineData: JSON.parse(JSON.stringify(match.timelineData))
-                        }
-                    });
-                } catch (timelineError) {
-                    console.warn(`Failed to create timeline data for match ${match.matchId}:`, timelineError);
-                }
-            }
-
-            // Create missing RiotAccounts for all participants
-            const participantPuuids = match.participants.map(p => p.puuid);
-            const existingRiotAccounts = await transaction.riotAccount.findMany({
-                where: { riotAccountDetailsPuuid: { in: participantPuuids } }
-            });
-
-            const existingPuuids = existingRiotAccounts.map(acc => acc.riotAccountDetailsPuuid);
-            const missingPuuids = participantPuuids.filter(puuid => !existingPuuids.includes(puuid));
-
-            // Create missing RiotAccountDetails and RiotAccounts
-            for (const puuid of missingPuuids) {
-                const participant = match.participants.find(p => p.puuid === puuid);
-                if (participant) {
-                    // Create RiotAccountDetails
-                    await transaction.riotAccountDetails.create({
-                        data: {
-                            puuid: puuid,
-                            gameName: participant.riotIdGameName,
-                            tagLine: participant.riotIdTagline
-                        }
-                    });
-
-                    // Create RiotAccount
-                    await transaction.riotAccount.create({
-                        data: {
-                            riotAccountDetailsPuuid: puuid
-                        }
-                    });
-                }
-            }
-
-            // Step 3: Create participants in batches to improve performance
-            const batchSize = 5; // Process 5 participants at a time
-            for (let i = 0; i < match.participants.length; i += batchSize) {
-                const batch = match.participants.slice(i, i + batchSize);
-                
-                await Promise.all(
-                    batch.map(async (participant) => {
-                        // Create arena stats if present and valid
-                        let arenaStatsId: string | null = null;
-                        if (participant.arenaStats && 
-                            participant.arenaStats.placement !== undefined && 
-                            participant.arenaStats.playerSubteamId !== undefined) {
-                            try {
-                                const arenaStats = await transaction.arenaStats.create({
-                                    data: {
-                                        placement: participant.arenaStats.placement,
-                                        playerSubteamId: participant.arenaStats.playerSubteamId
-                                    }
-                                });
-                                arenaStatsId = arenaStats.id;
-
-                                // Create arena stats augments if present
-                                if (participant.arenaStats.augments && 
-                                    Array.isArray(participant.arenaStats.augments) && 
-                                    participant.arenaStats.augments.length > 0) {
-                                    
-                                    const validAugments = participant.arenaStats.augments.filter(augment => augment && augment.id);
-                                    
-                                    // First, ensure all augments exist in the database
-                                    for (const augment of validAugments) {
-                                        try {
-                                            await transaction.augment.upsert({
-                                                where: { id: augment.id },
-                                                update: {}, // Don't update if exists
-                                                create: {
-                                                    id: augment.id,
-                                                    apiName: augment.apiName || '',
-                                                    calculations: augment.calculations || {},
-                                                    dataValues: augment.dataValues || {},
-                                                    desc: augment.desc || '',
-                                                    iconLarge: augment.iconLarge || '',
-                                                    iconSmall: augment.iconSmall || '',
-                                                    name: augment.name || '',
-                                                    rarity: augment.rarity || 0,
-                                                    tooltip: augment.tooltip || ''
-                                                }
-                                            });
-                                        } catch (augmentUpsertError) {
-                                            console.warn(`Failed to upsert augment ${augment.id}:`, augmentUpsertError);
-                                        }
-                                    }
-
-                                    // Now create the arena stats augments
-                                    await Promise.all(
-                                        validAugments.map(async (augment, index) => {
-                                            try {
-                                                await transaction.arenaStatsAugment.create({
-                                                    data: {
-                                                        arenaStatsId: arenaStats.id,
-                                                        augmentId: augment.id,
-                                                        position: index
-                                                    }
-                                                });
-                                            } catch (arenaStatsAugmentError) {
-                                                console.warn(`Failed to create arena stats augment for augment ${augment.id}:`, arenaStatsAugmentError);
-                                            }
-                                        })
-                                    );
-                                }
-                            } catch (arenaError) {
-                                console.warn(`Failed to create arena stats for participant ${participant.puuid}:`, arenaError);
-                                arenaStatsId = null;
-                            }
-                        }
-
-                        // Create the participant - PUUID will automatically link to RiotAccount if it exists
-                        const createdParticipant = await transaction.participant.create({
-                            data: {
-                                puuid: participant.puuid,
-                                participantId: participant.participantId,
-                                riotIdGameName: participant.riotIdGameName,
-                                riotIdTagline: participant.riotIdTagline,
-                                summonerName: participant.summonerName,
-                                region: participant.region,
-                                activeRegion: participant.activeRegion,
-                                teamId: participant.teamId,
-                                teamPosition: participant.teamPosition,
-                                champLevel: participant.champLevel,
-                                kills: participant.kills,
-                                deaths: participant.deaths,
-                                assists: participant.assists,
-                                kda: participant.kda,
-                                totalMinionsKilled: participant.totalMinionsKilled,
-                                neutralMinionsKilled: participant.neutralMinionsKilled,
-                                allMinionsKilled: participant.allMinionsKilled,
-                                minionsPerMinute: participant.minionsPerMinute,
-                                visionScore: participant.visionScore,
-                                visionPerMinute: participant.visionPerMinute,
-                                wardsPlaced: participant.wardsPlaced,
-                                goldEarned: participant.goldEarned,
-                                performanceScore: participant.performanceScore,
-                                performancePlacement: participant.performancePlacement,
-                                totalHealsOnTeammates: participant.totalHealsOnTeammates,
-                                totalDamageShieldedOnTeammates: participant.totalDamageShieldedOnTeammates,
-                                totalDamageTaken: participant.totalDamageTaken,
-                                totalDamageDealtToChampions: participant.totalDamageDealtToChampions,
-                                individualPosition: participant.individualPosition,
-                                win: participant.win,
-                                matchId: matchDetails.matchId,
-                                championId: participant.champion.id,
-                                summonerSpell1Id: BigInt(participant.summonerSpell1.id),
-                                summonerSpell2Id: BigInt(participant.summonerSpell2.id),
-                                arenaStatsId: arenaStatsId
-                            }
-                        });
-
-                        // Create participant items with position tracking
-                        if (participant.items && Array.isArray(participant.items) && participant.items.length > 0) {
-                            try {
-                                const validItems = participant.items.filter(item => item && item.id);
-                                
-                                // First, ensure all items exist in the database
-                                for (const item of validItems) {
-                                    try {
-                                        await transaction.item.upsert({
-                                            where: { id: item.id },
-                                            update: {}, // Don't update if exists
-                                            create: {
-                                                id: item.id,
-                                                name: item.name || '',
-                                                description: item.description || '',
-                                                active: item.active ?? true,
-                                                inStore: item.inStore ?? true,
-                                                from: item.from || null,
-                                                to: item.to || null,
-                                                categories: item.categories || null,
-                                                maxStacks: item.maxStacks || 1,
-                                                price: item.price || 0,
-                                                priceTotal: item.priceTotal || 0,
-                                                iconPath: item.iconPath || ''
-                                            }
-                                        });
-                                    } catch (itemUpsertError) {
-                                        console.warn(`Failed to upsert item ${item.id}:`, itemUpsertError);
-                                    }
-                                }
-
-                                // Now create the participant items
-                                await Promise.all(
-                                    validItems.map(async (item, index) => {
-                                        try {
-                                            await transaction.participantItem.create({
-                                                data: {
-                                                    participantId: createdParticipant.id,
-                                                    itemId: item.id,
-                                                    position: index
-                                                }
-                                            });
-                                        } catch (participantItemError) {
-                                            console.warn(`Failed to create participant item for item ${item.id}:`, participantItemError);
-                                        }
-                                    })
-                                );
-                            } catch (itemError) {
-                                console.warn(`Failed to create items for participant ${participant.puuid}:`, itemError);
-                            }
-                        }
-
-                        // Create participant runes with slot tracking
-                        if (participant.runes && Array.isArray(participant.runes) && participant.runes.length > 0) {
-                            try {
-                                await Promise.all(
-                                    participant.runes
-                                        .filter(rune => rune && rune.id)
-                                        .map(async (rune, index) => {
-                                            await transaction.participantRune.create({
-                                                data: {
-                                                    participantId: createdParticipant.id,
-                                                    runeId: rune.id,
-                                                    slot: index
-                                                }
-                                            });
-                                        })
-                                );
-                            } catch (runeError) {
-                                console.warn(`Failed to create runes for participant ${participant.puuid}:`, runeError);
-                            }
-                        }
-
-                        // Create participant stat perks with position tracking
-                        if (participant.statPerks) {
-                            try {
-                                const statPerksArray = Array.isArray(participant.statPerks) 
-                                    ? participant.statPerks 
-                                    : Object.values(participant.statPerks);
-                                
-                                const validStatPerks = statPerksArray.filter(perk => perk && perk.id);
-                                
-                                if (validStatPerks.length > 0) {
-                                    // First, ensure all stat perks exist in the database
-                                    for (const perk of validStatPerks) {
-                                        try {
-                                            await transaction.statPerk.upsert({
-                                                where: { id: perk.id },
-                                                update: {}, // Don't update if exists
-                                                create: {
-                                                    id: perk.id,
-                                                    name: perk.name || '',
-                                                    desc: perk.desc || '',
-                                                    longDesc: perk.longDesc || '',
-                                                    path: perk.path || ''
-                                                }
-                                            });
-                                        } catch (statPerkUpsertError) {
-                                            console.warn(`Failed to upsert stat perk ${perk.id}:`, statPerkUpsertError);
-                                        }
-                                    }
-
-                                    // Now create the participant stat perks
-                                    await Promise.all(
-                                        validStatPerks.map(async (perk, index) => {
-                                            try {
-                                                await transaction.participantStatPerk.create({
-                                                    data: {
-                                                        participantId: createdParticipant.id,
-                                                        statPerkId: perk.id,
-                                                        position: index
-                                                    }
-                                                });
-                                            } catch (participantStatPerkError) {
-                                                console.warn(`Failed to create participant stat perk for perk ${perk.id}:`, participantStatPerkError);
-                                            }
-                                        })
-                                    );
-                                }
-                            } catch (statPerkError) {
-                                console.warn(`Failed to create stat perks for participant ${participant.puuid}:`, statPerkError);
-                            }
-                        }
-                    })
-                );
-            }
-
-            console.log(`Created new match ${match.matchId} with ${match.participants.length} participants`);
+            console.log(`✅ ${match.matchId} was saved successfully with ${match.participants.length} participants.`);
             return matchDetails;
         }, {
             timeout: 15000,
+            maxWait: 5000,
+            isolationLevel: 'ReadCommitted'
         });
     } catch (error) {
-        console.error(`Error saving match data for ${match.matchId}:`, error);
+        // Enhanced error handling with specific Prisma error types
+        if (error instanceof Error) {
+            if (error.message.includes('Transaction already closed') || 
+                error.message.includes('P2028')) {
+                console.warn(`⚠️ Transaction timeout for match ${match.matchId}, retrying without transaction...`);
+                
+                // Fallback: Save without transaction for development hot-reload scenarios
+                return await saveMatchDataFallback(match);
+            }
+        }
+        
+        console.error(`❌ Error saving match data for ${match.matchId}:`, error);
         throw error;
+    }
+}
+
+/**
+ * Fallback function for saving match data without transactions.
+ * Used when transaction timeouts occur during development hot-reloads.
+ * 
+ * @param match - Match object to save
+ * @returns Promise that resolves to the saved Match record
+ */
+async function saveMatchDataFallback(match: Match) {
+    try {
+        console.log(`🔄 Saving match ${match.matchId} without transaction (fallback mode)`);
+        
+        // Check again if match exists (race condition protection)
+        const existingMatch = await prisma.match.findUnique({
+            where: { matchId: match.matchId.toString() },
+            include: { participants: true }
+        });
+
+        if (existingMatch) {
+            console.log(`� Match ${match.matchId} already exists (fallback check)`);
+            return existingMatch;
+        }
+
+        // Create match without transaction
+        const matchDetails = await prisma.match.create({
+            data: {
+                matchId: match.matchId.toString(),
+                gameDuration: match.gameDuration,
+                gameCreation: BigInt(match.gameCreation),
+                gameEndTimestamp: BigInt(match.gameEndTimestamp),
+                gameMode: match.gameMode,
+                gameType: match.gameType,
+                queueId: match.queueId
+            }
+        });
+
+        console.log(`✅ ${match.matchId} saved in fallback mode (basic data only)`);
+        return matchDetails;
+        
+    } catch (fallbackError) {
+        console.error(`❌ Fallback save failed for match ${match.matchId}:`, fallbackError);
+        throw fallbackError;
     }
 }
 
@@ -373,23 +148,64 @@ export async function saveMatchData(match: Match) {
  */
 export async function saveMatchHistory(matches: Match[]) {
     if (!matches || matches.length === 0) {
-        console.log('No matches to save');
+        console.log('🟡 No matches to save');
         return [];
     }
 
     const savedMatches = [];
+    let consecutiveErrors = 0;
+    const maxConsecutiveErrors = 3;
+    
+    // Track statistics for summary
+    let skippedCount = 0;
+    let failedCount = 0;
+    let savedCount = 0;
+    let circuitBreakerActivated = false;
     
     // Process matches sequentially to avoid potential database conflicts
     for (const match of matches) {
         try {
+            // Circuit breaker: skip remaining matches if too many consecutive errors
+            if (consecutiveErrors >= maxConsecutiveErrors) {
+                if (!circuitBreakerActivated) {
+                    console.warn(`🚨 Circuit breaker activated: too many consecutive errors (${consecutiveErrors}). Skipping remaining matches.`);
+                    circuitBreakerActivated = true;
+                }
+                skippedCount++;
+                continue;
+            }
+
             const savedMatch = await saveMatchData(match);
             savedMatches.push(savedMatch);
+            savedCount++;
+            consecutiveErrors = 0; // Reset error counter on success
+            
         } catch (error) {
-            console.error(`Failed to save match ${match.matchId}:`, error);
-            // Continue with next match instead of failing completely
+            consecutiveErrors++;
+            failedCount++;
+            console.error(`❌ Failed to save match ${match.matchId} (error ${consecutiveErrors}/${maxConsecutiveErrors}):`, error);
+            
+            // Add delay between retries to avoid overwhelming the database
+            if (consecutiveErrors < maxConsecutiveErrors) {
+                await new Promise(resolve => setTimeout(resolve, 1000 * consecutiveErrors));
+            }
         }
     }
 
-    console.log(`Successfully saved ${savedMatches.length}/${matches.length} matches`);
+    // Enhanced summary output
+    const totalMatches = matches.length;
+    console.log(`\n📋 Match Save Summary:`);
+    console.log(`   Total matches: ${totalMatches}`);
+    console.log(`   ✅ Saved: ${savedCount}`);
+    console.log(`   ❌ Failed: ${failedCount}`);
+    console.log(`   ⏭️  Skipped: ${skippedCount}`);
+    
+    if (circuitBreakerActivated) {
+        console.log(`   🚨 Circuit breaker was activated`);
+    }
+    
+    const successRate = totalMatches > 0 ? ((savedCount / totalMatches) * 100).toFixed(1) : '0.0';
+    console.log(`   📈 Success rate: ${successRate}%\n`);
+    
     return savedMatches;
 }

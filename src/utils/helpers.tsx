@@ -1,4 +1,4 @@
-import { ArenaStats, Augment, Item, Participant, Match, Rune } from "@/interfaces/productionTypes";
+import { ArenaStats, Augment, Item, Participant, Match, Rune, LeagueRank } from "@/interfaces/productionTypes";
 import { RawParticipant } from "@/interfaces/rawTypes";
 import { getAugmentById, getItemById, getRuneById } from "./getLeagueAssets/getLOLObject";
 
@@ -292,4 +292,20 @@ export async function fetchParticipantRunes(participant: RawParticipant): Promis
     const runePromises = runeIds.map(runeId => getRuneById(runeId));
     const runeObjects = await Promise.all(runePromises);
     return runeObjects.filter((rune): rune is Rune => rune !== null);
+}
+
+/**
+ * Finds a LeagueRank by queueType or returns a default unranked LeagueRank.
+ */
+export function getOrDefaultLeagueRank(leagueRanks: LeagueRank[], queueType: string): LeagueRank {
+    return leagueRanks.find(r => r.queueType === queueType) ?? {
+        queueType,
+        tier: "UNRANKED",
+        rank: "",
+        leaguePoints: 0,
+        wins: 0,
+        losses: 0,
+        winRate: 0,
+        hotStreak: false
+    };
 }

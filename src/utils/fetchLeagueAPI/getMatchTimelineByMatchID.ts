@@ -2,11 +2,11 @@ import { RawTimelineData, RawTimelineEvent } from '@/interfaces/rawTypes';
 import { fetchFromRiotAPI } from './fetchFromRiotAPI';
 import { ParticipantTimelineData } from '@/interfaces/proudctionTimeLapTypes';
 import { Item } from '@/interfaces/productionTypes';
-import { getItemById } from '../../getLeagueAssets/getLOLObject';
+import { getItemById } from '../getLeagueAssets/getLOLObject';
 
-export default async function getMatchTimelineByMatchID(matchID: string, region: string): Promise<ParticipantTimelineData[]> {
+export default async function getMatchTimelineByMatchID(matchID: string, activeRegion: string): Promise<ParticipantTimelineData[]> {
     const response: Response = await fetchFromRiotAPI(
-        `https://${region}.api.riotgames.com/lol/match/v5/matches/${matchID}/timeline`
+        `https://${activeRegion}.api.riotgames.com/lol/match/v5/matches/${matchID}/timeline`
     );
     
     const timelineData: RawTimelineData = await response.json();
