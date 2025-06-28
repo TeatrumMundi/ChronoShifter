@@ -1,7 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { RiotAccountDetails, LeagueAccountDetails, LeagueRank } from "@/interfaces/productionTypes";
 
-const prisma = new PrismaClient();
+// Singleton pattern for Prisma client to avoid connection pool issues during development
+const globalForPrisma = globalThis as unknown as {
+    prisma: PrismaClient | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 /**
  * Retrieves complete League account data from the database by gameName and tagLine.

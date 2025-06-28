@@ -56,7 +56,6 @@ export async function MatchHistoryWrapper({ puuid, region, activeRegion }: Match
     if (validMatches.length > 0) {
         try {
             await saveMatchHistory(validMatches);
-            console.log(`Successfully saved ${validMatches.length} matches to database`);
         } catch (error) {
             console.error('Failed to save match history to database:', error);
         }

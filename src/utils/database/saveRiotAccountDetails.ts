@@ -1,7 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { RiotAccountDetails } from "@/interfaces/productionTypes";
 
-const prisma = new PrismaClient();
+// Singleton pattern for Prisma client to avoid connection pool issues during development
+const globalForPrisma = globalThis as unknown as {
+    prisma: PrismaClient | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 /**
  * Saves RiotAccountDetails to DB if not present and creates corresponding RiotAccount.

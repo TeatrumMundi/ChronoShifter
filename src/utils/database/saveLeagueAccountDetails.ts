@@ -1,7 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { LeagueAccountDetails, LeagueRank } from "@/interfaces/productionTypes";
 
-const prisma = new PrismaClient();
+// Singleton pattern for Prisma client to avoid connection pool issues during development
+const globalForPrisma = globalThis as unknown as {
+    prisma: PrismaClient | undefined
+}
+
+const prisma = globalForPrisma.prisma ?? new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+})
+
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
 /**
  * Saves LeagueAccountDetails to the database if not already present and creates corresponding LeagueAccount.
