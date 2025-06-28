@@ -15,7 +15,7 @@ interface MatchHistoryWrapperProps {
 
 export async function MatchHistoryWrapper({ puuid, region, activeRegion }: MatchHistoryWrapperProps) {
     // Fetch recent match IDs
-    const recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, activeRegion, 0, 5);
+    const recentMatchesIDs = await getRecentMatchesIDsByPuuid(puuid, region, 0, 5);
 
     // Fetch complete match data for each recent match ID
     const recentMatches = await Promise.all(
@@ -23,8 +23,8 @@ export async function MatchHistoryWrapper({ puuid, region, activeRegion }: Match
             try {
                 // Fetch match details and timeline data in parallel
                 const [matchDetails, timelineData] = await Promise.all([
-                    getMatchDetailsByMatchID(matchId, activeRegion, region),
-                    getMatchTimelineByMatchID(matchId, activeRegion)
+                    getMatchDetailsByMatchID(matchId, region, activeRegion),
+                    getMatchTimelineByMatchID(matchId, region)
                 ]);
                 
                 if (!matchDetails) {
@@ -65,7 +65,6 @@ export async function MatchHistoryWrapper({ puuid, region, activeRegion }: Match
     return (
         <MatchHistory 
             puuid={puuid}
-            region={region}
             recentMatches={validMatches}
         />
     );

@@ -41,11 +41,10 @@ const DEFAULT_TAB: TabId = 'game';
 interface MatchDetailsProps {
     match: Match;
     mainPlayerPUUID: string;
-    region: string;
     gameMode: string;
 }
 
-export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, region, gameMode }: MatchDetailsProps) {
+export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID, gameMode }: MatchDetailsProps) {
     const [activeTab, setActiveTab] = useState<TabId>(DEFAULT_TAB);
 
     // Filter tabs based on game mode
@@ -97,7 +96,6 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         <MatchArenaGameTab
                             participants={match.participants}
                             mainPlayerPUUID={mainPlayerPUUID}
-                            region={region}
                         />
                     );
                 }
@@ -106,7 +104,6 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         team1={team1}
                         team2={team2}
                         mainPlayerPUUID={mainPlayerPUUID}
-                        region={region}
                         time={match.gameDuration}
                     />
                 );
@@ -116,7 +113,6 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
                         team1={team1}
                         team2={team2}
                         mainPlayerPUUID={mainPlayerPUUID}
-                        region={region}
                     />
                 );
             case 'build':
@@ -142,7 +138,7 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             default:
                 return null;
         }
-    }, [activeTab, gameMode, team1, team2, mainPlayerPUUID, region, match, mainPlayer]);
+    }, [activeTab, gameMode, team1, team2, mainPlayerPUUID, match, mainPlayer]);
 
     return (
         <motion.div 

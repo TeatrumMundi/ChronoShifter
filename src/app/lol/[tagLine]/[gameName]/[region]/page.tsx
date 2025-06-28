@@ -16,19 +16,19 @@ import {
     getRankedLeagueEntries
 } from "@/utils/fetchLeagueAPI";
 
-export default async function Home({params}: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
+export default async function Home({params}: { params: Promise<{ tagLine: string; gameName: string; region: string }>}) 
 {
-    // Destructure params to get tagLine, gameName, and activeRegion (Europe, Asia, Americas)
-    const { tagLine, gameName, activeRegion } = await params;
+    // Destructure params to get tagLine, gameName, and region (Europe, Asia, Americas)
+    const { tagLine, gameName, region } = await params;
 
     // First, get riot account details (required for subsequent calls)
-    const riotAccountDetails : RiotAccountDetails = await getAccountByRiotID(tagLine, gameName, activeRegion);
-    const region = await getActiveRegionByPuuid(riotAccountDetails.puuid, activeRegion);
+    const riotAccountDetails : RiotAccountDetails = await getAccountByRiotID(tagLine, gameName, region);
+    const activeRegion = await getActiveRegionByPuuid(riotAccountDetails.puuid, region);
     
-    // Run region detection and account details fetch in parallel since they both only need puuid and activeRegion
+    // Run region detection and account details fetch in parallel since they both only need puuid and region
     const [leagueAccountsDetails, leagueRanks] = await Promise.all([
-        getSummonerByPuuid(riotAccountDetails.puuid, activeRegion, region),
-        getRankedLeagueEntries(riotAccountDetails.puuid, region)
+        getSummonerByPuuid(riotAccountDetails.puuid, region, activeRegion),
+        getRankedLeagueEntries(riotAccountDetails.puuid, activeRegion)
     ]);
 
     // Extract or create default ranks and save data in parallel
@@ -79,12 +79,12 @@ export default async function Home({params}: { params: Promise<{ tagLine: string
     );
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
+export async function generateMetadata({ params }: { params: Promise<{ tagLine: string; gameName: string; region: string }>}) 
 {
-    const { tagLine, gameName, activeRegion } = await params;
+    const { tagLine, gameName, region } = await params;
 
     return {
-      title: `ChronoShifter - ${gameName}#${tagLine.toUpperCase()} - ${activeRegion}`,
-      description: `Riot account data for ${gameName}#${tagLine} in ${activeRegion}`,
+      title: `ChronoShifter - ${gameName}#${tagLine.toUpperCase()} - ${region}`,
+      description: `Riot account data for ${gameName}#${tagLine} in ${region}`,
     };
 }

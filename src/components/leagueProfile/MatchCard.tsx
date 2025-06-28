@@ -18,7 +18,6 @@ import { AnimatePresence } from "framer-motion";
 interface MatchCardProps {
     participant: Participant;
     match: Match;
-    region: string;
 }
 
 const getGameModeFromQueueId = (queueId: number): string => {
@@ -26,7 +25,7 @@ const getGameModeFromQueueId = (queueId: number): string => {
     return queue?.shortName || "Unknown";
 };
 
-export function MatchCard({ participant, match, region: region }: MatchCardProps) {
+export function MatchCard({ participant, match }: MatchCardProps) {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
     const gameMode: string = getGameModeFromQueueId(match.queueId);
@@ -191,7 +190,6 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                         <ParticipantList
                                             participants={match.participants}
                                             gameMode={gameMode}
-                                            region={region}
                                         />
                                     </div>
                                 </div>
@@ -227,7 +225,6 @@ export function MatchCard({ participant, match, region: region }: MatchCardProps
                                 key="match-details"
                                 match={match}
                                 mainPlayerPUUID={participant.puuid}
-                                region={region}
                                 gameMode={gameMode}
                             />
                         )}

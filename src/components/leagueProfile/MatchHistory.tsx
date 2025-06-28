@@ -8,11 +8,10 @@ import { useState } from "react";
 
 interface MatchHistoryProps {
     puuid: string;
-    region: string;
     recentMatches: Match[];
 }
 
-export function MatchHistory({ puuid, region, recentMatches }: MatchHistoryProps) {
+export function MatchHistory({ puuid, recentMatches }: MatchHistoryProps) {
     const [selectedGameMode, setSelectedGameMode] = useState("All Matches");
     const [selectedPosition, setSelectedPosition] = useState<string>("ALL");
     const [searchQuery, setSearchQuery] = useState("");
@@ -101,7 +100,6 @@ export function MatchHistory({ puuid, region, recentMatches }: MatchHistoryProps
                                 key={match.matchId}
                                 match={match}
                                 participant={participant}
-                                region={region}
                             />
                         );
                     })

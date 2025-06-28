@@ -17,26 +17,14 @@ const TEAM_COLORS: string[] = [
 /**
  * Renders a participant list based on the current game mode.
  */
-export function ParticipantList({participants, gameMode, region,}: {
+export function ParticipantList({participants, gameMode}: {
     participants: Participant[];
     gameMode: string;
-    region: string;
 }) {
      if (gameMode === "Arena") {
-        return (
-            <ArenaParticipantList
-                participants={participants}
-                region={region}
-            />
-        );
+        return ( <ArenaParticipantList participants={participants} /> );
     }
-
-    return (
-        <StandardParticipantList
-            participants={participants}
-            region={region}
-        />
-    );
+    return ( <StandardParticipantList participants={participants} /> );
 }
 
 /**
@@ -44,7 +32,7 @@ export function ParticipantList({participants, gameMode, region,}: {
  * - Left column: one team
  * - Right column: opposing team
  */
-function StandardParticipantList({participants, region,}: { participants: Participant[]; region: string; }) {
+function StandardParticipantList({participants}: { participants: Participant[] }) {
     const teams = useMemo(() => {
         const team100: Participant[] = [];
         const team200: Participant[] = [];
@@ -85,7 +73,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                                             className="rounded-xl flex-shrink-0"
                                         />
                                         <Link
-                                            href={`lol/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${region}`}
+                                            href={`/lol/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${leftPlayer.region}`}
                                             className="text-white/90 hover:text-blue-200 transition-colors 
                                                 whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 ml-1
                                                 font-medium text-xs"
@@ -106,7 +94,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                                 {rightPlayer && (
                                     <>
                                         <Link
-                                            href={`lol/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${region}`}
+                                            href={`/lol/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${rightPlayer.region}`}
                                             className="text-white/90 hover:text-red-200 transition-colors 
                                                 whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 mr-1 text-right
                                                 font-medium text-xs"
@@ -131,10 +119,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
     );
 }
 
-function ArenaParticipantList({ participants, region }: {
-    participants: Participant[];
-    region: string;
-}) {
+function ArenaParticipantList({ participants }: { participants: Participant[] }) {
     const teams = useMemo(() => {
         const teamGroups: { [key: number]: Participant[] } = {};
 
@@ -176,7 +161,7 @@ function ArenaParticipantList({ participants, region }: {
                         <ChampionIcon champion={player.champion} size={12} className="rounded-xl" />
                     </div>
                     <Link
-                        href={`lol/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
+                        href={`/lol/${player.riotIdTagline}/${player.riotIdGameName}/${player.region}`}
                         className="text-xs truncate text-white/90 hover:text-white 
                             transition-colors font-medium min-w-0 flex-1 ml-1"
                         title={`${player.riotIdGameName}#${player.riotIdTagline}`}

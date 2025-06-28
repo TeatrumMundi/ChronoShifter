@@ -51,7 +51,7 @@ export function SearchForm({ position = "centered", className }: SearchFormProps
     }, [recentPlayers]);
 
     const navigateToProfile = useCallback((name: string, tag: string, region: string) => {
-        const url = `lol/${tag.toLowerCase()}/${name.toLowerCase()}/${region.toLowerCase()}`;
+        const url = `/lol/${tag.toLowerCase()}/${name.toLowerCase()}/${region.toLowerCase()}`;
         router.push(url);
     }, [router]);
 

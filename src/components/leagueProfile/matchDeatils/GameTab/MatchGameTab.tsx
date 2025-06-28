@@ -11,14 +11,12 @@ interface MatchGameTabProps {
     team1: Participant[];
     team2: Participant[];
     mainPlayerPUUID: string;
-    region: string;
     time: number;
 }
 
 interface ParticipantRowProps {
     participant: Participant;
     isMain: boolean;
-    region: string;
     time: number;
 }
 
@@ -82,13 +80,7 @@ const getPlacementBoxStyle = (placement: number): string => {
 };
 
 // Memoized participant info component
-const ParticipantInfo = memo(function ParticipantInfo({ 
-    participant, 
-    region 
-}: { 
-    participant: Participant; 
-    region: string; 
-}) {
+const ParticipantInfo = memo(function ParticipantInfo({ participant }: { participant: Participant; }) {
     const handleLinkClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
     }, []);
@@ -114,7 +106,7 @@ const ParticipantInfo = memo(function ParticipantInfo({
                 secendaryRuneIconSize={12}
             />
             <Link
-                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
+                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${participant.region}`}
                 className="text-white/90 hover:text-blue-300 transition-colors duration-200 whitespace-nowrap overflow-hidden text-ellipsis font-medium"
                 title={`${participant.riotIdGameName}#${participant.riotIdTagline}`}
                 aria-label={`View profile for ${participant.riotIdGameName}`}
@@ -144,7 +136,7 @@ const ScoreDisplay = memo(function ScoreDisplay({
     );
 });
 
-const ParticipantRow = memo(function ParticipantRow({ participant, isMain, region }: ParticipantRowProps) {
+const ParticipantRow = memo(function ParticipantRow({ participant, isMain }: ParticipantRowProps) {
     const rowClasses = useMemo(() => {
         const baseClasses = "transition-all duration-200 border border-white/10";
         const backgroundClasses = isMain 
@@ -163,7 +155,7 @@ const ParticipantRow = memo(function ParticipantRow({ participant, isMain, regio
     return (
         <tr className={rowClasses}>
             <td className="px-4 py-1">
-                <ParticipantInfo participant={participant} region={region} />
+                <ParticipantInfo participant={participant} />
             </td>
             <td className="px-4 py-1 text-center">
                 <ScoreDisplay participant={participant} />
@@ -216,7 +208,6 @@ export const MatchGameTab = memo(function MatchGameTab({
     team1, 
     team2, 
     mainPlayerPUUID, 
-    region, 
     time 
 }: MatchGameTabProps) {
     // Memoize team data to prevent unnecessary re-renders
@@ -256,7 +247,6 @@ export const MatchGameTab = memo(function MatchGameTab({
                                 key={participant.puuid}
                                 participant={participant}
                                 isMain={participant.puuid === mainPlayerPUUID}
-                                region={region}
                                 time={time}
                             />
                         ))}
@@ -266,7 +256,6 @@ export const MatchGameTab = memo(function MatchGameTab({
                                 key={participant.puuid}
                                 participant={participant}
                                 isMain={participant.puuid === mainPlayerPUUID}
-                                region={region}
                                 time={time}
                             />
                         ))}

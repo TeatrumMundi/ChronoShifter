@@ -11,23 +11,15 @@ import Link from "next/link";
 interface MatchArenaGameTabProps {
     participants: Participant[];
     mainPlayerPUUID: string;
-    region: string;
 }
 
 interface ArenaParticipantRowProps {
     participant: Participant;
     isMain: boolean;
-    region: string;
 }
 
 // Memoized participant info component for Arena
-const ArenaParticipantInfo = memo(function ArenaParticipantInfo({ 
-    participant, 
-    region 
-}: { 
-    participant: Participant; 
-    region: string; 
-}) {
+const ArenaParticipantInfo = memo(function ArenaParticipantInfo({ participant }: { participant: Participant }) {
     const handleLinkClick = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
     }, []);
@@ -53,7 +45,7 @@ const ArenaParticipantInfo = memo(function ArenaParticipantInfo({
                 secendaryRuneIconSize={12}
             />
             <Link
-                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${region}`}
+                href={`/${participant.riotIdTagline}/${participant.riotIdGameName}/${participant.region}`}
                 className="text-white/90 hover:text-blue-300 transition-colors duration-200 whitespace-nowrap overflow-hidden text-ellipsis font-medium"
                 title={`${participant.riotIdGameName}#${participant.riotIdTagline}`}
                 aria-label={`View profile for ${participant.riotIdGameName}`}
@@ -65,7 +57,7 @@ const ArenaParticipantInfo = memo(function ArenaParticipantInfo({
     );
 });
 
-const ArenaParticipantRow = memo(function ArenaParticipantRow({ participant, isMain, region }: ArenaParticipantRowProps) {
+const ArenaParticipantRow = memo(function ArenaParticipantRow({ participant, isMain }: ArenaParticipantRowProps) {
     const placement = participant.arenaStats?.placement || 0;
     
     const rowClasses = useMemo(() => {
@@ -100,7 +92,7 @@ const ArenaParticipantRow = memo(function ArenaParticipantRow({ participant, isM
     return (
         <tr className={rowClasses}>
             <td className="px-4 py-1">
-                <ArenaParticipantInfo participant={participant} region={region} />
+                <ArenaParticipantInfo participant={participant} />
             </td>
             <td className={`px-4 py-1 text-center ${cellTextClasses}`}>
                 {participant.kills}/{participant.deaths}/{participant.assists} ({participant.kda})
@@ -179,11 +171,7 @@ const ArenaTeamHeader = memo(function ArenaTeamHeader({
     );
 });
 
-export const MatchArenaGameTab = memo(function MatchArenaGameTab({ 
-    participants, 
-    mainPlayerPUUID, 
-    region 
-}: MatchArenaGameTabProps) {
+export const MatchArenaGameTab = memo(function MatchArenaGameTab({ participants, mainPlayerPUUID }: MatchArenaGameTabProps) {
     // Group participants by arena teams
     const arenaTeams = useMemo(() => {
         const teams: Record<number, Participant[]> = {};
@@ -247,7 +235,6 @@ export const MatchArenaGameTab = memo(function MatchArenaGameTab({
                                         key={participant.puuid}
                                         participant={participant}
                                         isMain={participant.puuid === mainPlayerPUUID}
-                                        region={region}
                                     />
                                 ))}
                             </React.Fragment>
