@@ -41,7 +41,7 @@ export async function saveMatchData(match: Match) {
             });
 
             if (existingMatch) {
-                console.log(`Match ${match.matchId} already exists in database`);
+                console.log(`🟡 Match ${match.matchId} already exists in database. Skipping...`);
                 return existingMatch;
             }
 
@@ -68,7 +68,7 @@ export async function saveMatchData(match: Match) {
                         }
                     });
                 } catch (timelineError) {
-                    console.warn(`Failed to create timeline data for match ${match.matchId}:`, timelineError);
+                    console.warn(`❌ Failed to create timeline data for match ${match.matchId}:`, timelineError);
                 }
             }
 
@@ -151,7 +151,7 @@ export async function saveMatchData(match: Match) {
                                                 }
                                             });
                                         } catch (augmentUpsertError) {
-                                            console.warn(`Failed to upsert augment ${augment.id}:`, augmentUpsertError);
+                                            console.warn(`❌ Failed to upsert augment ${augment.id}:`, augmentUpsertError);
                                         }
                                     }
 
@@ -167,13 +167,13 @@ export async function saveMatchData(match: Match) {
                                                     }
                                                 });
                                             } catch (arenaStatsAugmentError) {
-                                                console.warn(`Failed to create arena stats augment for augment ${augment.id}:`, arenaStatsAugmentError);
+                                                console.warn(`❌ Failed to create arena stats augment for augment ${augment.id}:`, arenaStatsAugmentError);
                                             }
                                         })
                                     );
                                 }
                             } catch (arenaError) {
-                                console.warn(`Failed to create arena stats for participant ${participant.puuid}:`, arenaError);
+                                console.warn(`❌ Failed to create arena stats for participant ${participant.puuid}:`, arenaError);
                                 arenaStatsId = null;
                             }
                         }
@@ -246,7 +246,7 @@ export async function saveMatchData(match: Match) {
                                             }
                                         });
                                     } catch (itemUpsertError) {
-                                        console.warn(`Failed to upsert item ${item.id}:`, itemUpsertError);
+                                        console.warn(`❌Failed to upsert item ${item.id}:`, itemUpsertError);
                                     }
                                 }
 
@@ -262,12 +262,12 @@ export async function saveMatchData(match: Match) {
                                                 }
                                             });
                                         } catch (participantItemError) {
-                                            console.warn(`Failed to create participant item for item ${item.id}:`, participantItemError);
+                                            console.warn(`❌ Failed to create participant item for item ${item.id}:`, participantItemError);
                                         }
                                     })
                                 );
                             } catch (itemError) {
-                                console.warn(`Failed to create items for participant ${participant.puuid}:`, itemError);
+                                console.warn(`❌ Failed to create items for participant ${participant.puuid}:`, itemError);
                             }
                         }
 
@@ -288,7 +288,7 @@ export async function saveMatchData(match: Match) {
                                         })
                                 );
                             } catch (runeError) {
-                                console.warn(`Failed to create runes for participant ${participant.puuid}:`, runeError);
+                                console.warn(`❌ Failed to create runes for participant ${participant.puuid}:`, runeError);
                             }
                         }
 
@@ -317,7 +317,7 @@ export async function saveMatchData(match: Match) {
                                                 }
                                             });
                                         } catch (statPerkUpsertError) {
-                                            console.warn(`Failed to upsert stat perk ${perk.id}:`, statPerkUpsertError);
+                                            console.warn(`❌ Failed to upsert stat perk ${perk.id}:`, statPerkUpsertError);
                                         }
                                     }
 
@@ -333,26 +333,26 @@ export async function saveMatchData(match: Match) {
                                                     }
                                                 });
                                             } catch (participantStatPerkError) {
-                                                console.warn(`Failed to create participant stat perk for perk ${perk.id}:`, participantStatPerkError);
+                                                console.warn(`❌ Failed to create participant stat perk for perk ${perk.id}:`, participantStatPerkError);
                                             }
                                         })
                                     );
                                 }
                             } catch (statPerkError) {
-                                console.warn(`Failed to create stat perks for participant ${participant.puuid}:`, statPerkError);
+                                console.warn(`❌ Failed to create stat perks for participant ${participant.puuid}:`, statPerkError);
                             }
                         }
                     })
                 );
             }
 
-            console.log(`Created new match ${match.matchId} with ${match.participants.length} participants`);
+            console.log(`✅ ${match.matchId} was saved successfully with ${match.participants.length} participants.`);
             return matchDetails;
         }, {
             timeout: 15000,
         });
     } catch (error) {
-        console.error(`Error saving match data for ${match.matchId}:`, error);
+        console.error(`❌ Error saving match data for ${match.matchId}:`, error);
         throw error;
     }
 }
@@ -373,7 +373,7 @@ export async function saveMatchData(match: Match) {
  */
 export async function saveMatchHistory(matches: Match[]) {
     if (!matches || matches.length === 0) {
-        console.log('No matches to save');
+        console.log('🟡 No matches to save');
         return [];
     }
 
@@ -385,11 +385,11 @@ export async function saveMatchHistory(matches: Match[]) {
             const savedMatch = await saveMatchData(match);
             savedMatches.push(savedMatch);
         } catch (error) {
-            console.error(`Failed to save match ${match.matchId}:`, error);
+            console.error(`❌ Failed to save match ${match.matchId}:`, error);
             // Continue with next match instead of failing completely
         }
     }
 
-    console.log(`Successfully saved ${savedMatches.length}/${matches.length} matches`);
+    console.log(`✅ Successfully saved ${savedMatches.length}/${matches.length} matches`);
     return savedMatches;
 }
