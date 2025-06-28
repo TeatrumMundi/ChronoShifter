@@ -1,6 +1,8 @@
 import { useState, useMemo, memo, lazy, Suspense, useCallback, startTransition } from "react";
 import { Match } from "@/interfaces/productionTypes";
 import { motion } from "framer-motion";
+import { LoadingSpinner } from "@/components/common";
+
 
 // Lazy load all heavy components with preload
 const MatchGameTab = lazy(() => import("./GameTab/MatchGameTab").then(m => ({ default: m.MatchGameTab })));
@@ -77,16 +79,6 @@ export const MatchDetails = memo(function MatchDetails({ match, mainPlayerPUUID,
             isWin: mainPlayer?.win || false
         };
     }, [match, mainPlayerPUUID]);
-
-    // Lightweight loading component
-    const LoadingSpinner = memo(() => (
-        <div className="flex items-center justify-center p-4 min-h-[120px]">
-            <div className="relative">
-                <div className="w-6 h-6 border-2 border-white/20 border-t-white/60 rounded-full animate-spin"></div>
-            </div>
-        </div>
-    ));
-    LoadingSpinner.displayName = "LoadingSpinner";
 
     // Optimized tab content renderer with React.startTransition
     const handleTabChange = useCallback((tab: TabId) => {

@@ -4,6 +4,7 @@ export * from './Footer';
 export * from './Navbar';
 export * from './SearchForm';
 export * from './Tooltip';
+export * from './LoadingSpinner';
 
 // Icon components
 export * from './Icons/ChampionIcon';

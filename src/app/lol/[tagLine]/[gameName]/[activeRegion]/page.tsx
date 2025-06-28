@@ -1,22 +1,20 @@
 "use server";
 
 import { saveLeagueAccountDetails } from "@/utils/database/saveLeagueAccountDetails";
-import { LeagueRank, Match, RiotAccountDetails } from "@/interfaces/productionTypes";
+import { LeagueRank, RiotAccountDetails } from "@/interfaces/productionTypes";
 import PlayerInfo from "@/components/leagueProfile/PlayerBanner/PlayerInfo";
-import { MatchHistory } from "@/components/leagueProfile/MatchHistory";
+import { MatchHistoryWrapper } from "@/components/leagueProfile/MatchHistoryWrapper";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import RankDisplay from "@/components/leagueProfile/RankDisplay";
 import { getOrDefaultLeagueRank } from "@/utils/helpers";
 import Navbar from "@/components/common/Navbar";
+import { Suspense } from "react";
 import {
     getAccountByRiotID,
     getActiveRegionByPuuid,
     getSummonerByPuuid,
-    getRankedLeagueEntries,
-    getRecentMatchesIDsByPuuid,
-    getMatchDetailsByMatchID,
-    getMatchTimelineByMatchID
+    getRankedLeagueEntries
 } from "@/utils/fetchLeagueAPI";
-import { saveMatchHistory } from "@/utils/database/saveMatchData";
 
 export default async function Home({params}: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
 {
@@ -28,55 +26,10 @@ export default async function Home({params}: { params: Promise<{ tagLine: string
     const region = await getActiveRegionByPuuid(riotAccountDetails.puuid, activeRegion);
     
     // Run region detection and account details fetch in parallel since they both only need puuid and activeRegion
-    const [leagueAccountsDetails, leagueRanks, recentMatchesIDs] = await Promise.all([
+    const [leagueAccountsDetails, leagueRanks] = await Promise.all([
         getSummonerByPuuid(riotAccountDetails.puuid, activeRegion, region),
-        getRankedLeagueEntries(riotAccountDetails.puuid, region),
-        getRecentMatchesIDsByPuuid(riotAccountDetails.puuid, activeRegion, 0, 5)
+        getRankedLeagueEntries(riotAccountDetails.puuid, region)
     ]);
-
-    // Fetch complete match data for each recent match ID
-    const recentMatches = await Promise.all(
-        recentMatchesIDs.map(async (matchId, index) => {
-            try {
-                // Fetch match details and timeline data in parallel
-                const [matchDetails, timelineData] = await Promise.all([
-                    getMatchDetailsByMatchID(matchId, activeRegion, region),
-                    getMatchTimelineByMatchID(matchId, activeRegion)
-                ]);
-                
-                if (!matchDetails) {
-                    console.warn(`No match details returned for match ${matchId}`);
-                    return null;
-                }
-                if (!timelineData || timelineData.length === 0) {
-                    console.warn(`No timeline data returned for match ${matchId}`);
-                    return null;
-                }
-                
-                // Create complete Match object with integrated timeline data
-                const completeMatch: Match = {
-                    ...matchDetails,
-                    timelineData: timelineData
-                };
-                
-                return completeMatch;
-            } catch (error) {
-                console.warn(`Failed to fetch match data for match ${matchId} (index ${index}):`, error);
-                return null;
-            }
-        })
-    );
-
-    // Filter out any null values from the recent matches
-    const validMatches = recentMatches.filter((match): match is Match => match !== null);
-    if (validMatches.length > 0) {
-        try {
-            await saveMatchHistory(validMatches);
-            console.log(`Successfully saved ${validMatches.length} matches to database`);
-        } catch (error) {
-            console.error('Failed to save match history to database:', error);
-        }
-    }
 
     // Extract or create default ranks and save data in parallel
     const leagueSoloRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_SOLO_5x5");
@@ -112,11 +65,13 @@ export default async function Home({params}: { params: Promise<{ tagLine: string
                   
                     
                     <div className="col-span-12 2xl:col-span-9">
-                        <MatchHistory 
-                            puuid={riotAccountDetails.puuid}
-                            region={leagueAccountsDetails.region}
-                            recentMatches={validMatches}
-                        />
+                        <Suspense fallback={<LoadingSpinner />}>
+                            <MatchHistoryWrapper 
+                                puuid={riotAccountDetails.puuid}
+                                region={region}
+                                activeRegion={activeRegion}
+                            />
+                        </Suspense>
                     </div>
                 </div>
             </div>

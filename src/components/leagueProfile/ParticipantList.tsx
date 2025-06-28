@@ -85,7 +85,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                                             className="rounded-xl flex-shrink-0"
                                         />
                                         <Link
-                                            href={`/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${region}`}
+                                            href={`lol/${leftPlayer.riotIdTagline}/${leftPlayer.riotIdGameName}/${region}`}
                                             className="text-white/90 hover:text-blue-200 transition-colors 
                                                 whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 ml-1
                                                 font-medium text-xs"
@@ -106,7 +106,7 @@ function StandardParticipantList({participants, region,}: { participants: Partic
                                 {rightPlayer && (
                                     <>
                                         <Link
-                                            href={`/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${region}`}
+                                            href={`lol/${rightPlayer.riotIdTagline}/${rightPlayer.riotIdGameName}/${region}`}
                                             className="text-white/90 hover:text-red-200 transition-colors 
                                                 whitespace-nowrap overflow-hidden truncate flex-1 min-w-0 mr-1 text-right
                                                 font-medium text-xs"
@@ -176,7 +176,7 @@ function ArenaParticipantList({ participants, region }: {
                         <ChampionIcon champion={player.champion} size={12} className="rounded-xl" />
                     </div>
                     <Link
-                        href={`/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
+                        href={`lol/${player.riotIdTagline}/${player.riotIdGameName}/${region}`}
                         className="text-xs truncate text-white/90 hover:text-white 
                             transition-colors font-medium min-w-0 flex-1 ml-1"
                         title={`${player.riotIdGameName}#${player.riotIdTagline}`}
