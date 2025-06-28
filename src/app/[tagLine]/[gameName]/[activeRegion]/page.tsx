@@ -16,6 +16,7 @@ import {
     getMatchDetailsByMatchID,
     getMatchTimelineByMatchID
 } from "@/utils/fetchLeagueAPI";
+import { saveMatchHistory } from "@/utils/database/saveMatchData";
 
 export default async function Home({params}: { params: Promise<{ tagLine: string; gameName: string; activeRegion: string }>}) 
 {
@@ -66,6 +67,17 @@ export default async function Home({params}: { params: Promise<{ tagLine: string
         })
     );
 
+    // Filter out any null values from the recent matches
+    const validMatches = recentMatches.filter((match): match is Match => match !== null);
+    if (validMatches.length > 0) {
+        try {
+            await saveMatchHistory(validMatches);
+            console.log(`Successfully saved ${validMatches.length} matches to database`);
+        } catch (error) {
+            console.error('Failed to save match history to database:', error);
+        }
+    }
+
     // Extract or create default ranks and save data in parallel
     const leagueSoloRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_SOLO_5x5");
     const leagueFlexRank: LeagueRank = getOrDefaultLeagueRank(leagueRanks, "RANKED_FLEX_SR");
@@ -103,7 +115,7 @@ export default async function Home({params}: { params: Promise<{ tagLine: string
                         <MatchHistory 
                             puuid={riotAccountDetails.puuid}
                             region={leagueAccountsDetails.region}
-                            recentMatches={recentMatches.filter((m): m is Match => m !== null)}
+                            recentMatches={validMatches}
                         />
                     </div>
                 </div>
