@@ -27,7 +27,6 @@ export async function saveMatchData(match: Match) {
         });
 
         if (existingMatch) {
-            console.log(`🟡 Match ${match.matchId} already exists in database. Skipping...`);
             return { existing: true, match: existingMatch };
         }
 
@@ -46,7 +45,6 @@ export async function saveMatchData(match: Match) {
                 }
             });
 
-            console.log(`✅ ${match.matchId} was saved successfully with ${match.participants.length} participants.`);
             return { existing: false, match: matchDetails };
         }, {
             timeout: 15000,
@@ -54,7 +52,7 @@ export async function saveMatchData(match: Match) {
             isolationLevel: 'ReadCommitted'
         });
     } catch (error) {
-        console.error(`❌ Error saving match data for ${match.matchId}:`, error);
+        console.error(`❌ DB Error - saveMatchData:`, error);
         throw error;
     }
 }
@@ -70,76 +68,38 @@ export async function saveMatchData(match: Match) {
  */
 export async function saveMatchHistory(matches: Match[]) {
     if (!matches || matches.length === 0) {
-        console.log('🟡 No matches to save');
         return [];
     }
 
     const savedMatches = [];
-    let consecutiveErrors = 0;
-    const maxConsecutiveErrors = 3;
-    
-    // Track statistics for summary
-    let alreadyExistsCount = 0;
-    let failedCount = 0;
     let savedCount = 0;
-    let circuitBreakerSkippedCount = 0;
-    let circuitBreakerActivated = false;
+    let existingCount = 0;
+    let failedCount = 0;
     
-    // Process matches sequentially to avoid potential database conflicts
+    // Process matches sequentially to avoid database conflicts
     for (const match of matches) {
         try {
-            // Circuit breaker: skip remaining matches if too many consecutive errors
-            if (consecutiveErrors >= maxConsecutiveErrors) {
-                if (!circuitBreakerActivated) {
-                    console.warn(`🚨 Circuit breaker activated: too many consecutive errors (${consecutiveErrors}). Skipping remaining matches.`);
-                    circuitBreakerActivated = true;
-                }
-                circuitBreakerSkippedCount++;
-                continue;
-            }
-
             const result = await saveMatchData(match);
             
             if (result.existing) {
-                alreadyExistsCount++;
-                savedMatches.push(result.match);
+                existingCount++;
             } else {
                 savedCount++;
-                savedMatches.push(result.match);
             }
             
-            consecutiveErrors = 0; // Reset error counter on success
+            savedMatches.push(result.match);
             
         } catch (error) {
-            consecutiveErrors++;
             failedCount++;
-            console.error(`❌ Failed to save match ${match.matchId} (error ${consecutiveErrors}/${maxConsecutiveErrors}):`, error);
-            
-            // Add delay between retries to avoid overwhelming the database
-            if (consecutiveErrors < maxConsecutiveErrors) {
-                await new Promise(resolve => setTimeout(resolve, 1000 * consecutiveErrors));
-            }
+            console.error(`❌ DB Error - saveMatch ${match.matchId}:`, error);
         }
     }
 
-    // Enhanced summary output
-    const totalMatches = matches.length;
-    console.log(`\n📋 Match Save Summary:`);
-    console.log(`   Total matches: ${totalMatches}`);
-    console.log(`   ✅ Saved (new): ${savedCount}`);
-    console.log(`   🟡 Already existed: ${alreadyExistsCount}`);
-    console.log(`   ❌ Failed: ${failedCount}`);
-    console.log(`   ⏭️  Skipped (circuit breaker): ${circuitBreakerSkippedCount}`);
-    
-    if (circuitBreakerActivated) {
-        console.log(`   🚨 Circuit breaker was activated`);
+    // Concise summary
+    const total = matches.length;
+    if (savedCount > 0 || failedCount > 0) {
+        console.log(`💾 DB Save: ${savedCount} new, ${existingCount} existing, ${failedCount} failed (${total} total)`);
     }
-    
-    const successRate = totalMatches > 0 ? (((savedCount + alreadyExistsCount) / totalMatches) * 100).toFixed(1) : '0.0';
-    const newSaveRate = totalMatches > 0 ? ((savedCount / totalMatches) * 100).toFixed(1) : '0.0';
-    console.log(`   📈 Processing rate: ${successRate}% (includes existing matches)`);
-    console.log(`   🆕 New save rate: ${newSaveRate}% (new matches only)\n`);
     
     return savedMatches;
 }
-

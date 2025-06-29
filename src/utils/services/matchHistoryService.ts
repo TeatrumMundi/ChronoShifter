@@ -59,56 +59,39 @@ export async function getMatchHistory(
     }
 
     try {
+        console.log(`� Match History Request: ${count} matches (start: ${startIndex}) for ${puuid.slice(0, 8)}... [${force ? 'FORCE' : 'CACHE'}]`);
+        
         let matches: Match[] = [];
 
         // Step 1: Try to get from database if not forcing API call
         if (!force) {
-            console.log(`🔍 Checking database for ${count} matches starting at index ${startIndex} for PUUID: ${puuid}`);
-            
-            // Get player matches from database
             const dbMatches = await getPlayerMatches(puuid, startIndex + count, false);
             
             if (dbMatches && dbMatches.length > startIndex) {
-                // Apply pagination to database results
                 const paginatedMatches = dbMatches.slice(startIndex, startIndex + count);
                 
                 if (paginatedMatches.length === count) {
-                    console.log(`✅ Found ${paginatedMatches.length} matches in database for PUUID: ${puuid}`);
-                    
-                    // Convert database format to Match interface format
-                    matches = await convertDatabaseMatchesToInterface(paginatedMatches);
-                    return matches;
+                    console.log(`✅ Serving ${paginatedMatches.length} matches from cache`);
+                    return paginatedMatches;
                 } else {
-                    console.log(`🟡 Database only has ${paginatedMatches.length} matches (requested ${count}), falling back to API`);
+                    console.log(`🟡 Cache incomplete (${paginatedMatches.length}/${count}), fetching from API`);
                 }
-            } else {
-                console.log(`🟡 No matches found in database for PUUID: ${puuid}, fetching from API`);
             }
-        } else {
-            console.log(`🔄 Force refresh enabled - fetching fresh data from API for PUUID: ${puuid}`);
         }
 
         // Step 2: Fetch from API if not found in database or if forced
-        console.log(`🌐 Fetching match history from API: ${count} matches starting at index ${startIndex}`);
-        
-        // Get match IDs from API
         const matchIds = await getRecentMatchesIDsByPuuid(puuid, region, startIndex, count);
         
         if (!matchIds || matchIds.length === 0) {
-            console.log(`🟡 No match IDs returned from API for PUUID: ${puuid}`);
+            console.log(`🟡 No recent matches found`);
             return [];
         }
-
-        console.log(`📋 Retrieved ${matchIds.length} match IDs from API`);
 
         // Step 3: Check which matches already exist in database (unless forcing)
         let matchesToFetch = matchIds;
         let existingMatches: Match[] = [];
 
         if (!force) {
-            console.log(`🔍 Checking which of ${matchIds.length} matches already exist in database`);
-            
-            // Check existence in parallel
             const existenceChecks = await Promise.all(
                 matchIds.map(async (matchId) => ({
                     matchId,
@@ -124,22 +107,19 @@ export async function getMatchHistory(
                 .filter(check => !check.exists)
                 .map(check => check.matchId);
 
-            console.log(`💾 Found ${existingMatchIds.length} matches in database, need to fetch ${matchesToFetch.length} from API`);
-
-            // Get existing matches from database
             if (existingMatchIds.length > 0) {
-                const dbExistingMatches = await getMultipleMatches(existingMatchIds, true);
-                existingMatches = await convertDatabaseMatchesToInterface(dbExistingMatches);
+                existingMatches = await getMultipleMatches(existingMatchIds, true);
+                console.log(`� ${existingMatchIds.length} matches from cache, ${matchesToFetch.length} from API`);
             }
+        } else {
+            console.log(`🔄 Force refresh: fetching all ${matchIds.length} matches from API`);
         }
 
         // Step 4: Fetch missing matches from API
         let newMatches: Match[] = [];
         if (matchesToFetch.length > 0) {
-            console.log(`🌐 Fetching ${matchesToFetch.length} matches from API`);
-            
             newMatches = await Promise.all(
-                matchesToFetch.map(async (matchId, index) => {
+                matchesToFetch.map(async (matchId) => {
                     try {
                         // Fetch match details and timeline data in parallel
                         const [matchDetails, timelineData] = await Promise.all([
@@ -148,71 +128,52 @@ export async function getMatchHistory(
                         ]);
                         
                         if (!matchDetails) {
-                            console.warn(`⚠️ No match details returned for match ${matchId}`);
-                            return null;
-                        }
-                        
-                        if (!timelineData || timelineData.length === 0) {
-                            console.warn(`⚠️ No timeline data returned for match ${matchId}`);
                             return null;
                         }
                         
                         // Create complete Match object with integrated timeline data
-                        const completeMatch: Match = {
+                        return {
                             ...matchDetails,
-                            timelineData: timelineData
+                            timelineData: timelineData || []
                         };
-                        
-                        return completeMatch;
-                    } catch (error) {
-                        console.warn(`❌ Failed to fetch match data for match ${matchId} (index ${index}):`, error);
+                    } catch {
                         return null;
                     }
                 })
             ).then(results => results.filter((match): match is Match => match !== null));
 
-            console.log(`✅ Successfully fetched ${newMatches.length} matches from API`);
-
             // Step 5: Save new matches to database
             if (newMatches.length > 0) {
-                console.log(`💾 Saving ${newMatches.length} new matches to database`);
                 try {
                     await saveMatchHistory(newMatches);
-                    console.log(`✅ Successfully saved ${newMatches.length} matches to database`);
                 } catch (saveError) {
-                    console.error(`❌ Failed to save matches to database:`, saveError);
-                    console.log(`📤 Returning API data despite save failure`);
+                    console.error(`❌ Failed to save matches:`, saveError);
                 }
             }
         }
 
         // Step 6: Combine and sort all matches
         matches = [...existingMatches, ...newMatches];
-        
-        // Sort by game creation time (newest first) to maintain proper order
         matches.sort((a, b) => b.gameCreation - a.gameCreation);
-        
-        // Apply final pagination in case we got more than requested
         matches = matches.slice(0, count);
 
-        console.log(`✅ Returning ${matches.length} matches for PUUID: ${puuid}`);
+        console.log(`✅ Retrieved ${matches.length} matches (${existingMatches.length} cached + ${newMatches.length} new)`);
         return matches;
 
     } catch (error) {
-        console.error(`❌ Error in getMatchHistory for PUUID ${puuid}:`, error);
+        console.error(`❌ Match history error:`, error);
         
         // If this was a forced call and it failed, try to return cached data as fallback
         if (force) {
-            console.log(`🔄 Force call failed, attempting to retrieve cached data for PUUID: ${puuid}`);
             try {
                 const fallbackMatches = await getPlayerMatches(puuid, startIndex + count, true);
                 if (fallbackMatches && fallbackMatches.length > startIndex) {
                     const paginatedFallback = fallbackMatches.slice(startIndex, startIndex + count);
-                    console.log(`💾 Returning ${paginatedFallback.length} cached matches as fallback`);
-                    return await convertDatabaseMatchesToInterface(paginatedFallback);
+                    console.log(`💾 Fallback: ${paginatedFallback.length} cached matches`);
+                    return paginatedFallback;
                 }
-            } catch (fallbackError) {
-                console.error(`❌ Fallback retrieval also failed for PUUID: ${puuid}:`, fallbackError);
+            } catch {
+                // Fallback failed, will throw original error
             }
         }
 
@@ -240,100 +201,61 @@ export async function getSingleMatch(
     }
 
     try {
-        let match: Match | null = null;
-
+        console.log(`🎯 Single match request: ${matchId} [${force ? 'FORCE' : 'CACHE'}]`);
+        
         // Step 1: Try database first if not forcing
         if (!force) {
-            console.log(`🔍 Checking database for match: ${matchId}`);
-            
             const dbMatch = await getMultipleMatches([matchId], true);
             if (dbMatch && dbMatch.length > 0) {
-                console.log(`✅ Found match ${matchId} in database`);
-                const convertedMatches = await convertDatabaseMatchesToInterface(dbMatch);
-                return convertedMatches[0] || null;
+                console.log(`✅ Serving match from cache`);
+                return dbMatch[0] || null;
             }
-        } else {
-            console.log(`🔄 Force refresh enabled for match: ${matchId}`);
         }
 
         // Step 2: Fetch from API
-        console.log(`🌐 Fetching match ${matchId} from API`);
-        
         const [matchDetails, timelineData] = await Promise.all([
             getMatchDetailsByMatchID(matchId, region, activeRegion),
             getMatchTimelineByMatchID(matchId, region)
         ]);
         
         if (!matchDetails) {
-            console.log(`🟡 Match ${matchId} not found in API`);
+            console.log(`🟡 Match not found`);
             return null;
         }
         
-        if (!timelineData || timelineData.length === 0) {
-            console.warn(`⚠️ No timeline data for match ${matchId}`);
-        }
-        
         // Create complete match object
-        match = {
+        const match = {
             ...matchDetails,
             timelineData: timelineData || []
         };
 
         // Step 3: Save to database
-        console.log(`💾 Saving match ${matchId} to database`);
         try {
             await saveMatchHistory([match]);
-            console.log(`✅ Successfully saved match ${matchId} to database`);
         } catch (saveError) {
-            console.error(`❌ Failed to save match ${matchId} to database:`, saveError);
+            console.error(`❌ Save failed:`, saveError);
         }
 
         return match;
 
     } catch (error) {
-        console.error(`❌ Error getting match ${matchId}:`, error);
+        console.error(`❌ Single match error:`, error);
         
         // Fallback to database if force call failed
         if (force) {
             try {
                 const fallbackMatch = await getMultipleMatches([matchId], true);
                 if (fallbackMatch && fallbackMatch.length > 0) {
-                    console.log(`💾 Returning cached match ${matchId} as fallback`);
-                    const convertedMatches = await convertDatabaseMatchesToInterface(fallbackMatch);
-                    return convertedMatches[0] || null;
+                    console.log(`💾 Fallback: cached match`);
+                    return fallbackMatch[0] || null;
                 }
-            } catch (fallbackError) {
-                console.error(`❌ Fallback failed for match ${matchId}:`, fallbackError);
+            } catch {
+                // Fallback failed, will throw original error
             }
         }
 
         throw error;
     }
-}
-
-/**
- * Helper function to convert database match objects to the Match interface format.
- * This handles any necessary data transformations between database and interface formats.
- */
-async function convertDatabaseMatchesToInterface(dbMatches: Array<Record<string, unknown>>): Promise<Match[]> {
-    return dbMatches.map(dbMatch => {
-        // Convert database format to Match interface
-        // Handle bigint conversions and structure differences
-        return {
-            matchId: parseInt(dbMatch.matchId as string) || 0,
-            gameDuration: dbMatch.gameDuration,
-            gameCreation: Number(dbMatch.gameCreation),
-            gameEndTimestamp: Number(dbMatch.gameEndTimestamp),
-            gameMode: dbMatch.gameMode,
-            gameType: dbMatch.gameType,
-            queueId: dbMatch.queueId,
-            participants: dbMatch.participants || [],
-            // Include timeline data if available
-            timelineData: (dbMatch.timeline && typeof dbMatch.timeline === 'object' && dbMatch.timeline !== null)
-                ? JSON.parse((dbMatch.timeline as { timelineData: string }).timelineData)
-                : []
-        } as Match;
-    });
 }
 
 /**
@@ -363,12 +285,10 @@ export async function batchCheckMatchExistence(matchIds: string[]) {
         const missing = existenceChecks
             .filter(check => !check.exists)
             .map(check => check.matchId);
-
-        console.log(`📊 Batch check complete: ${existing.length} existing, ${missing.length} missing`);
         
         return { existing, missing };
     } catch (error) {
-        console.error(`❌ Error in batch check:`, error);
+        console.error(`❌ Batch check error:`, error);
         throw error;
     }
 }

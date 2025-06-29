@@ -201,4 +201,3 @@ export async function saveLeagueAccountDetails(
         throw error; // Re-throw to allow caller to handle the error
     }
 }
-
