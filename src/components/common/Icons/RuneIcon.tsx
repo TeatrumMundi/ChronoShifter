@@ -31,7 +31,7 @@ export function RuneIcon({
         <IconBox
             src={getRuneIconUrl(rune)}
             key={rune.id}
-            alt={rune.name}
+            alt={rune ? `Item ${rune.name}` : "Rune"}
             size={size}
             childrenSize={childrenSize}
             className={`border transition-all ${isSelected ? "opacity-100" : "opacity-15"} ${className}`}

@@ -125,23 +125,35 @@ const RuneTreeDisplay = memo(function RuneTreeDisplay({
 });
 
 const StatPerksDisplay = memo(function StatPerksDisplay({ mainPlayer }: { mainPlayer: Participant }) {
-    const statPerkCategories = useMemo(() => [
-        {
-            name: "Offense",
-            perks: statPerksData.offense,
-            selectedPerk: mainPlayer.statPerks.offense
-        },
-        {
-            name: "Flex", 
-            perks: statPerksData.flex,
-            selectedPerk: mainPlayer.statPerks.flex
-        },
-        {
-            name: "Defense",
-            perks: statPerksData.defense,
-            selectedPerk: mainPlayer.statPerks.defense
+    const statPerkCategories = useMemo(() => {
+        // Null checks for statPerks
+        if (!mainPlayer.statPerks) {
+            return [];
         }
-    ], [mainPlayer.statPerks]);
+
+        return [
+            {
+                name: "Offense",
+                perks: statPerksData.offense || [],
+                selectedPerk: mainPlayer.statPerks.offense
+            },
+            {
+                name: "Flex", 
+                perks: statPerksData.flex || [],
+                selectedPerk: mainPlayer.statPerks.flex
+            },
+            {
+                name: "Defense",
+                perks: statPerksData.defense || [],
+                selectedPerk: mainPlayer.statPerks.defense
+            }
+        ].filter(category => category.selectedPerk); // Filter out categories with no selected perk
+    }, [mainPlayer.statPerks]);
+
+    // Return null if no stat perks available
+    if (!mainPlayer.statPerks || statPerkCategories.length === 0) {
+        return null;
+    }
 
     return (
         <div className="flex flex-col items-center">
@@ -160,7 +172,8 @@ const StatPerksDisplay = memo(function StatPerksDisplay({ mainPlayer }: { mainPl
                     {statPerkCategories.map((category, categoryIndex) => (
                         <div key={categoryIndex} className="flex items-center justify-center gap-2">
                             {category.perks.map((perk) => {
-                                const isSelected = perk.id === category.selectedPerk.id;
+                                // Null check for selectedPerk
+                                const isSelected = category.selectedPerk && perk.id === category.selectedPerk.id;
                                 
                                 if (!isSelected) {
                                     return (
@@ -204,10 +217,32 @@ const StatPerksDisplay = memo(function StatPerksDisplay({ mainPlayer }: { mainPl
 export const RunesSection = memo(function RunesSection({ mainPlayer }: RunesSectionProps) {
     const activeRuneTrees = useMemo(() => 
         (runesData as RuneTreeData[]).filter(runeTree => {
-            return mainPlayer.runes[0].runeTree.id === runeTree.id || 
-                   mainPlayer.runes[mainPlayer.runes.length - 1].runeTree?.id === runeTree.id;
+            // Add null checks for the runes and their runeTree properties
+            const firstRune = mainPlayer.runes?.[0];
+            const lastRune = mainPlayer.runes?.[mainPlayer.runes.length - 1];
+            
+            return (firstRune?.runeTree?.id === runeTree.id) || 
+                   (lastRune?.runeTree?.id === runeTree.id);
         }), [mainPlayer.runes]
     );
+    
+    // Add safety check to prevent rendering if no runes exist
+    if (!mainPlayer.runes || mainPlayer.runes.length === 0) {
+        return (
+            <div className="relative rounded-xl backdrop-blur-xl border border-white/20 overflow-hidden
+                bg-gradient-to-br from-white/5 via-white/3 to-white/5 shadow-xl shadow-black/10">
+                
+                <SectionHeader title="Runes" />
+                
+                {/* Subtle inner glow */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/2 to-transparent" />
+                
+                <div className="relative z-5 p-6 text-center text-white/70">
+                    <p>Runes data not available for this match</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="relative rounded-xl backdrop-blur-xl border border-white/20 overflow-hidden

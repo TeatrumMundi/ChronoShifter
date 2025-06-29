@@ -35,9 +35,6 @@ export const MatchBuildTab = memo(function MatchBuildTab({ mainPlayer, recentMat
         timelineData: playerTimelineData || undefined
     };
 
-    // Check if runes data is available
-    const hasRunes = mainPlayer.runes && mainPlayer.runes.length > 0;
-
     // If no timeline data is available, show a fallback message or basic info
     if (!recentMatch.timelineData || recentMatch.timelineData.length === 0) {
         return (
@@ -49,14 +46,14 @@ export const MatchBuildTab = memo(function MatchBuildTab({ mainPlayer, recentMat
                         <p>Timeline data not available for this match</p>
                     </div>
                 </div>
-                {hasRunes && <RunesSection mainPlayer={enrichedPlayer} />}
+                <RunesSection mainPlayer={enrichedPlayer} />
             </div>
         );
     }
 
     return (
         <div className="space-y-4">
-            {hasRunes && <RunesSection mainPlayer={enrichedPlayer} />}
+            <RunesSection mainPlayer={enrichedPlayer} />
             <ItemTimelineSection mainPlayer={enrichedPlayer} />
             <SkillOrderSection mainPlayer={enrichedPlayer} />
         </div>

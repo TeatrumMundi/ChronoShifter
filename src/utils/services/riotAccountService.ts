@@ -1,6 +1,7 @@
 import { RiotAccountDetails } from "@/interfaces/productionTypes";
-import { getRiotAccountDetailsByNameAndTag, saveRiotAccountDetails } from "../database/RiotAccountDetails_DB";
+import { saveRiotAccountDetails } from "../database/POST/postRiotAccountDetails_DB";
 import getAccountByRiotIDFromAPI from "../fetchLeagueAPI/RiotAccountDetails_API";
+import { getRiotAccountDetailsByNameAndTag } from "../database/GET/getRiotAccountDetails";
 
 /**
  * Service layer for managing Riot Account data with database caching.

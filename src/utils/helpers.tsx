@@ -201,7 +201,11 @@ export function calculatePerformanceScore(participant: RawParticipant, timeInSec
 
 // Helper function to clean and format the item description.
 // It replaces <br> and <li> tags with newlines, then removes remaining tags.
-export const cleanItemDescription = (text: string): string => {
+export const cleanItemDescription = (text: string | null | undefined): string => {
+    if (!text) {
+        return "";
+    }
+    
     return text
         .replace(/<br\s*\/?>/gi, "\n")
         .replace(/<li>/gi, "\n")
@@ -308,4 +312,28 @@ export function getOrDefaultLeagueRank(leagueRanks: LeagueRank[], queueType: str
         winRate: 0,
         hotStreak: false
     };
+}
+
+import { PrismaClient } from "@prisma/client";
+
+/**
+ * Creates a singleton Prisma client instance to avoid connection pool issues during development.
+ * Uses the global object to store the instance across hot reloads in development.
+ * 
+ * @returns PrismaClient instance
+ */
+export function createPrismaClient(): PrismaClient {
+    const globalForPrisma = globalThis as unknown as {
+        prisma: PrismaClient | undefined
+    };
+
+    const prisma = globalForPrisma.prisma ?? new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
+    });
+
+    if (process.env.NODE_ENV !== 'production') {
+        globalForPrisma.prisma = prisma;
+    }
+
+    return prisma;
 }

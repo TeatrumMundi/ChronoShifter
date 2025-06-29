@@ -15,6 +15,8 @@ export function RuneDisplay({ runes, boxSize, keyStoneIconSize, secendaryRuneIco
     const primaryRune = runes[0];
     const secondaryRune = runes[runes.length - 1];
 
+    if (!primaryRune || !secondaryRune) return null;
+
     const secondaryIconUrl = getRuneTreeIconUrl(secondaryRune);
 
     return (
@@ -31,7 +33,7 @@ export function RuneDisplay({ runes, boxSize, keyStoneIconSize, secendaryRuneIco
             {/* Secondary Rune Tree Icon */}
             <IconBox
                 src={secondaryIconUrl || ""}
-                alt={secondaryRune.runeTree.name || "Rune Tree"}
+                alt={secondaryRune.runeTree?.name || "Rune Tree"}
                 size={boxSize}
                 childrenSize={secendaryRuneIconSize}
                 tooltip={

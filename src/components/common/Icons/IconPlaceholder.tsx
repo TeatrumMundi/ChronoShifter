@@ -1,9 +1,10 @@
 interface IconPlaceholderProps {
     size: number;
     className?: string;
+    children?: React.ReactNode;
 }
 
-export function BoxPlaceHolder({ size, className = "" }: IconPlaceholderProps) {
+export function BoxPlaceHolder({ size, className = "", children }: IconPlaceholderProps) {
     return (
         <div
             className={`object-contain bg-white/5 backdrop-blur-md border border-white/10 rounded-sm shadow-lg relative overflow-hidden ${className}`}
@@ -34,6 +35,7 @@ export function BoxPlaceHolder({ size, className = "" }: IconPlaceholderProps) {
                     animation: 'shimmer 3s ease-in-out infinite',
                 }}
             />
+            {children}
         </div>
     );
 }

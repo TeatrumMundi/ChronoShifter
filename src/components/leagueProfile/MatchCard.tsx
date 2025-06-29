@@ -1,19 +1,19 @@
 ﻿"use client";
 
-import { Participant, Match } from "@/interfaces/productionTypes";
 import { formatRole, getOrdinalPlacement, secToHHMMSS, timeAgo } from "@/utils/helpers";
-import { MatchStats } from "./MatchStats";
-import { ItemDisplay } from "./ItemDisplay";
-import { ChampionIcon } from "../common/Icons/ChampionIcon";
-import { ParticipantList } from "./ParticipantList";
-import { RuneDisplay } from "./RuneDisplay";
-import { AugmentDisplay } from "./AugmentDisplay";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { Participant, Match } from "@/interfaces/productionTypes";
 import { SummonerSpellDisplay } from "./SummonerSpellDisplay";
-import { MatchDetails } from "./matchDeatils/MatchDetails";
 import queuesData from "@/utils/getLeagueAssets/queues.json";
+import { ChampionIcon } from "../common/Icons/ChampionIcon";
+import { MatchDetails } from "./matchDeatils/MatchDetails";
+import { ParticipantList } from "./ParticipantList";
+import { AugmentDisplay } from "./AugmentDisplay";
 import { AnimatePresence } from "framer-motion";
+import { ItemDisplay } from "./ItemDisplay";
+import { RuneDisplay } from "./RuneDisplay";
+import { ChevronDown } from "lucide-react";
+import { MatchStats } from "./MatchStats";
+import { useState } from "react";
 
 interface MatchCardProps {
     participant: Participant;
@@ -166,7 +166,7 @@ export function MatchCard({ participant, match }: MatchCardProps) {
                                             </div>
 
                                             {/* Augments - inline for Arena */}
-                                            {gameMode === "Arena" && participant.arenaStats && participant.arenaStats.augments.length > 0 && (
+                                            {gameMode === "Arena" && participant.arenaStats?.augments?.length > 0 && (
                                                 <div className="flex justify-center items-center">
                                                     <div className="rounded-md bg-white/10 backdrop-blur-sm border border-white/20 p-0.5 sm:p-1">
                                                         <AugmentDisplay itemSize={24} augments={participant.arenaStats.augments} />

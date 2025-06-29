@@ -25,6 +25,9 @@ export function getRuneIconUrl(rune: Rune): string {
  * Returns the full URL to the rune tree icon (Domination, Precision, etc.)
  */
 export function getRuneTreeIconUrl(rune: Rune): string {
+    if (!rune || !rune.runeTree || !rune.runeTree.icon) {
+        return "";
+    }
     return `https://ddragon.leagueoflegends.com/cdn/img/${rune.runeTree.icon}`;
 }
 
@@ -46,7 +49,23 @@ export function getChampionSpellIconByChampionAndID(champion: Champion, spellId:
  * @returns A fully qualified image URL.
  */
 export function getAugmentIconUrl(augment: Augment, size: "small" | "large" = "small"): string {
-    const iconFile = augment.apiName.toLowerCase() + `_${size}.png`;
+    // Validate augment input
+    if (!augment || !augment.apiName || typeof augment.apiName !== 'string') {
+        return "/augments/default_small.png";
+    }
+
+    // Sanitize apiName to prevent path traversal or invalid characters
+    const sanitizedApiName = augment.apiName
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '') // Only allow alphanumeric, underscore, and hyphen
+        .trim();
+
+    // Check if sanitized name is empty after cleaning
+    if (!sanitizedApiName) {
+        return "/augments/default_small.png";
+    }
+
+    const iconFile = sanitizedApiName + `_${size}.png`;
 
     const cdnUrl = `https://raw.communitydragon.org/latest/game/assets/ux/cherry/augments/icons/${iconFile}`;
     const localUrl = `/augments/${iconFile}`; // File stored in public/augments/

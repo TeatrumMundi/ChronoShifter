@@ -1,16 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { Match } from "@/interfaces/productionTypes";
+import { createPrismaClient } from "../../helpers";
 
-// Singleton pattern for Prisma client to avoid connection pool issues during development
-const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined
-}
-
-const prisma = globalForPrisma.prisma ?? new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error']
-})
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Create singleton Prisma client
+const prisma = createPrismaClient();
 
 /**
  * Saves match data including match details and all participants to the database.
@@ -21,11 +13,6 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
  * @returns Promise that resolves to an object with `existing` boolean and `match` record
  * @throws {Error} When required parameters are missing or database operations fail
  * 
- * @example
- * ```typescript
- * const savedMatch = await saveMatchData(matchObject);
- * console.log(`Saved match: ${savedMatch.matchId}`);
- * ```
  */
 export async function saveMatchData(match: Match) {
     // Validate required input parameters
@@ -80,11 +67,6 @@ export async function saveMatchData(match: Match) {
  * @returns Promise that resolves to array of saved Match records
  * @throws {Error} When required parameters are missing or database operations fail
  * 
- * @example
- * ```typescript
- * const savedMatches = await saveMatchHistory(matchArray);
- * console.log(`Saved ${savedMatches.length} matches`);
- * ```
  */
 export async function saveMatchHistory(matches: Match[]) {
     if (!matches || matches.length === 0) {
@@ -160,3 +142,4 @@ export async function saveMatchHistory(matches: Match[]) {
     
     return savedMatches;
 }
+

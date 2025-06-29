@@ -1,9 +1,7 @@
 import { LeagueAccountDetails, LeagueRank } from "@/interfaces/productionTypes";
 import getSummonerByPuuid from "@/utils/fetchLeagueAPI/LeagueAccountDetails_API";
-import { 
-    saveLeagueAccountDetails, 
-    getLeagueAccountDetailsByPuuid 
-} from "@/utils/database/LeagueAccountDetails_DB";
+import { saveLeagueAccountDetails, } from "@/utils/database/POST/postLeagueAccountDetails_DB";
+import { getLeagueAccountDetailsByPuuid } from "../database/GET/getLeagueAccountDetails";
 
 /**
  * Service for managing League Account Details with intelligent caching.
