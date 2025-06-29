@@ -1,12 +1,13 @@
+import { LeagueAccountDetails } from "@/interfaces/productionTypes";
 import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
 
 /**
- * Fetches the active region for a given PUUID from Riot Games API.
+ * Fetches League of Legends summoner account details by PUUID.
  * 
  * @param puuid - Player Universally Unique Identifier
  * @param region - The regional routing value (e.g., "europe", "americas", "asia")
- * @param game - The game identifier (default: "lol" for League of Legends)
- * @returns Promise that resolves to the active region string (e.g., "eun1", "euw1", "na1")
+ * @param activeRegion - The platform routing value (e.g., "eun1", "euw1", "na1")
+ * @returns Promise that resolves to LeagueAccountDetails object
  * @throws {Error} When the API request fails or returns invalid data
  * @throws {Error} When PUUID is not found (404)
  * @throws {Error} When rate limit is exceeded (429)
@@ -15,14 +16,14 @@ import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
  * @example
  * ```typescript
  * try {
- *   const activeRegion = await getActiveRegionByPuuid("puuid123", "europe", "lol");
- *   console.log(`Active region: ${activeRegion}`);
+ *   const summoner = await getSummonerByPuuid("puuid123", "europe", "euw1");
+ *   console.log(`Summoner level: ${summoner.summonerLevel}`);
  * } catch (error) {
- *   console.error("Failed to get active region:", error.message);
+ *   console.error("Failed to get summoner:", error.message);
  * }
  * ```
  */
-export default async function getActiveRegionByPuuid(puuid: string, region: string, game: string = "lol"): Promise<string> {
+export default async function getSummonerByPuuid(puuid: string, region: string, activeRegion: string): Promise<LeagueAccountDetails> {
     // Input validation
     if (!puuid || typeof puuid !== 'string' || puuid.trim().length === 0) {
         throw new Error('PUUID is required and must be a non-empty string');
@@ -32,25 +33,27 @@ export default async function getActiveRegionByPuuid(puuid: string, region: stri
         throw new Error('Region is required and must be a non-empty string');
     }
     
-    if (!game || typeof game !== 'string' || game.trim().length === 0) {
-        throw new Error('Game is required and must be a non-empty string');
+    if (!activeRegion || typeof activeRegion !== 'string' || activeRegion.trim().length === 0) {
+        throw new Error('Active region is required and must be a non-empty string');
     }
 
     try {
+        console.log(`📡 Fetching League account from Riot API for PUUID: ${puuid}`);
+        
         const response: Response = await fetchFromRiotAPI(
-            `https://${region}.api.riotgames.com/riot/account/v1/region/by-game/${game}/by-puuid/${puuid}`
+            `https://${activeRegion}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`
         );
 
         if (!response.ok) {
             switch (response.status) {
                 case 404:
-                    throw new Error(`PUUID not found or no active region for game "${game}": ${puuid}`);
+                    throw new Error(`Summoner not found for PUUID: ${puuid}`);
                 case 429:
                     throw new Error('Rate limit exceeded. Please try again later.');
                 case 403:
                     throw new Error('Forbidden: Invalid API key or insufficient permissions.');
                 case 400:
-                    throw new Error('Bad request: Invalid PUUID, region, or game parameter.');
+                    throw new Error('Bad request: Invalid PUUID or region parameter.');
                 case 500:
                     throw new Error('Riot API server error. Please try again later.');
                 default:
@@ -65,15 +68,27 @@ export default async function getActiveRegionByPuuid(puuid: string, region: stri
             throw new Error('Invalid response data received from Riot API');
         }
         
-        if (!data.region || typeof data.region !== 'string') {
-            throw new Error('Invalid or missing region in API response');
+        // Validate essential summoner data
+        if (!data.id || !data.puuid || typeof data.summonerLevel !== 'number') {
+            throw new Error('Invalid summoner data structure received from API');
         }
 
-        return data.region;
+        console.log(`✅ Successfully fetched League account from API for PUUID: ${puuid}`);
+
+        return {
+            id: data.id,
+            accountId: data.id,
+            puuid: data.puuid,
+            region,
+            activeRegion,
+            profileIconId: data.profileIconId,
+            revisionDate: data.revisionDate,
+            summonerLevel: data.summonerLevel
+        } as LeagueAccountDetails;
     } catch (error) {
         if (error instanceof Error) {
             throw error;
         }
-        throw new Error(`Unexpected error while fetching active region: ${String(error)}`);
+        throw new Error(`Unexpected error while fetching summoner data: ${String(error)}`);
     }
 }

@@ -2,7 +2,8 @@ import { RiotAccountDetails } from "@/interfaces/productionTypes";
 import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
 
 /**
- * Fetches Riot account details by Riot ID (gameName#tagLine).
+ * Fetches Riot account details by Riot ID (gameName#tagLine) from the Riot API.
+ * This is a pure API function with no database operations.
  * 
  * @param tagLine - The tag line part of the Riot ID (e.g., "EUW" from "Player#EUW")
  * @param gameName - The game name part of the Riot ID (e.g., "Player" from "Player#EUW")
@@ -18,8 +19,13 @@ import { fetchFromRiotAPI } from "./fetchFromRiotAPI";
  * console.log(account.puuid);
  * ```
  */
-export default async function getAccountByRiotID(tagLine: string, gameName: string, region: string): Promise<RiotAccountDetails> {
+export default async function getAccountByRiotID(
+    tagLine: string, 
+    gameName: string, 
+    region: string
+): Promise<RiotAccountDetails> {
     try {
+        console.log(`📡 Fetching account data from API for ${gameName}#${tagLine}`);
         const response: Response = await fetchFromRiotAPI(
             `https://${region}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`
         );

@@ -11,7 +11,7 @@ interface PlayerInfoProps {
     profileIconId: number;
     summonerLevel: number;
     region: string;
-    isFromCache: boolean;
+    isFromCache?: boolean;
 }
 
 export default function PlayerInfo({ 
@@ -20,7 +20,7 @@ export default function PlayerInfo({
     profileIconId, 
     summonerLevel,
     region,
-    isFromCache
+    isFromCache = false
 }: PlayerInfoProps) {
     const router = useRouter();
 

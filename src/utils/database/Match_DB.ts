@@ -18,7 +18,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
  * Items, runes, stat perks, and arena stats are stored as proper relational objects.
  * 
  * @param match - Complete match object with participants and timeline data
- * @returns Promise that resolves to the saved Match record
+ * @returns Promise that resolves to an object with `existing` boolean and `match` record
  * @throws {Error} When required parameters are missing or database operations fail
  * 
  * @example
@@ -29,13 +29,8 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
  */
 export async function saveMatchData(match: Match) {
     // Validate required input parameters
-    if (!match || !match.matchId) {
-        throw new Error('Match with valid matchId required');
-    }
-
-    if (!match.participants || match.participants.length === 0) {
-        throw new Error('Match must contain participants');
-    }
+    if (!match || !match.matchId) { throw new Error('Match with valid matchId required'); }
+    if (!match.participants || match.participants.length === 0) { throw new Error('Match must contain participants'); }
 
     try {
         // Step 1: Check if match already exists
@@ -46,7 +41,7 @@ export async function saveMatchData(match: Match) {
 
         if (existingMatch) {
             console.log(`🟡 Match ${match.matchId} already exists in database. Skipping...`);
-            return existingMatch;
+            return { existing: true, match: existingMatch };
         }
 
         return await prisma.$transaction(async (transaction) => {
@@ -65,70 +60,15 @@ export async function saveMatchData(match: Match) {
             });
 
             console.log(`✅ ${match.matchId} was saved successfully with ${match.participants.length} participants.`);
-            return matchDetails;
+            return { existing: false, match: matchDetails };
         }, {
             timeout: 15000,
             maxWait: 5000,
             isolationLevel: 'ReadCommitted'
         });
     } catch (error) {
-        // Enhanced error handling with specific Prisma error types
-        if (error instanceof Error) {
-            if (error.message.includes('Transaction already closed') || 
-                error.message.includes('P2028')) {
-                console.warn(`⚠️ Transaction timeout for match ${match.matchId}, retrying without transaction...`);
-                
-                // Fallback: Save without transaction for development hot-reload scenarios
-                return await saveMatchDataFallback(match);
-            }
-        }
-        
         console.error(`❌ Error saving match data for ${match.matchId}:`, error);
         throw error;
-    }
-}
-
-/**
- * Fallback function for saving match data without transactions.
- * Used when transaction timeouts occur during development hot-reloads.
- * 
- * @param match - Match object to save
- * @returns Promise that resolves to the saved Match record
- */
-async function saveMatchDataFallback(match: Match) {
-    try {
-        console.log(`🔄 Saving match ${match.matchId} without transaction (fallback mode)`);
-        
-        // Check again if match exists (race condition protection)
-        const existingMatch = await prisma.match.findUnique({
-            where: { matchId: match.matchId.toString() },
-            include: { participants: true }
-        });
-
-        if (existingMatch) {
-            console.log(`� Match ${match.matchId} already exists (fallback check)`);
-            return existingMatch;
-        }
-
-        // Create match without transaction
-        const matchDetails = await prisma.match.create({
-            data: {
-                matchId: match.matchId.toString(),
-                gameDuration: match.gameDuration,
-                gameCreation: BigInt(match.gameCreation),
-                gameEndTimestamp: BigInt(match.gameEndTimestamp),
-                gameMode: match.gameMode,
-                gameType: match.gameType,
-                queueId: match.queueId
-            }
-        });
-
-        console.log(`✅ ${match.matchId} saved in fallback mode (basic data only)`);
-        return matchDetails;
-        
-    } catch (fallbackError) {
-        console.error(`❌ Fallback save failed for match ${match.matchId}:`, fallbackError);
-        throw fallbackError;
     }
 }
 
@@ -157,9 +97,10 @@ export async function saveMatchHistory(matches: Match[]) {
     const maxConsecutiveErrors = 3;
     
     // Track statistics for summary
-    let skippedCount = 0;
+    let alreadyExistsCount = 0;
     let failedCount = 0;
     let savedCount = 0;
+    let circuitBreakerSkippedCount = 0;
     let circuitBreakerActivated = false;
     
     // Process matches sequentially to avoid potential database conflicts
@@ -171,13 +112,20 @@ export async function saveMatchHistory(matches: Match[]) {
                     console.warn(`🚨 Circuit breaker activated: too many consecutive errors (${consecutiveErrors}). Skipping remaining matches.`);
                     circuitBreakerActivated = true;
                 }
-                skippedCount++;
+                circuitBreakerSkippedCount++;
                 continue;
             }
 
-            const savedMatch = await saveMatchData(match);
-            savedMatches.push(savedMatch);
-            savedCount++;
+            const result = await saveMatchData(match);
+            
+            if (result.existing) {
+                alreadyExistsCount++;
+                savedMatches.push(result.match);
+            } else {
+                savedCount++;
+                savedMatches.push(result.match);
+            }
+            
             consecutiveErrors = 0; // Reset error counter on success
             
         } catch (error) {
@@ -196,16 +144,19 @@ export async function saveMatchHistory(matches: Match[]) {
     const totalMatches = matches.length;
     console.log(`\n📋 Match Save Summary:`);
     console.log(`   Total matches: ${totalMatches}`);
-    console.log(`   ✅ Saved: ${savedCount}`);
+    console.log(`   ✅ Saved (new): ${savedCount}`);
+    console.log(`   🟡 Already existed: ${alreadyExistsCount}`);
     console.log(`   ❌ Failed: ${failedCount}`);
-    console.log(`   ⏭️  Skipped: ${skippedCount}`);
+    console.log(`   ⏭️  Skipped (circuit breaker): ${circuitBreakerSkippedCount}`);
     
     if (circuitBreakerActivated) {
         console.log(`   🚨 Circuit breaker was activated`);
     }
     
-    const successRate = totalMatches > 0 ? ((savedCount / totalMatches) * 100).toFixed(1) : '0.0';
-    console.log(`   📈 Success rate: ${successRate}%\n`);
+    const successRate = totalMatches > 0 ? (((savedCount + alreadyExistsCount) / totalMatches) * 100).toFixed(1) : '0.0';
+    const newSaveRate = totalMatches > 0 ? ((savedCount / totalMatches) * 100).toFixed(1) : '0.0';
+    console.log(`   📈 Processing rate: ${successRate}% (includes existing matches)`);
+    console.log(`   🆕 New save rate: ${newSaveRate}% (new matches only)\n`);
     
     return savedMatches;
 }

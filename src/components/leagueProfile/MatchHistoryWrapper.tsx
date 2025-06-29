@@ -5,7 +5,7 @@ import {
     getMatchDetailsByMatchID,
     getMatchTimelineByMatchID
 } from "@/utils/fetchLeagueAPI";
-import { saveMatchHistory } from "@/utils/database/saveMatchData";
+import { saveMatchHistory } from "@/utils/database/Match_DB";
 
 interface MatchHistoryWrapperProps {
     puuid: string;
